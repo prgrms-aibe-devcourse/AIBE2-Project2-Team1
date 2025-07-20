@@ -1,6 +1,7 @@
 package com.example.campy.controller;
 
 import com.example.campy.dto.LoginForm;
+import com.example.campy.dto.SignUpForm;
 import com.example.campy.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +19,11 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody @Valid LoginForm form) {
         String token = authService.login(form);
         return ResponseEntity.ok().body(token);
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody @Valid SignUpForm form) {
+        authService.signUp(form);
+        return ResponseEntity.ok().build();
     }
 }

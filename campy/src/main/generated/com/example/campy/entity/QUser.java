@@ -25,8 +25,6 @@ public class QUser extends EntityPathBase<User> {
 
     public final NumberPath<Integer> entranceYear = createNumber("entranceYear", Integer.class);
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
-
     public final StringPath intro = createString("intro");
 
     public final BooleanPath isVerified = createBoolean("isVerified");
@@ -46,6 +44,8 @@ public class QUser extends EntityPathBase<User> {
     public final StringPath school = createString("school");
 
     public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
+
+    public final NumberPath<Integer> userId = createNumber("userId", Integer.class);
 
     public QUser(String variable) {
         super(User.class, forVariable(variable));

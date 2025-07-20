@@ -10,4 +10,9 @@ public class PageController {
     public String loginPage() {
         return "login"; // → templates/login.html 렌더링
     }
+
+    @GetMapping("/signup")
+    public String signupPage() {
+        return "signup"; // → templates/signup.html 렌더링
+    }
 }
