@@ -1,0 +1,55 @@
+/* signup.css */
+
+/* 회원가입 제목 */
+.signup-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-color, #333); /* login.css의 변수 활용 */
+}
+
+/* 이전/다음 버튼 그룹 */
+.step-btn-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px; /* 버튼 사이 간격 */
+    margin-top: 20px;
+}
+
+.step-btn-group > .login-btn {
+    width: 100%;
+}
+
+/* 학과 검색 입력창 스타일 */
+.major-search-group {
+    position: relative;
+}
+
+.major-search-group .form-input {
+    padding-right: 40px; /* 아이콘 공간 확보 */
+}
+
+.major-search-group::after {
+    content: '🔍'; /* 돋보기 아이콘 */
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    pointer-events: none; /* 아이콘 클릭 방지 */
+    font-size: 18px;
+}
+
+
+/* 입학년도 select 태그 스타일 */
+#entranceYear {
+    /* 기본 브라우저 스타일을 초기화하고 커스텀 화살표를 만듭니다. */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+    padding-right: 40px;
+}

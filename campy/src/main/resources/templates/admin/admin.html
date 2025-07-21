@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지 - Campy</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="admin-page-container">
+    <h1>관리자페이지</h1>
+
+    <!-- 프로필 섹션 -->
+    <section class="profile-section">
+        <img th:src="${admin.profileImageUrl}" src="https://placehold.co/60x60/19A7CE/F6F1F1?text=A" alt="관리자 프로필 이미지" class="profile-image" onerror="this.onerror=null; this.src='https://placehold.co/60x60/cccccc/ffffff?text=Admin';">
+        <div class="profile-info">
+            <p class="username" th:text="|관리자/${admin.username}|">관리자/admin</p>
+            <p class="details" th:text="${admin.level}">LEVEL</p>
+        </div>
+    </section>
+
+    <hr class="separator">
+
+    <!-- 메뉴 네비게이션 -->
+    <nav class="menu-nav">
+        <div class="menu-category">
+            <h2>계정</h2>
+            <ul>
+                <li><a th:href="@{/admin/users}">회원 관리</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-category">
+            <h2>거래</h2>
+            <ul>
+                <li><a th:href="@{/admin/transactions}">거래 내역</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-category">
+            <h2>통계</h2>
+            <ul>
+                <li><a th:href="@{/admin/stats/ai-usage}">ai 사용 내역</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+</body>
+</html>
