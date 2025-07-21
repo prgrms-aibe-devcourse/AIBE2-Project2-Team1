@@ -1,5 +1,6 @@
 package com.example.campy.service;
 
+import com.example.campy.dto.MaterialListDto;
 import com.example.campy.dto.MaterialRequestDto;
 import com.example.campy.dto.MaterialResponseDto;
 import com.example.campy.entity.Material;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,4 +47,21 @@ public class MaterialServiceImpl implements MaterialService {
                 saved.getCreatedAt()
         );
     }
+
+    @Override
+    public List<MaterialListDto> getAllMaterials() {
+        List<Material> materials = materialRepository.findAll();
+
+        return materials.stream()
+                .map(material -> MaterialListDto.builder()
+                        .materialId(material.getMaterialId())
+                        .title(material.getTitle())
+                        .thumbnailUrl(material.getThumbnailUrl())
+                        .price(material.getPrice())
+                        .createdAt(material.getCreatedAt())
+                        .build()
+                )
+                .collect(Collectors.toList());
+    }
+
 }

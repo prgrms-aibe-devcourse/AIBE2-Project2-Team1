@@ -1,5 +1,6 @@
 package com.example.campy.controller;
 
+import com.example.campy.dto.MaterialListDto;
 import com.example.campy.dto.MaterialRequestDto;
 import com.example.campy.dto.MaterialResponseDto;
 import com.example.campy.entity.User;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/materials")
@@ -20,6 +23,7 @@ public class MaterialController {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
+    //자료 등록
     @PostMapping
     public ResponseEntity<MaterialResponseDto> createMaterial(
             @RequestHeader("Authorization") String authHeader,
@@ -41,4 +45,13 @@ public class MaterialController {
         MaterialResponseDto responseDto = materialService.createMaterial(requestDto, sellerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
+
+    //자료 목록 조회
+    @GetMapping
+    public ResponseEntity<List<MaterialListDto>> getAllMaterials() {
+        List<MaterialListDto> materials = materialService.getAllMaterials();
+        return ResponseEntity.ok(materials);
+    }
+
+
 }
