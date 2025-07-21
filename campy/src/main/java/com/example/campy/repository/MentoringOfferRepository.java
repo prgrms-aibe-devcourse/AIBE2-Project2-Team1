@@ -13,6 +13,6 @@ public interface MentoringOfferRepository extends JpaRepository<MentoringOffer, 
     List<MentoringOffer> findByIsDeletedFalse();
 
     // 특정 유저의 요청 조회
-    List<MentoringOffer> findByUserId(Integer userId);
+    List<MentoringOffer> findByUserIdAndIsDeletedFalse(Integer userId);
 
 }
