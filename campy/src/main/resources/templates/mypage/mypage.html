@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - Campy</title>
+    <link rel="stylesheet" th:href="@{/css/mypage.css}">
+    
+</head>
+<body>
+
+<div class="my-page-container">
+    <h1>마이페이지</h1>
+
+    <!-- 프로필 섹션 -->
+    <section class="profile-section">
+        <img th:src="${user.profileImg}" src="https://placehold.co/60x60/19A7CE/F6F1F1?text=P" alt="프로필 이미지" class="profile-image" onerror="this.onerror=null; this.src='https://placehold.co/60x60/cccccc/ffffff?text=User';">
+        <div class="profile-info">
+            <p class="username" th:text="${user.nickname}"></p>
+            <p class="details" th:text="|${user.school} ${user.entranceYear}학번/${user.role}|"></p>
+            <p class="details" th:text="${user.major}"></p>
+        </div>
+        <a href="/messages" class="message-icon" title="메시지함">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </a>
+    </section>
+
+    <hr class="separator">
+
+    <!-- 메뉴 네비게이션 -->
+    <nav class="menu-nav">
+        <div class="menu-category">
+            <h2>계정</h2>
+            <ul>
+                <li><a th:href="@{/my-page/profile}">프로필 관리</a></li>
+                <li><a th:href="@{/my-page/academic-status}">학적 처리</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-category">
+            <h2>멘토</h2>
+            <ul>
+                <li><a th:href="@{/my-page/mentor/profile}">멘토 프로필 관리</a></li>
+                <li><a th:href="@{/my-page/mentor/registered-classes}">등록한 수업</a></li>
+                <li><a th:href="@{/my-page/mentor/purchased-classes}">결제한 수업</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-category">
+            <h2>재능</h2>
+            <ul>
+                <li><a th:href="@{/my-page/talent/registered}">등록한 재능</a></li>
+                <li><a th:href="@{/my-page/talent/purchased}">결제한 재능</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-category">
+            <h2>게시판</h2>
+            <ul>
+                <li><a th:href="@{/my-page/posts}">등록한 글</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-category">
+            <h2>자료</h2>
+            <ul>
+                <li><a th:href="@{/my-page/materials/registered}">등록한 자료</a></li>
+                <li><a th:href="@{/my-page/materials/purchased}">결제한 자료</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-category">
+            <h2>후기</h2>
+            <ul>
+                <li><a th:href="@{/reviews}">후기 게시판</a></li>
+                <li><a th:href="@{/my-page/reviews/my-reviews}">내가 등록한 후기</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+</body>
+</html>
