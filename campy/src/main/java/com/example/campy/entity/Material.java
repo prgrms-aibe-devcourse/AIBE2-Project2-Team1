@@ -1,9 +1,9 @@
 package com.example.campy.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+        import lombok.*;
 
-import java.time.LocalDateTime;
+        import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "materials")
