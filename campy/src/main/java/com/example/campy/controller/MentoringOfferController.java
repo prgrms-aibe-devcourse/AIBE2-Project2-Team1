@@ -1,6 +1,7 @@
 package com.example.campy.controller;
 
 import com.example.campy.dto.mentoring.request.MentoringOfferCreateRequest;
+import com.example.campy.dto.mentoring.request.MentoringOfferUpdateRequest;
 import com.example.campy.dto.mentoring.response.MentoringOfferResponse;
 import com.example.campy.service.MentoringOfferService;
 import jakarta.validation.Valid;
@@ -43,4 +44,13 @@ public class MentoringOfferController {
     public ResponseEntity<List<MentoringOfferResponse>> getMentoringOffersByUserId(@PathVariable Integer userId) {
         return ResponseEntity.ok(mentoringOfferService.findByUserId(userId));
     }
+
+    @PutMapping("/{offerId}")
+    public ResponseEntity<MentoringOfferResponse> updateMentoringOffer(
+            @PathVariable Integer offerId,
+            @RequestBody @Valid MentoringOfferUpdateRequest req
+            ) {
+        return ResponseEntity.ok(mentoringOfferService.update(offerId, req));
+    }
+
 }
