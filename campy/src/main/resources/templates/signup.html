@@ -1,16 +1,15 @@
-<!-- src/main/resources/templates/login.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>캠퍼스재능톡 - 로그인</title>
+    <title>캠퍼스재능톡 - 회원가입</title>
     <link rel="stylesheet" href="/css/style.css"> <!-- 필요 시 CSS 연결 -->
 </head>
 <body>
 <div class="container">
-    <h2>로그인</h2>
+    <h2>회원가입</h2>
 
-    <form th:action="@{/api/auth/login}" method="post" id="loginForm">
+    <form th:action="@{/api/auth/signup}" method="post" id="signupForm">
         <div>
             <label for="email">이메일</label><br>
             <input type="email" id="email" name="email" placeholder="example@school.ac.kr" required>
@@ -19,27 +18,36 @@
             <label for="password">비밀번호</label><br>
             <input type="password" id="password" name="password" required>
         </div>
+        <div>
+            <label for="name">이름</label><br>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="nickname">닉네임</label><br>
+            <input type="text" id="nickname" name="nickname" required>
+        </div>
 
-        <button type="submit">로그인</button>
+        <button type="submit">가입하기</button>
     </form>
 
     <div id="error-message" style="color: red;"></div>
 </div>
 
 <script>
-    // AJAX 로그인 요청 처리
-    const loginForm = document.getElementById('loginForm');
-    loginForm.addEventListener('submit', async function (e) {
+    const signupForm = document.getElementById('signupForm');
+    signupForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        const formData = new FormData(loginForm);
+        const formData = new FormData(signupForm);
         const data = {
             email: formData.get("email"),
-            password: formData.get("password")
+            password: formData.get("password"),
+            name: formData.get("name"),
+            nickname: formData.get("nickname")
         };
 
         try {
-            const res = await fetch('/api/auth/login', {
+            const res = await fetch('/api/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -53,10 +61,8 @@
                 return;
             }
 
-            const token = await res.text();
-            localStorage.setItem("token", token);
-            alert("로그인 성공!");
-            window.location.href = "/"; // 로그인 후 이동할 페이지
+            alert("회원가입 성공!");
+            window.location.href = "/login"; // 회원가입 후 로그인 페이지로 이동
 
         } catch (err) {
             document.getElementById('error-message').innerText = '서버 오류 발생';

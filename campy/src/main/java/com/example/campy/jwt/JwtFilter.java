@@ -58,11 +58,20 @@ public class JwtFilter extends OncePerRequestFilter {
         }
     }
 
-    // Authorization 헤더에서 Bearer 토큰을 추출
+    // Authorization 헤더 또는 쿠키에서 Bearer 토큰을 추출
     private String resolveToken(HttpServletRequest request) {
         String bearer = request.getHeader("Authorization");
         if (bearer != null && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);
+        }
+
+        // Try to get token from cookie
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals("jwtToken")) {
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }
