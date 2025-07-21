@@ -27,6 +27,8 @@ public class QAdmin extends EntityPathBase<Admin> {
 
     public final StringPath password = createString("password");
 
+    public final StringPath profileImageUrl = createString("profileImageUrl");
+
     public final StringPath username = createString("username");
 
     public QAdmin(String variable) {

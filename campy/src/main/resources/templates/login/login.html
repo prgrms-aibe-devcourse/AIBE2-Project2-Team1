@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 - Campy</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
+    
 </head>
 <body>
 <!-- 로고 섹션 -->
@@ -106,9 +107,8 @@
 
             if (response.ok) {
                 // 로그인 성공
-                const token = await response.text(); // 토큰을 응답 본문으로 가정
-                // TODO: 토큰을 로컬 스토리지 또는 쿠키에 저장하는 로직 추가
-                console.log('로그인 성공, 토큰:', token);
+                // 토큰은 HttpOnly 쿠키로 설정되므로 클라이언트에서 직접 접근할 필요 없음
+                console.log('로그인 성공');
                 window.location.href = '/'; // 메인 페이지로 리다이렉트
             } else {
                 // 로그인 실패

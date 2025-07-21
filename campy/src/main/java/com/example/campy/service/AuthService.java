@@ -27,7 +27,7 @@ public class AuthService {
                     if (!passwordEncoder.matches(form.getPassword(), user.getPassword())) {
                         throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
                     }
-                    return jwtUtil.createToken(user.getName(), user.getEmail(), user.getRole());
+                    return jwtUtil.createToken(user.getUsername(), user.getEmail(), user.getRole());
                 })
                 .orElseGet(() -> {
                     // 2. User 테이블에 없으면 Admin 테이블에서 관리자 찾기

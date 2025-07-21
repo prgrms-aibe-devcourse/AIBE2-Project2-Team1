@@ -28,6 +28,9 @@ public class Admin {
     @Column(name = "level", length = 20)
     private String level;
 
+    @Column(name = "profile_image_url", length = 255)
+    private String profileImageUrl;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }
