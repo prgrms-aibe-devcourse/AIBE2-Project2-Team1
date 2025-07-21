@@ -42,3 +42,6 @@ out/
 ### log ###
 logs/
 *.log
+
+# Querydsl generated source
+**/generated/

@@ -32,6 +32,7 @@ dependencyManagement {
 
 // importedProperties를 참조해서 버전 가져옴
 project.ext {
+	querydslDir = "src/main/generated"
 	querydslVersion = dependencyManagement.importedProperties['querydsl.version']
 }
 
@@ -42,11 +43,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.data:spring-data-rest-webmvc'
-	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
-
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 	// DB
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -72,12 +74,6 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	//thymeleaf
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-
 }
 
 test {
@@ -85,8 +81,6 @@ test {
 }
 
 // Querydsl 설정
-def querydslDir = "src/main/generated"
-
 tasks.withType(JavaCompile) {
 	options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
 }
