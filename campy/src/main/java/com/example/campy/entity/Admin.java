@@ -19,6 +19,9 @@ public class Admin {
     @Column(name = "admin_id")
     private Integer adminId;
 
+    @Column(name = "username", nullable = false, unique = true, length = 50)
+    private String username;
+
     @Column(name = "password", length = 255)
     private String password;
 

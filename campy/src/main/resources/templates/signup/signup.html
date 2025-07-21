@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - Campy</title>
+    <link rel="stylesheet" th:href="@{/css/signup.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}"> <!-- 디자인 통일을 위해 login.css도 함께 사용 -->
+</head>
+<body>
+<!-- 로고 섹션 -->
+<div class="logo-section">
+    <a href="/" class="logo" th:href="@{/}">
+        <img src="/images/logo.png" alt="Campy Logo" class="logo-image">
+    </a>
+</div>
+
+<!-- 회원가입 폼 -->
+<div class="login-container">
+    <h2 style="text-align: center; margin-bottom: 30px; color: #333;">회원가입</h2>
+
+    <!-- 에러 메시지 표시 -->
+    <div id="error-message" class="error-message" style="display: none;"></div>
+
+    <form id="signupForm">
+        <!-- Step 1: 학교 정보 -->
+        <div class="form-step" id="step1">
+            <div class="form-group">
+                <label for="entranceYear" class="form-label">입학년도</label>
+                <select id="entranceYear" name="entranceYear" class="form-input" required>
+                    <option value="">입학년도 선택</option>
+                    <script>
+                        const currentYear = new Date().getFullYear();
+                        for (let i = currentYear; i >= currentYear - 20; i--) {
+                            document.write(`<option value="${i}">${i}</option>`);
+                        }
+                    </script>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="school" class="form-label">학교</label>
+                <input type="text"
+                       id="school"
+                       name="school"
+                       class="form-input"
+                       placeholder="학교 이름을 입력하세요"
+                       required>
+            </div>
+            <button type="button" class="login-btn next-step-btn" data-step="2">다음</button>
+        </div>
+
+        <!-- Step 2: 학과 정보 -->
+        <div class="form-step" id="step2" style="display: none;">
+            <div class="form-group">
+                <label for="major" class="form-label">학과</label>
+                <input type="text"
+                       id="major"
+                       name="major"
+                       class="form-input"
+                       placeholder="학과 이름을 입력하세요"
+                       required>
+            </div>
+            <button type="button" class="login-btn prev-step-btn" data-step="1">이전</button>
+            <button type="button" class="login-btn next-step-btn" data-step="3">다음</button>
+        </div>
+
+        <!-- Step 3: 기본 정보 -->
+        <div class="form-step" id="step3" style="display: none;">
+            <div class="form-group">
+                <label for="username" class="form-label">아이디</label>
+                <input type="text"
+                       id="username"
+                       name="username"
+                       class="form-input"
+                       placeholder="사용할 아이디를 입력하세요"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="email" class="form-label">이메일</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       class="form-input"
+                       placeholder="이메일을 입력하세요"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="password" class="form-label">비밀번호</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       class="form-input"
+                       placeholder="비밀번호를 입력하세요"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="passwordConfirm" class="form-label">비밀번호 재확인</label>
+                <input type="password"
+                       id="passwordConfirm"
+                       name="passwordConfirm"
+                       class="form-input"
+                       placeholder="비밀번호를 다시 입력하세요"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="name" class="form-label">이름</label>
+                <input type="text"
+                       id="name"
+                       name="name"
+                       class="form-input"
+                       placeholder="이름을 입력하세요"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="nickname" class="form-label">닉네임</label>
+                <input type="text"
+                       id="nickname"
+                       name="nickname"
+                       class="form-input"
+                       placeholder="닉네임을 입력하세요"
+                       required>
+            </div>
+            <button type="button" class="login-btn prev-step-btn" data-step="2">이전</button>
+            <button type="submit" class="login-btn">가입하기</button>
+        </div>
+    </form>
+
+    <div class="signup-link" style="margin-top: 20px; padding-top: 15px;">
+        이미 회원이신가요?
+        <a href="/login" th:href="@{/login}">로그인</a>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    const formSteps = document.querySelectorAll('.form-step');
+    const errorMessageDiv = document.getElementById('error-message');
+
+    function showStep(step) {
+        formSteps.forEach((s, index) => {
+            s.style.display = (index + 1 === step) ? 'block' : 'none';
+        });
+        currentStep = step;
+        errorMessageDiv.style.display = 'none'; // 단계 변경 시 에러 메시지 숨김
+    }
+
+    function validateStep(step) {
+        let isValid = true;
+        let message = '';
+
+        if (step === 1) {
+            const entranceYear = document.getElementById('entranceYear').value;
+            const school = document.getElementById('school').value.trim();
+            if (!entranceYear || !school) {
+                isValid = false;
+                message = '입학년도와 학교를 모두 입력해주세요.';
+            }
+        } else if (step === 2) {
+            const major = document.getElementById('major').value.trim();
+            if (!major) {
+                isValid = false;
+                message = '학과를 입력해주세요.';
+            }
+        } else if (step === 3) {
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const passwordConfirm = document.getElementById('passwordConfirm').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const nickname = document.getElementById('nickname').value.trim();
+
+            if (!username || !email || !password || !passwordConfirm || !name || !nickname) {
+                isValid = false;
+                message = '모든 필수 정보를 입력해주세요.';
+            } else if (password !== passwordConfirm) {
+                isValid = false;
+                message = '비밀번호가 일치하지 않습니다.';
+            }
+        }
+
+        if (!isValid) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.style.display = 'block';
+        }
+        return isValid;
+    }
+
+    document.querySelectorAll('.next-step-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetStep = parseInt(button.dataset.step);
+            if (validateStep(currentStep)) {
+                showStep(targetStep);
+            }
+        });
+    });
+
+    document.querySelectorAll('.prev-step-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetStep = parseInt(button.dataset.step);
+            showStep(targetStep);
+        });
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        if (!validateStep(currentStep)) {
+            return;
+        }
+
+        const container = document.querySelector('.login-container');
+        const submitBtn = e.submitter; // 제출 버튼
+
+        // 로딩 상태 적용
+        container.classList.add('loading');
+        if (submitBtn) submitBtn.textContent = '가입 중...';
+
+        const formData = new FormData(this);
+        const data = {
+            username: formData.get("username"),
+            email: formData.get("email"),
+            password: formData.get("password"),
+            name: formData.get("name"),
+            nickname: formData.get("nickname"),
+            school: formData.get("school"),
+            major: formData.get("major"),
+            entranceYear: parseInt(formData.get("entranceYear"))
+        };
+
+        try {
+            const res = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+                window.location.href = "/login";
+            } else {
+                const errorText = await res.text();
+                errorMessageDiv.textContent = errorText || '회원가입에 실패했습니다. 다시 시도해주세요.';
+                errorMessageDiv.style.display = 'block';
+            }
+        } catch (err) {
+            console.error('네트워크 오류:', err);
+            errorMessageDiv.textContent = '네트워크 오류가 발생했습니다. 다시 시도해주세요.';
+            errorMessageDiv.style.display = 'block';
+        } finally {
+            container.classList.remove('loading');
+            if (submitBtn) submitBtn.textContent = '가입하기';
+        }
+    });
+
+    // 초기 단계 표시
+    showStep(1);
+</script>
+</body>
+</html>
