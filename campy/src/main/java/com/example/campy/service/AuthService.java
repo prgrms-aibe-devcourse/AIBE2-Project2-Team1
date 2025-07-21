@@ -25,6 +25,6 @@ public class AuthService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        return jwtUtil.createToken(user.getName(), user.getEmail(), user.getRole());
+        return jwtUtil.createToken(user.getUserId(), user.getName(), user.getEmail(), user.getRole());
     }
 }

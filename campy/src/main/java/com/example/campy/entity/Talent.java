@@ -48,4 +48,7 @@ public class Talent {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "image_path", length = 255)
+    private String imagePath;
 }

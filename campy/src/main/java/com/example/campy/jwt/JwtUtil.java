@@ -20,28 +20,22 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // 토큰 생성
-    public String createToken(String username, String email, String role) {
+    public String createToken(Integer userId, String username, String email, String role) {
         Date now = new Date();
-        // 6시간 = 6 * 60 * 60 * 1000 밀리초
         long expirationMs = 6 * 60 * 60 * 1000;
         Date expiryDate = new Date(now.getTime() + expirationMs);
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .subject(username)
+                .claim("userId", userId)
                 .claim("email", email)
                 .claim("role", role)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(secretKey)
                 .compact();
-
-        log.info("JWT 토큰 생성: {}", token);
-
-        return token;
     }
 
-    // 공통 Claims 추출
     public Claims extractClaims(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
@@ -50,31 +44,30 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    // 사용자명 추출
     public String getUsername(String token) {
         return extractClaims(token).getSubject();
     }
 
-    // 이메일 추출
     public String getEmail(String token) {
         return extractClaims(token).get("email", String.class);
     }
 
-    // 역할(role) 추출
     public String getRole(String token) {
         return extractClaims(token).get("role", String.class);
     }
 
-    // 토큰 만료 여부 확인
+    public Integer getUserId(String token) {
+        return extractClaims(token).get("userId", Integer.class);
+    }
+
     public boolean isTokenExpired(String token) {
         Date expiration = extractClaims(token).getExpiration();
         return expiration.before(new Date());
     }
 
-    // 전체 유효성 검사 (서명 + 만료)  >>> 로직 추가 예정
     public boolean validateToken(String token) {
         try {
-            Claims claims = extractClaims(token);
+            extractClaims(token);
             return !isTokenExpired(token);
         } catch (Exception e) {
             return false;
