@@ -44,4 +44,7 @@ logs/
 *.log
 
 # Querydsl generated source
+
 **/generated/
+
+
