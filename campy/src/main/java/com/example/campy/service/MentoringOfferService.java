@@ -7,6 +7,8 @@ import com.example.campy.dto.mentoring.response.MentoringOfferResponse;
 import com.example.campy.entity.MentoringOffer;
 import com.example.campy.exception.GeneralException;
 import com.example.campy.repository.MentoringOfferRepository;
+import com.example.campy.repository.UserRepository;
+import com.example.campy.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +20,14 @@ import java.util.List;
 public class MentoringOfferService {
 
     private final MentoringOfferRepository mentoringOfferRepository;
+    private final UserRepository userRepository;
 
-    public MentoringOfferResponse create(MentoringOfferCreateRequest req){
+    public MentoringOfferResponse create(MentoringOfferCreateRequest req, Integer userId){
 
-        MentoringOffer entity = req.toEntity(); // DTO -> Entity
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        MentoringOffer entity = req.toEntity(user); // User 객체 전달
         MentoringOffer saved = mentoringOfferRepository.save(entity);
 
         return MentoringOfferResponse.from(saved); // Entity -> Response DTO
