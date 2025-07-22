@@ -1,11 +1,22 @@
 <!-- templates/fragments/header.html -->
 <div th:fragment="header">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
         .auth-button {
             background-color: #146C94;
             color: white;
-            border: 1px solid white;
-            border-radius: 10px;
+            border: 3px solid white;
+            border-radius: 12px;
             padding: 6px 12px;
             text-decoration: none;
             font-weight: 500;
@@ -20,32 +31,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 18px;
+            padding: 10px 20px; /* 세로 높이 줄임 */
             background-color: #AFD3E2;
             border-bottom: 8px solid #19A7CE;
             border-radius: 0 0 20px 20px;
             position: relative;
             z-index: 1;
-        }
-
-        .nav-links {
-            display: flex;
-            justify-content: flex-start;
-            flex: 1;
-            gap: 24px;
-            margin-left: 40px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #515151; /* ✔ 기본 글자색 */
-            font-weight: bold; /* ✔ 굵게 */
-            font-size: 18px; /* ✔ 크기 */
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: #146C94; /* ✔ hover 시 색상 */
         }
 
         .logo-section {
@@ -54,18 +45,40 @@
         }
 
         .logo-image {
-            height: 50px;
+            height: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex: 1;
+            gap: 46px; /* 항목 사이 간격 */
+            margin-left: 76px; /* 로고로부터 간격 */
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #515151;
+            font-weight: bold;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #146C94;
         }
     </style>
 
     <header class="custom-header">
+        <!-- 좌측 로고 -->
         <div class="logo-section">
             <a th:href="@{/}">
                 <img src="/images/logo.png" alt="Campy Logo" class="logo-image">
             </a>
         </div>
 
-        <!-- 중앙: 카테고리 (왼쪽 정렬) -->
+        <!-- 중앙 카테고리 -->
         <nav class="nav-links">
             <a th:href="@{/about}">소개</a>
             <a href="#" onclick="requireLogin('멘토 페이지는 로그인 후 이용 가능합니다')">멘토</a>
@@ -75,7 +88,7 @@
             <a href="#" onclick="requireLogin('리뷰는 로그인 후 이용 가능합니다')">리뷰</a>
         </nav>
 
-        <!-- 우측: 로그인/회원가입 or 마이페이지 -->
+        <!-- 우측 로그인/회원 기능 -->
         <div style="display: flex; gap: 12px;">
             <span th:if="${loggedInUser}">
                 <a th:href="@{/mypage}" class="auth-button">마이페이지</a>
