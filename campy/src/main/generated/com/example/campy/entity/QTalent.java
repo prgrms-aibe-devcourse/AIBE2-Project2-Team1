@@ -24,6 +24,8 @@ public class QTalent extends EntityPathBase<Talent> {
 
     public final StringPath availableDays = createString("availableDays");
 
+    public final StringPath category = createString("category");
+
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final StringPath description = createString("description");
@@ -37,6 +39,8 @@ public class QTalent extends EntityPathBase<Talent> {
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
     public final StringPath status = createString("status");
+
+    public final SetPath<Tag, QTag> tags = this.<Tag, QTag>createSet("tags", Tag.class, QTag.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> talentId = createNumber("talentId", Integer.class);
 
@@ -68,4 +72,3 @@ public class QTalent extends EntityPathBase<Talent> {
     }
 
 }
-

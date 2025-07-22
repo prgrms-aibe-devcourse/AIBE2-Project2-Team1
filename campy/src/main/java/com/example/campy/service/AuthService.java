@@ -48,6 +48,7 @@ public class AuthService {
             throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
         }
 
+        return jwtUtil.createToken(user.getUserId(), user.getName(), user.getEmail(), user.getRole());
         User user = User.builder()
                 .username(form.getUsername())
                 .email(form.getEmail())
