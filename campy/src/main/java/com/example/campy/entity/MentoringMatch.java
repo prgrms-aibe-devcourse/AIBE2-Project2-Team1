@@ -19,8 +19,9 @@ public class MentoringMatch {
     @Column(name = "match_id")
     private Integer matchId;
 
-    @Column(name = "request_id", nullable = false)
-    private Integer requestId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id", nullable = false)
+    private MentoringOffer mentoringOffer;
 
     @Column(name = "status", nullable = false, length = 20)
     private String status; // 예: REQUESTED, ACCEPTED, REJECTED, CANCELED

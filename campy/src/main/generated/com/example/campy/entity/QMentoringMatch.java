@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,6 +18,8 @@ public class QMentoringMatch extends EntityPathBase<MentoringMatch> {
 
     private static final long serialVersionUID = 676115336L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QMentoringMatch mentoringMatch = new QMentoringMatch("mentoringMatch");
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
@@ -25,7 +28,7 @@ public class QMentoringMatch extends EntityPathBase<MentoringMatch> {
 
     public final NumberPath<Integer> matchId = createNumber("matchId", Integer.class);
 
-    public final NumberPath<Integer> requestId = createNumber("requestId", Integer.class);
+    public final QMentoringOffer mentoringOffer;
 
     public final StringPath status = createString("status");
 
@@ -34,15 +37,24 @@ public class QMentoringMatch extends EntityPathBase<MentoringMatch> {
     public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
     public QMentoringMatch(String variable) {
-        super(MentoringMatch.class, forVariable(variable));
+        this(MentoringMatch.class, forVariable(variable), INITS);
     }
 
     public QMentoringMatch(Path<? extends MentoringMatch> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QMentoringMatch(PathMetadata metadata) {
-        super(MentoringMatch.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QMentoringMatch(PathMetadata metadata, PathInits inits) {
+        this(MentoringMatch.class, metadata, inits);
+    }
+
+    public QMentoringMatch(Class<? extends MentoringMatch> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.mentoringOffer = inits.isInitialized("mentoringOffer") ? new QMentoringOffer(forProperty("mentoringOffer"), inits.get("mentoringOffer")) : null;
     }
 
 }
