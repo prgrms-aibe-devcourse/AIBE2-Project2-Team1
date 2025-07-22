@@ -8,9 +8,10 @@
 </head>
 <body>
     <h1>Campy 메인 페이지</h1>
-    <p th:if="${loggedInUser}" th:text="|${loggedInUser.nickname}님 환영합니다!|">환영합니다!</p>
-    <p th:unless="${loggedInUser}">환영합니다!</p>
-    <a th:href="@{/login}">로그인 페이지로 이동</a>
+    <p th:if="${loggedInUsername}" th:text="|${loggedInUsername}님 환영합니다!|">환영합니다!</p>
+    <p th:unless="${loggedInUsername}">환영합니다!</p>
+    <a th:if="${loggedInUsername}" th:href="@{/logout}">로그아웃</a>
+    <a th:unless="${loggedInUsername}" th:href="@{/login}">로그인 페이지로 이동</a>
     <br><br>
     <a th:href="@{/mypage}">마이 페이지로 이동</a>
     <br><br>

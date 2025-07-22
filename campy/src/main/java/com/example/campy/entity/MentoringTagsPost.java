@@ -17,9 +17,11 @@ public class MentoringTagsPost {
     @Column(name = "mentoring_tags_post_id")
     private Integer mentoringTagsPostId;
 
-    @Column(name = "mentoring_request_id", nullable = false)
-    private Integer mentoringRequestId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mentoring_request_id", nullable = false)
+    private MentoringOffer mentoringOffer;
 
-    @Column(name = "mentoring_tag_id", nullable = false)
-    private Integer mentoringTagId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mentoring_tag_id", nullable = false)
+    private MentoringTag mentoringTag;
 }

@@ -19,11 +19,16 @@ public class Review {
     @Column(name = "review_id")
     private Integer reviewId;
 
-    @Column(name = "author_id", nullable = false)
-    private Integer authorId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
 
-    @Column(name = "target_user_id")
-    private Integer targetUserId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_user_id")
+    private User targetUser;
+
+    @Column(name = "target_id")
+    private Integer targetId;
 
     @Column(name = "rating")
     private Integer rating;

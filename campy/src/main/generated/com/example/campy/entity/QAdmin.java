@@ -29,6 +29,8 @@ public class QAdmin extends EntityPathBase<Admin> {
 
     public final StringPath profileImageUrl = createString("profileImageUrl");
 
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
+
     public final StringPath username = createString("username");
 
     public QAdmin(String variable) {

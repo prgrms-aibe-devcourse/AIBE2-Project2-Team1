@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,6 +18,8 @@ public class QAiCnt extends EntityPathBase<AiCnt> {
 
     private static final long serialVersionUID = -1062859299L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QAiCnt aiCnt = new QAiCnt("aiCnt");
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
@@ -25,18 +28,27 @@ public class QAiCnt extends EntityPathBase<AiCnt> {
 
     public final StringPath tagList = createString("tagList");
 
-    public final NumberPath<Integer> userId = createNumber("userId", Integer.class);
+    public final QUser user;
 
     public QAiCnt(String variable) {
-        super(AiCnt.class, forVariable(variable));
+        this(AiCnt.class, forVariable(variable), INITS);
     }
 
     public QAiCnt(Path<? extends AiCnt> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QAiCnt(PathMetadata metadata) {
-        super(AiCnt.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QAiCnt(PathMetadata metadata, PathInits inits) {
+        this(AiCnt.class, metadata, inits);
+    }
+
+    public QAiCnt(Class<? extends AiCnt> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 
 }

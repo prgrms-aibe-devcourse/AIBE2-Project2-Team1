@@ -24,6 +24,8 @@ public class QTalent extends EntityPathBase<Talent> {
 
     public final StringPath availableDays = createString("availableDays");
 
+    public final StringPath category = createString("category");
+
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final StringPath description = createString("description");

@@ -52,4 +52,7 @@ public class Talent {
 
     @Column(name = "image_path", length = 255)
     private String imagePath;
+
+    @Column(nullable = false)
+    private String category;
 }
