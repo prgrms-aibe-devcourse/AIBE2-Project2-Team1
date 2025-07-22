@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>메인 페이지 - Campy</title>
-    
+
 </head>
 <body>
-    <h1>Campy 메인 페이지</h1>
-    <p th:if="${loggedInUser}" th:text="|${loggedInUser.nickname}님 환영합니다!|">환영합니다!</p>
-    <p th:unless="${loggedInUser}">환영합니다!</p>
-    <a th:href="@{/login}">로그인 페이지로 이동</a>
-    <br><br>
-    <a th:href="@{/mypage}">마이 페이지로 이동</a>
-    <br><br>
-    <a th:href="@{/admin}">어드민 페이지로 이동</a>
+    <header th:replace="~{fragments/header :: header}"></header>
+        <h1>Campy 메인 페이지</h1>
+        <p th:if="${loggedInUser}" th:text="|${loggedInUser.nickname}님 환영합니다!|">환영합니다!</p>
+        <p th:unless="${loggedInUser}">환영합니다!</p>
+        <a th:href="@{/login}">로그인 페이지로 이동</a>
+        <br><br>
+        <a th:href="@{/mypage}">마이 페이지로 이동</a>
+        <br><br>
+        <a th:href="@{/admin}">어드민 페이지로 이동</a>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
 </body>
 </html>
