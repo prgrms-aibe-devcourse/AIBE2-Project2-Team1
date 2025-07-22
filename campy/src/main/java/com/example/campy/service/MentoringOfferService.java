@@ -9,8 +9,11 @@ import com.example.campy.entity.MentoringTag;
 import com.example.campy.entity.MentoringTagPost;
 import com.example.campy.exception.GeneralException;
 import com.example.campy.repository.MentoringOfferRepository;
+<<<<<<< Updated upstream
 import com.example.campy.repository.UserRepository;
 import com.example.campy.entity.User;
+=======
+>>>>>>> Stashed changes
 import com.example.campy.repository.MentoringTagPostRepository;
 import com.example.campy.repository.MentoringTagRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +26,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MentoringOfferService {
-
 
     private final UserRepository userRepository;
     private final MentoringOfferRepository offerRepo;
@@ -81,7 +83,6 @@ public class MentoringOfferService {
     }
 
     public List<MentoringOfferResponse> findByUserId(Integer userId){
-
 
         return offerRepo.findByUser_UserIdAndIsDeletedFalse(userId)
                 .stream()
