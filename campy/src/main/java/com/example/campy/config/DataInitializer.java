@@ -88,7 +88,7 @@ public class DataInitializer implements CommandLineRunner {
                 .title("JPA 기초부터 알려드립니다.")
                 .description("객체와 테이블 매핑의 어려움을 겪는 분들께, ORM의 기본 개념부터 차근차근 알려드립니다.")
                 .price(50000)
-                .status(com.example.campy.constant.MentoringStatus.WAITING)
+                .status(com.example.campy.constant.MentoringStatus.REQUESTED)
                 .createdAt(LocalDateTime.now())
                 .build();
 
