@@ -49,7 +49,7 @@ public class MentoringOfferService {
     }
 
     public List<MentoringOfferResponse> findByUserId(Integer userId){
-        return mentoringOfferRepository.findByUserIdAndIsDeletedFalse(userId)
+        return mentoringOfferRepository.findByUser_UserIdAndIsDeletedFalse(userId)
                 .stream()
                 .map(MentoringOfferResponse::from)
                 .toList();
