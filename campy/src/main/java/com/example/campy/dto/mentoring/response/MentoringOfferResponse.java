@@ -1,6 +1,5 @@
 package com.example.campy.dto.mentoring.response;
 
-import com.example.campy.constant.MentoringStatus;
 import com.example.campy.entity.MentoringOffer;
 import lombok.*;
 

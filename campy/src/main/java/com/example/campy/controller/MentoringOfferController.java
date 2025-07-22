@@ -30,16 +30,19 @@ public class MentoringOfferController {
 
     }
 
+    // 모든 멘토링 제안 조회
     @GetMapping
     public ResponseEntity<List<MentoringOfferResponse>> getAllMentoringOffers() {
         return ResponseEntity.ok(mentoringOfferService.findAll());
     }
 
+    // 제안 id별 검색
     @GetMapping("/{offerId}")
     public ResponseEntity<MentoringOfferResponse> getMentoringOfferById(@PathVariable Integer offerId) {
         return ResponseEntity.ok(mentoringOfferService.findById(offerId));
     }
 
+    // 유저가 작성한 모든 멘토링 제안 검색
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<MentoringOfferResponse>> getMentoringOffersByUserId(@PathVariable Integer userId) {
         return ResponseEntity.ok(mentoringOfferService.findByUserId(userId));
@@ -53,4 +56,10 @@ public class MentoringOfferController {
         return ResponseEntity.ok(mentoringOfferService.update(offerId, req));
     }
 
+    @DeleteMapping("/{offerId}")
+    public ResponseEntity<Void> deleteMentoringOffer(@PathVariable Integer offerId) {
+        mentoringOfferService.delete(offerId);
+
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
 }

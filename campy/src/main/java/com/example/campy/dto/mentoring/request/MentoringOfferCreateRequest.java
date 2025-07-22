@@ -31,7 +31,7 @@ public class MentoringOfferCreateRequest {
 
     public MentoringOffer toEntity() {
         return MentoringOffer.builder()
-                .userId(this.userId) // ✅ DTO 내부의 값 사용
+                .userId(this.userId) // DTO 내부의 값 사용
                 .title(this.title)
                 .description(this.description)
                 .duration(this.duration)

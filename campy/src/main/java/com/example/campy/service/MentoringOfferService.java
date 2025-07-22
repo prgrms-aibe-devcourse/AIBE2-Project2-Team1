@@ -69,4 +69,15 @@ public class MentoringOfferService {
         return MentoringOfferResponse.from(offer);
     }
 
+    @Transactional
+    public void delete(Integer offerId){
+        MentoringOffer offer = mentoringOfferRepository.findById(offerId)
+                .filter(o -> !o.getIsDeleted())
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND));
+
+        offer.setIsDeleted(true);
+        offer.setUpdatedAt(LocalDateTime.now());
+
+    }
+
 }
