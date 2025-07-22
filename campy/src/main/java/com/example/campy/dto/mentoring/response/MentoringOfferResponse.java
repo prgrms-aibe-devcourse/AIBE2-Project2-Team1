@@ -4,6 +4,7 @@ import com.example.campy.entity.MentoringOffer;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,7 +25,10 @@ public class MentoringOfferResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private List<String> tags;
+
     public static MentoringOfferResponse from(MentoringOffer entity) {
+
         return MentoringOfferResponse.builder()
                 .offerId(entity.getOfferId())
                 .title(entity.getTitle())
@@ -36,6 +40,22 @@ public class MentoringOfferResponse {
                 .duration(entity.getDuration())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
+                .build();
+    }
+
+    public static MentoringOfferResponse from(MentoringOffer entity, List<String> tagNames) {
+        return MentoringOfferResponse.builder()
+                .offerId(entity.getOfferId())
+                .title(entity.getTitle())
+                .description(entity.getDescription())
+                .status(entity.getStatus().getLabel())
+                .price(entity.getPrice())
+                .location(entity.getLocation())
+                .maxParticipants(entity.getMaxParticipants())
+                .duration(entity.getDuration())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
+                .tags(tagNames)
                 .build();
     }
 

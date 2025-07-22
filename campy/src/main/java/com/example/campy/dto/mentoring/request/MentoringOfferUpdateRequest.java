@@ -3,6 +3,8 @@ package com.example.campy.dto.mentoring.request;
 import com.example.campy.constant.MentoringStatus;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,5 +17,6 @@ public class MentoringOfferUpdateRequest {
     private String location;
     private Integer maxParticipants;
     private Integer duration;
-    private MentoringStatus status; // 상태 변경 허용 시
+    private MentoringStatus status;
+    private List<String> tags;
 }

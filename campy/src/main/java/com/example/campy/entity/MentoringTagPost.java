@@ -10,16 +10,18 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MentoringTagsPost {
+public class MentoringTagPost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mentoring_tags_post_id")
     private Integer mentoringTagsPostId;
 
-    @Column(name = "mentoring_request_id", nullable = false)
-    private Integer mentoringRequestId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mentoring_requests_id")
+    private MentoringOffer mentoringOffer;
 
-    @Column(name = "mentoring_tag_id", nullable = false)
-    private Integer mentoringTagId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mentoring_tag_id")
+    private MentoringTag tag;
 }
