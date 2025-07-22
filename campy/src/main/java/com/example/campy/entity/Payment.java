@@ -19,8 +19,9 @@ public class Payment {
     @Column(name = "payment_id")
     private Integer paymentId;
 
-    @Column(name = "buyer_id", nullable = false)
-    private Integer buyerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buyer_id", nullable = false)
+    private User buyer;
 
     @Column(name = "target_id")
     private Integer targetId; // 재능, 멘토링, 자료 ID 중 하나
