@@ -1,6 +1,7 @@
 package com.example.campy.entity;
 
 
+import com.example.campy.constant.MentoringStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,12 +14,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MentoringRequest {
+public class MentoringOffer  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_id")
-    private Integer requestId;
+    private Integer offerId;
 
     @Column(name = "user_id", nullable = false)
     private Integer userId;
@@ -41,8 +42,9 @@ public class MentoringRequest {
     @Column(name = "max_participants")
     private Integer maxParticipants;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50)
-    private String status; // 예: 요청중, 진행중, 완료
+    private MentoringStatus status;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
