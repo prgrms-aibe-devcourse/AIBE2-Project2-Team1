@@ -3,9 +3,11 @@ package com.example.campy.controller;
 import com.example.campy.dto.mentoring.request.MentoringOfferCreateRequest;
 import com.example.campy.dto.mentoring.response.MentoringOfferResponse;
 import com.example.campy.service.MentoringOfferService;
+import com.example.campy.service.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,10 +22,13 @@ public class MentoringOfferController {
     // 멘토링 제안 등록
     @PostMapping
     public ResponseEntity<MentoringOfferResponse> createMentoringOffer(
-            @RequestBody @Valid MentoringOfferCreateRequest req
+            @RequestBody @Valid MentoringOfferCreateRequest req,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
             ){
 
-        MentoringOfferResponse res = mentoringOfferService.create(req);
+        Integer userId = customUserDetails.getUserId();
+
+        MentoringOfferResponse res = mentoringOfferService.create(req, userId);
 
         return ResponseEntity.ok(res);
 
