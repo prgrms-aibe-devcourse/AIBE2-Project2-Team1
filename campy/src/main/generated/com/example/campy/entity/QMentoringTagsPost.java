@@ -13,7 +13,7 @@ import com.querydsl.core.types.Path;
  * QMentoringTagsPost is a Querydsl query type for MentoringTagsPost
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QMentoringTagsPost extends EntityPathBase<MentoringTagsPost> {
+public class QMentoringTagsPost extends EntityPathBase<MentoringTagPost> {
 
     private static final long serialVersionUID = 2007087030L;
 
@@ -26,15 +26,15 @@ public class QMentoringTagsPost extends EntityPathBase<MentoringTagsPost> {
     public final NumberPath<Integer> mentoringTagsPostId = createNumber("mentoringTagsPostId", Integer.class);
 
     public QMentoringTagsPost(String variable) {
-        super(MentoringTagsPost.class, forVariable(variable));
+        super(MentoringTagPost.class, forVariable(variable));
     }
 
-    public QMentoringTagsPost(Path<? extends MentoringTagsPost> path) {
+    public QMentoringTagsPost(Path<? extends MentoringTagPost> path) {
         super(path.getType(), path.getMetadata());
     }
 
     public QMentoringTagsPost(PathMetadata metadata) {
-        super(MentoringTagsPost.class, metadata);
+        super(MentoringTagPost.class, metadata);
     }
 
 }

@@ -18,6 +18,8 @@ public class QTalent extends EntityPathBase<Talent> {
 
     private static final long serialVersionUID = 1948878512L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QTalent talent = new QTalent("talent");
 
     public final StringPath availableDays = createString("availableDays");
@@ -46,18 +48,27 @@ public class QTalent extends EntityPathBase<Talent> {
 
     public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
-    public final NumberPath<Integer> userId = createNumber("userId", Integer.class);
+    public final QUser user;
 
     public QTalent(String variable) {
-        super(Talent.class, forVariable(variable));
+        this(Talent.class, forVariable(variable), INITS);
     }
 
     public QTalent(Path<? extends Talent> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QTalent(PathMetadata metadata) {
-        super(Talent.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QTalent(PathMetadata metadata, PathInits inits) {
+        this(Talent.class, metadata, inits);
+    }
+
+    public QTalent(Class<? extends Talent> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 
 }

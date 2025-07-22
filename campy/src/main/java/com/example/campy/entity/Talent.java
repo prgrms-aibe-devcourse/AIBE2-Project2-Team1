@@ -21,8 +21,9 @@ public class Talent {
     @Column(name = "talent_id")
     private Integer talentId;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "title", nullable = false, length = 255)
     private String title;
@@ -65,4 +66,5 @@ public class Talent {
     )
     @Builder.Default
     private Set<Tag> tags = new HashSet<>();
+
 }
