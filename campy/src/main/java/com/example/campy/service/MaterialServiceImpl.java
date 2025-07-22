@@ -64,4 +64,42 @@ public class MaterialServiceImpl implements MaterialService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteMaterial(Integer materialId, Integer sellerId) {
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new RuntimeException("자료를 찾을 수 없습니다."));
+
+        // sellerId가 일치하는지 확인 (본인 자료만 삭제 가능)
+        if (!material.getSellerId().equals(sellerId)) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
+        }
+
+        // 실제 삭제가 아니라 isDeleted = true로 soft delete 처리
+        material.setIsDeleted(true);
+        material.setUpdatedAt(LocalDateTime.now());
+
+        materialRepository.save(material);
+    }
+
+    @Override
+    public void updateMaterial(Integer materialId, Integer sellerId, MaterialRequestDto requestDto) {
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new RuntimeException("자료를 찾을 수 없습니다."));
+
+        if (!material.getSellerId().equals(sellerId)) {
+            throw new RuntimeException("수정 권한이 없습니다.");
+        }
+
+        // 수정할 필드만 갱신
+        material.setTitle(requestDto.getTitle());
+        material.setContent(requestDto.getContent());
+        material.setFileUrl(requestDto.getFileUrl());
+        material.setPreviewFileUrl(requestDto.getPreviewFileUrl());
+        material.setThumbnailUrl(requestDto.getThumbnailUrl());
+        material.setPrice(requestDto.getPrice());
+        material.setUpdatedAt(LocalDateTime.now());
+
+        materialRepository.save(material);
+    }
+
 }

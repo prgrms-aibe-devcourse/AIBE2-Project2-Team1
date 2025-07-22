@@ -13,4 +13,10 @@ public interface MaterialService {
 
     //등록된 전체 자료 목록을 조회하는 메서드
     List<MaterialListDto> getAllMaterials();
+
+    //자료 삭제 메서드
+    void deleteMaterial(Integer materialId, Integer sellerId);
+
+    //자료 수정 메서드
+    void updateMaterial(Integer materialId, Integer sellerId, MaterialRequestDto updateDto);
 }
