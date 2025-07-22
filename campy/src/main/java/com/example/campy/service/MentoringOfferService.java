@@ -24,12 +24,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MentoringOfferService {
 
+
     private final UserRepository userRepository;
     private final MentoringOfferRepository offerRepo;
     private final MentoringTagRepository tagRepo;
     private final MentoringTagPostRepository tagPostRepo;
 
     public MentoringOfferResponse create(MentoringOfferCreateRequest req, Integer userId){
+
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "사용자를 찾을 수 없습니다."));
@@ -79,6 +81,7 @@ public class MentoringOfferService {
     }
 
     public List<MentoringOfferResponse> findByUserId(Integer userId){
+
 
         return offerRepo.findByUser_UserIdAndIsDeletedFalse(userId)
                 .stream()
