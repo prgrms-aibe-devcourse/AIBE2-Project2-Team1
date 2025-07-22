@@ -47,4 +47,11 @@ public class Review {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    public void update(Integer rating, String category, String content) {
+        this.rating = rating;
+        this.category = category;
+        this.content = content;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

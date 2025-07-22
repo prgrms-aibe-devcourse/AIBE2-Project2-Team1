@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<head>
+    <title>관리자 - 리뷰 수정</title>
+    <th:block th:fragment="head-extra">
+        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="content">
+        <div class="container">
+            <h1>리뷰 수정</h1>
+            <form th:action="@{/admin/reviews/{reviewId}(reviewId=${review.reviewId})}" th:object="${review}" method="post">
+                <input type="hidden" name="_method" value="put" />
+                <div class="form-group">
+                    <label for="reviewId">리뷰 ID:</label>
+                    <input type="text" id="reviewId" th:field="*{reviewId}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="authorNickname">작성자:</label>
+                    <input type="text" id="authorNickname" th:value="${review.author.nickname}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="targetUserNickname">대상 사용자:</label>
+                    <input type="text" id="targetUserNickname" th:value="${review.targetUser.nickname}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="rating">평점:</label>
+                    <input type="number" id="rating" th:field="*{rating}" min="1" max="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">카테고리:</label>
+                    <input type="text" id="category" th:field="*{category}" required>
+                </div>
+                <div class="form-group">
+                    <label for="content">내용:</label>
+                    <textarea id="content" th:field="*{content}" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="button">수정 완료</button>
+                <a th:href="@{/admin/reviews}" class="button cancel-button">취소</a>
+            </form>
+        </div>
+    </th:block>
+    <th:block th:fragment="body-extra">
+        <!-- 이 페이지에만 필요한 추가 JS -->
+    </th:block>
+</body>
+</html>
