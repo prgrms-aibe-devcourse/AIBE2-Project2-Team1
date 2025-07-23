@@ -51,7 +51,7 @@ public class AdminService {
                 request.getSchool(),
                 request.getEntranceYear(),
                 request.getRole(),
-                request.getIsVerified(),
+                request.getIsVerified() != null ? request.getIsVerified() : false,
                 request.getProfileImg(),
                 request.getIntro()
         );
