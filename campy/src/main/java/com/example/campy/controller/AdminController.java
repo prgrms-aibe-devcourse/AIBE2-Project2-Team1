@@ -3,6 +3,7 @@ package com.example.campy.controller;
 import com.example.campy.service.AdminService;
 import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
+import com.example.campy.dto.user.response.UserResponseDto;
 import com.example.campy.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -64,5 +65,41 @@ public class AdminController {
         return "redirect:/admin/reviews";
     }
 
-    
+
+    @GetMapping("/users")
+    public String adminUsersPage(Model model) {
+        List<UserResponseDto> users = adminService.getAllUsers();
+        model.addAttribute("users", users);
+        return "admin/admin_users/admin_users";
+    }
+
+    @GetMapping("/boards")
+    public String adminBoardsPage() {
+        return "admin/admin_boards/admin_boards";
+    }
+
+    @GetMapping("/talents")
+    public String adminTalentsPage() {
+        return "admin/admin_talents/admin_talents";
+    }
+
+    @GetMapping("/mentoring-offers")
+    public String adminMentoringOffersPage() {
+        return "admin/admin_mentoring_offers/admin_mentoring_offers";
+    }
+
+    @GetMapping("/mentoring-matches")
+    public String adminMentoringMatchesPage() {
+        return "admin/admin_mentoring_matches/admin_mentoring_matches";
+    }
+
+    @GetMapping("/transactions")
+    public String adminTransactionsPage() {
+        return "admin/admin_transactions/admin_transactions";
+    }
+
+    @GetMapping("/ai-stats")
+    public String adminAiStatsPage() {
+        return "admin/admin_ai_stats/admin_ai_stats";
+    }
 }

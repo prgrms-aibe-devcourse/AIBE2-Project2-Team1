@@ -2,6 +2,7 @@ package com.example.campy.service;
 
 import com.example.campy.repository.ReviewRepository;
 import com.example.campy.repository.UserRepository;
+import com.example.campy.dto.user.response.UserResponseDto;
 import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
 import com.example.campy.entity.Review;
@@ -22,6 +23,12 @@ public class AdminService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+
+    public List<UserResponseDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserResponseDto::from)
+                .collect(Collectors.toList());
+    }
 
     public List<ReviewResponseDto> getAllReviews(String searchType, String keyword) {
         List<Review> reviews;
