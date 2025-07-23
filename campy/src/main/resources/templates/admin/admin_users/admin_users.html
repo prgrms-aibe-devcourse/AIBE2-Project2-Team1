@@ -22,6 +22,7 @@
                         <th>인증 여부</th>
                         <th>가입일</th>
                         <th>수정일</th>
+                        <th>액션</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,6 +35,12 @@
                         <td th:text="${user.isVerified}"></td>
                         <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                         <td th:text="${#temporals.format(user.updatedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td>
+                            <a th:href="@{/admin/users/{userId}/edit(userId=${user.userId})}" class="button">수정</a>
+                            <form th:action="@{/admin/users/{userId}/delete(userId=${user.userId})}" method="post" style="display:inline;" onsubmit="return confirm('정말로 이 회원을 삭제하시겠습니까?');">
+                                <button type="submit" class="button delete-button">삭제</button>
+                            </form>
+                        </td>
                     </tr>
                 </tbody>
             </table>

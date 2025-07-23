@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<head>
+    <title>관리자 - 회원 정보 수정</title>
+    <th:block th:fragment="head-extra">
+        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="content">
+        <div class="container">
+            <h1>회원 정보 수정</h1>
+            <form th:action="@{/admin/users/{userId}/update(userId=${user.userId})}" th:object="${userUpdateRequest}" method="post">
+                <div th:if="${#fields.hasErrors('global')}" class="alert alert-danger">
+                    <p th:each="err : ${#fields.errors('global')}" th:text="${err}">...</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="userId">회원 ID:</label>
+                    <input type="text" id="userId" th:value="${user.userId}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="username">사용자명:</label>
+                    <input type="text" id="username" th:field="*{username}" required>
+                    <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="email">이메일:</label>
+                    <input type="email" id="email" th:field="*{email}" required>
+                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="name">이름:</label>
+                    <input type="text" id="name" th:field="*{name}" required>
+                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="nickname">닉네임:</label>
+                    <input type="text" id="nickname" th:field="*{nickname}" required>
+                    <p th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="major">전공:</label>
+                    <input type="text" id="major" th:field="*{major}">
+                    <p th:if="${#fields.hasErrors('major')}" th:errors="*{major}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="school">학교:</label>
+                    <input type="text" id="school" th:field="*{school}">
+                    <p th:if="${#fields.hasErrors('school')}" th:errors="*{school}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="entranceYear">입학년도:</label>
+                    <input type="number" id="entranceYear" th:field="*{entranceYear}">
+                    <p th:if="${#fields.hasErrors('entranceYear')}" th:errors="*{entranceYear}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="role">역할:</label>
+                    <input type="text" id="role" th:field="*{role}" required>
+                    <p th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="isVerified">인증 여부:</label>
+                    <input type="checkbox" id="isVerified" th:field="*{isVerified}">
+                    <p th:if="${#fields.hasErrors('isVerified')}" th:errors="*{isVerified}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="profileImg">프로필 이미지 URL:</label>
+                    <input type="text" id="profileImg" th:field="*{profileImg}">
+                    <p th:if="${#fields.hasErrors('profileImg')}" th:errors="*{profileImg}" class="text-danger"></p>
+                </div>
+                <div class="form-group">
+                    <label for="intro">소개:</label>
+                    <textarea id="intro" th:field="*{intro}" rows="5"></textarea>
+                    <p th:if="${#fields.hasErrors('intro')}" th:errors="*{intro}" class="text-danger"></p>
+                </div>
+                <button type="submit" class="button">수정 완료</button>
+                <a th:href="@{/admin/users}" class="button cancel-button">취소</a>
+            </form>
+        </div>
+    </th:block>
+    <th:block th:fragment="body-extra">
+        <!-- 이 페이지에만 필요한 추가 JS -->
+    </th:block>
+</body>
+</html>

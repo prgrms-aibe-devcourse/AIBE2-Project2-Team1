@@ -1,14 +1,19 @@
 package com.example.campy.controller;
 
 import com.example.campy.service.AdminService;
+
+import com.example.campy.service.AdminService;
 import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
 import com.example.campy.dto.user.response.UserResponseDto;
+import com.example.campy.dto.user.request.UserUpdateRequest;
 import com.example.campy.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -71,6 +76,48 @@ public class AdminController {
         List<UserResponseDto> users = adminService.getAllUsers();
         model.addAttribute("users", users);
         return "admin/admin_users/admin_users";
+    }
+
+    @GetMapping("/users/{userId}/edit")
+    public String editUserForm(@PathVariable Integer userId, Model model) {
+        UserResponseDto userResponseDto = adminService.getUserById(userId);
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
+                .username(userResponseDto.username())
+                .email(userResponseDto.email())
+                .name(userResponseDto.name())
+                .nickname(userResponseDto.nickname())
+                .major(userResponseDto.major())
+                .school(userResponseDto.school())
+                .entranceYear(userResponseDto.entranceYear())
+                .role(userResponseDto.role())
+                .isVerified(userResponseDto.isVerified())
+                .profileImg(userResponseDto.profileImg())
+                .intro(userResponseDto.intro())
+                .build();
+        model.addAttribute("user", userResponseDto); // user ID for form action
+        model.addAttribute("userUpdateRequest", userUpdateRequest);
+        return "admin/admin_users/admin_user_edit";
+    }
+
+    @PostMapping("/users/{userId}/update")
+    public String updateUser(@PathVariable Integer userId, @Valid @ModelAttribute UserUpdateRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            System.out.println("Validation Errors:");
+            bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+            model.addAttribute("user", adminService.getUserById(userId)); // 기존 사용자 정보 유지
+            model.addAttribute("userUpdateRequest", request); // 입력했던 데이터 유지
+            return "admin/admin_users/admin_user_edit";
+        }
+        adminService.updateUser(userId, request);
+        redirectAttributes.addFlashAttribute("message", "회원 정보가 성공적으로 수정되었습니다.");
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/{userId}/delete")
+    public String deleteUser(@PathVariable Integer userId, RedirectAttributes redirectAttributes) {
+        adminService.deleteUser(userId);
+        redirectAttributes.addFlashAttribute("message", "회원이 성공적으로 삭제되었습니다.");
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/boards")
