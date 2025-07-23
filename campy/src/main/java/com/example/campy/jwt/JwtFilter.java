@@ -30,8 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
             String uri = request.getRequestURI();
 
             // ✅ JWT 검증이 필요 없는 공개 경로는 필터를 통과시킴
-            if (uri.equals("/") ||                              // 메인 페이지
-                    uri.startsWith("/login") ||                    // 로그인 페이지
+            if (uri.startsWith("/login") ||                    // 로그인 페이지
                     uri.startsWith("/signup") ||                   // 회원가입 페이지
                     uri.startsWith("/css") ||                      // CSS 정적 파일
                     uri.startsWith("/js") ||                       // JS 정적 파일

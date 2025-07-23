@@ -81,11 +81,16 @@
         <!-- 중앙 카테고리 -->
         <nav class="nav-links">
             <a th:href="@{/about}">소개</a>
-            <a href="#" onclick="requireLogin('멘토 페이지는 로그인 후 이용 가능합니다')">멘토</a>
-            <a href="#" onclick="requireLogin('재능 페이지는 로그인 후 이용 가능합니다')">재능</a>
-            <a href="#" onclick="requireLogin('게시판은 로그인 후 이용 가능합니다')">게시판</a>
-            <a href="#" onclick="requireLogin('자료 페이지는 로그인 후 이용 가능합니다')">자료</a>
-            <a href="#" onclick="requireLogin('리뷰는 로그인 후 이용 가능합니다')">리뷰</a>
+            <a th:if="${loggedInUser}" th:href="@{/mentors}">멘토</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('멘토 페이지는 로그인 후 이용 가능합니다')">멘토</a>
+            <a th:if="${loggedInUser}" th:href="@{/talents}">재능</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('재능 페이지는 로그인 후 이용 가능합니다')">재능</a>
+            <a th:if="${loggedInUser}" th:href="@{/boards}">게시판</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('게시판은 로그인 후 이용 가능합니다')">게시판</a>
+            <a th:if="${loggedInUser}" th:href="@{/materials}">자료</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('자료 페이지는 로그인 후 이용 가능합니다')">자료</a>
+            <a th:if="${loggedInUser}" th:href="@{/reviews}">리뷰</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('리뷰는 로그인 후 이용 가능합니다')">리뷰</a>
         </nav>
 
         <!-- 우측 로그인/회원 기능 -->

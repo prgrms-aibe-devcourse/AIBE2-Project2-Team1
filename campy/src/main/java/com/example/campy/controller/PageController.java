@@ -19,11 +19,23 @@ public class PageController {
 
     @GetMapping
     public String mainPage(Authentication authentication, Model model) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            userRepository.findByUsername(username).ifPresent(user -> {
-                model.addAttribute("loggedInUser", user);
-            });
+        System.out.println("mainPage 호출됨");
+        if (authentication != null) {
+            System.out.println("Authentication 객체 존재. Principal: " + authentication.getPrincipal() + ", Authenticated: " + authentication.isAuthenticated());
+            if (authentication.isAuthenticated()) {
+                String username = authentication.getName();
+                System.out.println("인증된 사용자: " + username);
+                userRepository.findByUsername(username).ifPresentOrElse(user -> {
+                    model.addAttribute("loggedInUser", user);
+                    System.out.println("loggedInUser 모델에 추가됨: " + user.getUsername());
+                }, () -> {
+                    System.out.println("DB에서 사용자 " + username + "를 찾을 수 없음.");
+                });
+            } else {
+                System.out.println("Authentication 객체는 존재하지만 인증되지 않음.");
+            }
+        } else {
+            System.out.println("Authentication 객체 없음 (로그인되지 않은 상태).");
         }
         return "main"; // → templates/main.html 렌더링
     }
