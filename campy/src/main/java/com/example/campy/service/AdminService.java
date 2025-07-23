@@ -42,19 +42,19 @@ public class AdminService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
 
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setName(request.getName());
-        user.setNickname(request.getNickname());
-        user.setMajor(request.getMajor());
-        user.setSchool(request.getSchool());
-        user.setEntranceYear(request.getEntranceYear());
-        user.setRole(request.getRole());
-        user.setIsVerified(request.getIsVerified());
-        user.setProfileImg(request.getProfileImg());
-        user.setIntro(request.getIntro());
-        user.setUpdatedAt(LocalDateTime.now());
-
+        user.update(
+                request.getUsername(),
+                request.getEmail(),
+                request.getName(),
+                request.getNickname(),
+                request.getMajor(),
+                request.getSchool(),
+                request.getEntranceYear(),
+                request.getRole(),
+                request.getIsVerified(),
+                request.getProfileImg(),
+                request.getIntro()
+        );
         userRepository.save(user);
     }
 

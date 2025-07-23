@@ -82,15 +82,15 @@ public class AdminController {
     public String editUserForm(@PathVariable Integer userId, Model model) {
         UserResponseDto userResponseDto = adminService.getUserById(userId);
         UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-                .username(userResponseDto.username())
-                .email(userResponseDto.email())
-                .name(userResponseDto.name())
-                .nickname(userResponseDto.nickname())
+                .username(userResponseDto.username() != null ? userResponseDto.username() : "")
+                .email(userResponseDto.email() != null ? userResponseDto.email() : "")
+                .name(userResponseDto.name() != null ? userResponseDto.name() : "")
+                .nickname(userResponseDto.nickname() != null ? userResponseDto.nickname() : "")
                 .major(userResponseDto.major())
                 .school(userResponseDto.school())
                 .entranceYear(userResponseDto.entranceYear())
-                .role(userResponseDto.role())
-                .isVerified(userResponseDto.isVerified())
+                .role(userResponseDto.role() != null ? userResponseDto.role() : "")
+                .isVerified(userResponseDto.isVerified() != null ? userResponseDto.isVerified() : false)
                 .profileImg(userResponseDto.profileImg())
                 .intro(userResponseDto.intro())
                 .build();

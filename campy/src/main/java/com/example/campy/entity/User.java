@@ -62,5 +62,20 @@ public class User {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    public void update(String username, String email, String name, String nickname, String major, String school, Integer entranceYear, String role, Boolean isVerified, String profileImg, String intro) {
+        this.setUsername(username);
+        this.setEmail(email);
+        this.setName(name);
+        this.setNickname(nickname);
+        this.setMajor(major);
+        this.setSchool(school);
+        this.setEntranceYear(entranceYear);
+        this.setRole(role);
+        this.setIsVerified(isVerified);
+        this.setProfileImg(profileImg);
+        this.setIntro(intro);
+        this.setUpdatedAt(LocalDateTime.now());
+    }
 }
 
