@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>게시판</title>
+    <link rel="stylesheet" href="../../static/css/board.css">
+</head>
+<body>
+
+<h2>게시판</h2>
+
+<div class="search-bar">
+    <form th:action="@{/board/listBoard}" method="get">
+        <select name="type">
+            <option value="title">제목</option>
+            <option value="writer">작성자</option>
+            <option value="category">카테고리</option>
+            <option value="content">내용</option>
+            <option value="university">학교명</option>
+        </select>
+        <input type="text" name="keyword" placeholder="검색어를 입력하세요" />
+        <button type="submit">검색</button>
+    </form>
+    <button class="write-button" th:onclick="|location.href='@{/board/writeBoard}'|">글쓰기</button>
+</div>
+
+<table class="board-table">
+    <thead>
+    <tr>
+        <th>NO</th>
+        <th>UNIVERSITY</th>
+        <th>CATEGORY</th>
+        <th>TITLE</th>
+        <th>NAME</th>
+        <th>DATE</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="post : ${boardList}" th:onclick="|location.href='@{/board/readBoard/{id}(id=${post.id})}'|">
+        <td th:text="${post.id}">1</td>
+        <td th:text="${post.university}">학교명</td>
+        <td th:text="${post.category}">잡담</td>
+        <td th:text="${post.title}">게시글 제목</td>
+        <td th:text="${post.writer}">작성자</td>
+        <td th:text="${post.date}">9999-12-31</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="pagination">
+    <!-- 간단한 페이징 예시 -->
+    <span th:if="${hasPrevious}">
+    <a th:href="@{/board/list(page=${currentPage - 1})}">«</a>
+  </span>
+    <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+    <a th:href="@{/board/list(page=${i})}"
+       th:classappend="${i == currentPage} ? 'active'" th:text="${i}">1</a>
+  </span>
+    <span th:if="${hasNext}">
+    <a th:href="@{/board/list(page=${currentPage + 1})}">»</a>
+  </span>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const dummyPosts = [
+            {
+                no: 9999,
+                university: "하버드대학교",
+                category: "잡담",
+                title: "배고파",
+                author: "김김김",
+                date: "2025/07/20"
+            },
+        ];
+
+        const tbody = document.querySelector(".board-table tbody");
+        if (tbody && tbody.children.length === 0) {
+            dummyPosts.forEach((post) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>${post.no}</td>
+          <td>${post.university}</td>
+          <td>${post.category}</td>
+          <td><a href="readBoard.html?no=${post.no}">${post.title}</a></td>
+          <td>${post.author}</td>
+          <td>${post.date}</td>
+        `;
+                tbody.appendChild(tr);
+            });
+        }
+    });
+</script>
+</body>
+</html>
