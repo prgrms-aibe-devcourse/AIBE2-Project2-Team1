@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>내 쪽지함 - 캠피</title>
+  <link rel="stylesheet" href="../../static/css/msg.css" />
+</head>
+<body>
+<main class="container">
+  <h2>내 쪽지함</h2>
+
+  <div class="search-box">
+    <select id="search-type">
+      <option>제목</option>
+    </select>
+    <input type="text" id="search-input" placeholder="검색어를 입력하세요" />
+    <button onclick="searchMessages()">검색</button>
+    <button class="send-btn" onclick="openMessageForm()">📨 보내기</button>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>NO</th>
+      <th>구분</th>
+      <th>NAME</th>
+      <th>CONTENT</th>
+      <th>DATE</th>
+    </tr>
+    </thead>
+    <tbody id="message-table-body">
+    <!-- 메시지 데이터가 여기에 들어갑니다 -->
+    </tbody>
+  </table>
+
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<script>
+  const messages = [
+    { no: 9999, type: "보낸쪽지", name: "김김김", content: "배고파", date: "2025/07/20" }
+  ];
+
+  const ITEMS_PER_PAGE = 5;
+  let currentPage = 1;
+
+  function renderMessages() {
+    const tableBody = document.getElementById("message-table-body");
+    tableBody.innerHTML = "";
+
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    const pageItems = messages.slice(start, end);
+
+    pageItems.forEach(msg => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+          <td>${msg.no}</td>
+          <td>${msg.type}</td>
+          <td>${msg.name}</td>
+          <td>${msg.content}</td>
+          <td>${msg.date}</td>
+        `;
+      row.style.cursor = "pointer";
+      row.onclick = () => openMessageView(msg);
+      tableBody.appendChild(row);
+    });
+
+    renderPagination();
+  }
+
+  function renderPagination() {
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+
+    const totalPages = Math.ceil(messages.length / ITEMS_PER_PAGE);
+
+    if (currentPage > 1) {
+      const prev = document.createElement("button");
+      prev.textContent = "이전";
+      prev.onclick = () => {
+        currentPage--;
+        renderMessages();
+      };
+      pagination.appendChild(prev);
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      if (i === currentPage) btn.classList.add("active");
+      btn.onclick = () => {
+        currentPage = i;
+        renderMessages();
+      };
+      pagination.appendChild(btn);
+    }
+
+    if (currentPage < totalPages) {
+      const next = document.createElement("button");
+      next.textContent = "다음";
+      next.onclick = () => {
+        currentPage++;
+        renderMessages();
+      };
+      pagination.appendChild(next);
+    }
+  }
+
+  function searchMessages() {
+    alert("검색 기능은 아직 구현되지 않았어요 :)");
+  }
+
+  function openMessageForm() {
+    const width = 500;
+    const height = 400;
+    const left = (window.screen.width / 2) - (width / 2);
+    const top = (window.screen.height / 2) - (height / 2);
+
+    window.open(
+            /* 타임리프 링크로 수정 가능: th:href="@{/message/send}" */
+            'sendMsg.html',
+            '쪽지 보내기',
+            `width=${width},height=${height},top=${top},left=${left},resizable=no`
+    );
+  }
+
+  function openMessageView(msg) {
+    const query = new URLSearchParams({
+      to: msg.to || '나나나',
+      from: msg.name,
+      content: msg.content,
+      date: msg.date
+    }).toString();
+
+    const width = 500;
+    const height = 400;
+    const left = (window.screen.width / 2) - (width / 2);
+    const top = (window.screen.height / 2) - (height / 2);
+
+    window.open(
+            `readMsg.html?${query}`,
+            '쪽지 보기',
+            `width=${width},height=${height},top=${top},left=${left},resizable=no`
+    );
+  }
+
+  renderMessages(); // 처음 렌더링
+</script>
+</body>
+</html>
