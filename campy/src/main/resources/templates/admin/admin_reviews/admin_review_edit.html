@@ -11,8 +11,7 @@
     <th:block th:fragment="content">
         <div class="container">
             <h1>리뷰 수정</h1>
-            <form th:action="@{/admin/reviews/{reviewId}(reviewId=${review.reviewId})}" th:object="${review}" method="post">
-                <input type="hidden" name="_method" value="put" />
+            <form th:action="@{/admin/reviews/{reviewId}/update(reviewId=${review.reviewId})}" th:object="${review}" method="post">
                 <div class="form-group">
                     <label for="reviewId">리뷰 ID:</label>
                     <input type="text" id="reviewId" th:field="*{reviewId}" readonly>

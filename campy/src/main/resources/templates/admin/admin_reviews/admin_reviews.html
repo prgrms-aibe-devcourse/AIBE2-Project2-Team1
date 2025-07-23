@@ -23,9 +23,7 @@
                     <button type="submit" class="button">검색</button>
                 </form>
             </div>
-            <div class="button-group" style="margin-bottom: 20px;">
-                <a th:href="@{/admin/reviews/new}" class="button">새 리뷰 추가</a>
-            </div>
+            
             <table>
                 <thead>
                     <tr>
@@ -54,8 +52,7 @@
                         <td th:text="${review.targetId}"></td>
                         <td>
                             <a th:href="@{/admin/reviews/{reviewId}/edit(reviewId=${review.reviewId})}" class="button">수정</a>
-                            <form th:action="@{/admin/reviews/{reviewId}(reviewId=${review.reviewId})}" method="post" style="display:inline;" onsubmit="return confirm('정말로 이 리뷰를 삭제하시겠습니까?');">
-                                <input type="hidden" name="_method" value="delete" />
+                            <form th:action="@{/admin/reviews/{reviewId}/delete(reviewId=${review.reviewId})}" method="post" style="display:inline;" onsubmit="return confirm('정말로 이 리뷰를 삭제하시겠습니까?');">
                                 <button type="submit" class="button delete-button">삭제</button>
                             </form>
                         </td>

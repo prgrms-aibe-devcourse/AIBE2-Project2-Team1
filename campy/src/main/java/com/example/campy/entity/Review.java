@@ -49,9 +49,9 @@ public class Review {
     private LocalDateTime deletedAt;
 
     public void update(Integer rating, String category, String content) {
-        this.rating = rating;
-        this.category = category;
-        this.content = content;
-        this.updatedAt = LocalDateTime.now();
+        this.setRating(rating);
+        this.setCategory(category);
+        this.setContent(content);
+        this.setUpdatedAt(LocalDateTime.now());
     }
 }

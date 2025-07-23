@@ -4,7 +4,6 @@ import com.example.campy.repository.ReviewRepository;
 import com.example.campy.repository.UserRepository;
 import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
-import com.example.campy.dto.review.request.ReviewCreateRequest;
 import com.example.campy.entity.Review;
 import com.example.campy.entity.User;
 import com.example.campy.exception.GeneralException;
@@ -28,23 +27,23 @@ public class AdminService {
         List<Review> reviews;
 
         if (keyword == null || keyword.trim().isEmpty()) {
-            reviews = reviewRepository.findAll();
+            reviews = reviewRepository.findByDeletedAtIsNull();
         } else {
             switch (searchType) {
                 case "content":
-                    reviews = reviewRepository.findByContentContainingIgnoreCase(keyword);
+                    reviews = reviewRepository.findByContentContainingIgnoreCaseAndDeletedAtIsNull(keyword);
                     break;
                 case "category":
-                    reviews = reviewRepository.findByCategoryContainingIgnoreCase(keyword);
+                    reviews = reviewRepository.findByCategoryContainingIgnoreCaseAndDeletedAtIsNull(keyword);
                     break;
                 case "authorNickname":
-                    reviews = reviewRepository.findByAuthor_NicknameContainingIgnoreCase(keyword);
+                    reviews = reviewRepository.findByAuthor_NicknameContainingIgnoreCaseAndDeletedAtIsNull(keyword);
                     break;
                 case "targetUserNickname":
-                    reviews = reviewRepository.findByTargetUser_NicknameContainingIgnoreCase(keyword);
+                    reviews = reviewRepository.findByTargetUser_NicknameContainingIgnoreCaseAndDeletedAtIsNull(keyword);
                     break;
                 default:
-                    reviews = reviewRepository.findAll(); // Fallback to all if searchType is invalid
+                    reviews = reviewRepository.findByDeletedAtIsNull(); // Fallback to all non-deleted if searchType is invalid
                     break;
             }
         }
@@ -76,23 +75,5 @@ public class AdminService {
         reviewRepository.save(review);
     }
 
-    @Transactional
-    public void createReview(ReviewCreateRequest request) {
-        User author = userRepository.findById(request.getAuthorId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
-        User targetUser = userRepository.findById(request.getTargetUserId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
 
-        Review review = Review.builder()
-                .author(author)
-                .targetUser(targetUser)
-                .targetId(request.getTargetId())
-                .rating(request.getRating())
-                .category(request.getCategory())
-                .content(request.getContent())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        reviewRepository.save(review);
-    }
 }
