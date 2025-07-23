@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>마이페이지</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .mypage-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .profile-box h2 {
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-text .nickname {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .profile-text .school,
+        .profile-text .major {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .msg-btn {
+            margin-left: auto;
+            width: 28px;
+            height: 28px;
+            background-color: #b3dfee;
+            border-radius: 5px;
+            display: inline-block;
+            background-image: url('../../static/images/msg-icon.png'); /* 메시지 아이콘 경로 */
+            background-size: 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .menu-section {
+            margin-top: 20px;
+        }
+
+        .menu-group {
+            margin-bottom: 20px;
+        }
+
+        .menu-group h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .menu-group a {
+            display: block;
+            margin: 4px 0;
+            text-decoration: none;
+            color: #111;
+            font-size: 14px;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="mypage-container">
+    <div class="profile-box">
+        <h2>마이페이지</h2>
+        <div class="profile-info">
+            <img src="/images/profile-default.png" alt="프로필" class="profile-img" />
+            <div class="profile-text">
+                <div class="nickname">
+                    <b th:text="${user.name}">설윤</b>/<span th:text="${user.nickname}">rabbit</span>
+                </div>
+                <div class="school">
+                    <th:text="${user.university}">OO대학교/<span th:text="${user.year}">25학번</span>
+                </div>
+                <div class="major" th:text="${user.major}">컴퓨터공학과</div>
+            </div>
+            <a th:href="@{/msg/inboxMsg}" class="msg-btn"></a>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="menu-section">
+        <div class="menu-group">
+            <h3>계정</h3>
+            <a th:href="@{/mypage/profile}">프로필 관리</a>
+            <a th:href="@{/mypage/enrollment}">학적 처리</a>
+        </div>
+
+        <div class="menu-group">
+            <h3>멘토</h3>
+            <a th:href="@{/mypage/mentorProfile}">멘토 프로필 관리</a>
+            <a th:href="@{/mypage/mentorClasses}">등록한 수업</a>
+            <a th:href="@{/mypage/mentorClassesPurchased}">결제한 수업</a>
+        </div>
+
+        <div class="menu-group">
+            <h3>재능</h3>
+            <a th:href="@{/mypage/myTalents}">등록한 재능</a>
+            <a th:href="@{/mypage/talentsPurchased}">결제한 재능</a>
+        </div>
+
+        <div class="menu-group">
+            <h3>자료</h3>
+            <a th:href="@{/mypage/myMaterials}">등록한 자료</a>
+            <a th:href="@{/mypage/materialsPurchased}">결제한 자료</a>
+        </div>
+
+        <div class="menu-group">
+            <h3>게시판</h3>
+            <a th:href="@{/mypage/myPosts}">등록한 글</a>
+        </div>
+
+        <div class="menu-group">
+            <h3>후기</h3>
+            <a th:href="@{/review/listBoard}">후기 게시판</a>
+            <a th:href="@{/mypage/myReviews}">내가 등록한 후기</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.menu-group a').forEach(link => {
+        link.addEventListener('click', e => {
+            console.log('이동:', e.target.textContent);
+        });
+    });
+</script>
+</body>
+</html>

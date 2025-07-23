@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>프로필 수정</title>
+  <style>
+    body {
+      background-color: #f8f2f2;
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 40px;
+      background-color: #f8f2f2;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .profile-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .profile-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .info-list {
+      margin-top: 30px;
+      line-height: 2.4;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      font-size: 15px;
+    }
+
+    .info-row label {
+      width: 100px;
+      font-weight: bold;
+    }
+
+    .info-row span {
+      margin-right: 8px;
+    }
+
+    .edit-icon {
+      width: 14px;
+      height: 14px;
+      background-image: url('../../static/images/edit-icon.png'); /* 연필 아이콘 */
+      background-size: cover;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .info-row input {
+      font-size: 14px;
+      padding: 2px 4px;
+      width: 250px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .guide {
+      margin-top: 40px;
+      font-size: 13px;
+      color: #333;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>내 프로필</h2>
+
+  <div class="profile-box">
+    <label for="profileUpload">
+      <img th:src="${user.profileImageUrl}" alt="프로필" class="profile-img" />
+    </label>
+    <input type="file" id="profileUpload" name="profileImage" accept="image/*" />
+
+    <div>
+      <div class="info-row">
+        <label>이름:</label>
+        <span th:text="${user.name}">설윤</span>
+        <span class="edit-icon" onclick="editField(this, 'name')"></span>
+      </div>
+
+      <div class="info-row">
+        <label>닉네임:</label>
+        <span th:text="${user.username}">rabbit</span>
+        <span class="edit-icon" onclick="editField(this, 'username')"></span>
+      </div>
+
+      <div class="info-row">
+        <label>이메일:</label>
+        <span th:text="${user.email}">rabbit@naver.com</span>
+        <span class="edit-icon" onclick="editField(this, 'email')"></span>
+      </div>
+
+      <div class="info-row">
+        <label>학교:</label>
+        <span th:text="${user.school}">하버드대학교</span>
+        <span class="edit-icon" onclick="editField(this, 'school')"></span>
+      </div>
+
+      <div class="info-row">
+        <label>학과:</label>
+        <span th:text="${user.major}">컴퓨터공학과</span>
+        <span class="edit-icon" onclick="editField(this, 'major')"></span>
+      </div>
+
+      <div class="info-row">
+        <label>입학년도:</label>
+        <span th:text="${user.year}">25학번</span>
+        <span class="edit-icon" onclick="editField(this, 'year')"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function editField(iconElement, fieldName) {
+    const row = iconElement.parentElement;
+    const span = row.querySelector('span');
+    const oldValue = span.textContent;
+
+    // 이미 인풋 있으면 중복 방지
+    if (row.querySelector('input')) return;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = fieldName;
+    input.value = oldValue;
+
+    row.insertBefore(input, iconElement);
+    span.remove();
+
+    // 엔터 입력 시 저장
+    input.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        const newSpan = document.createElement('span');
+        newSpan.textContent = this.value;
+        row.insertBefore(newSpan, iconElement);
+        this.remove();
+        // TODO: 서버로 PATCH 요청 or hidden form 처리
+      }
+    });
+  }
+
+  // 이미지 클릭 시 파일 업로드
+  document.getElementById('profileUpload').addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.querySelector('.profile-img').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    // TODO: 서버로 이미지 전송
+  });
+</script>
+</body>
+</html>
