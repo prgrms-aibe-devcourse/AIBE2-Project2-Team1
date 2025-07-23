@@ -19,8 +19,9 @@ public class Board {
     @Column(name = "board_id")
     private Integer boardId;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "school", length = 100)
     private String school;

@@ -2,11 +2,13 @@ package com.example.campy.dto.mentoring.request;
 
 import com.example.campy.constant.MentoringStatus;
 import com.example.campy.entity.MentoringOffer;
+import com.example.campy.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,9 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class MentoringOfferCreateRequest {
-
-    @NotNull
-    private Integer userId;
 
     @NotBlank
     private String title;
@@ -29,9 +28,13 @@ public class MentoringOfferCreateRequest {
     private String location;
     private Integer maxParticipants;
 
-    public MentoringOffer toEntity() {
+    // 멘토링 해시태그
+    private List<String> tags;
+
+    public MentoringOffer toEntity(User user) {
+
         return MentoringOffer.builder()
-                .userId(this.userId) // ✅ DTO 내부의 값 사용
+                .user(user) //
                 .title(this.title)
                 .description(this.description)
                 .duration(this.duration)
