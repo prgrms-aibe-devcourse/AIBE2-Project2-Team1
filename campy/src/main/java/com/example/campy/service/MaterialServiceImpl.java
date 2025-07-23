@@ -1,8 +1,8 @@
 package com.example.campy.service;
 
-import com.example.campy.dto.MaterialListDto;
-import com.example.campy.dto.MaterialRequestDto;
-import com.example.campy.dto.MaterialResponseDto;
+import com.example.campy.dto.material.MaterialListDto;
+import com.example.campy.dto.material.request.MaterialRequestDto;
+import com.example.campy.dto.material.response.MaterialResponseDto;
 import com.example.campy.entity.Material;
 import com.example.campy.repository.MaterialRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,17 +35,7 @@ public class MaterialServiceImpl implements MaterialService {
 
         Material saved = materialRepository.save(material);
 
-        return new MaterialResponseDto(
-                saved.getMaterialId(),
-                saved.getSellerId(),
-                saved.getTitle(),
-                saved.getContent(),
-                saved.getFileUrl(),
-                saved.getPreviewFileUrl(),
-                saved.getThumbnailUrl(),
-                saved.getPrice(),
-                saved.getCreatedAt()
-        );
+        return new MaterialResponseDto(saved);
     }
 
     @Override
@@ -101,5 +91,49 @@ public class MaterialServiceImpl implements MaterialService {
 
         materialRepository.save(material);
     }
+
+    @Override
+    public MaterialResponseDto getMaterialById(Integer materialId) {
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new RuntimeException("자료를 찾을 수 없습니다."));
+
+        return new MaterialResponseDto(material);
+    }
+
+    //  최신순 정렬
+    @Override
+    public List<MaterialListDto> getMaterialsOrderByCreatedAtDesc() {
+        List<Material> materials = materialRepository.findByIsDeletedFalseOrderByCreatedAtDesc();
+        return materials.stream()
+                .map(MaterialListDto::new)
+                .toList();
+    }
+
+    //  가격 오름차순
+    @Override
+    public List<MaterialListDto> getMaterialsOrderByPriceAsc() {
+        List<Material> materials = materialRepository.findByIsDeletedFalseOrderByPriceAsc();
+        return materials.stream()
+                .map(MaterialListDto::new)
+                .toList();
+    }
+
+    //  가격 내림차순
+    @Override
+    public List<MaterialListDto> getMaterialsOrderByPriceDesc() {
+        List<Material> materials = materialRepository.findByIsDeletedFalseOrderByPriceDesc();
+        return materials.stream()
+                .map(MaterialListDto::new)
+                .toList();
+    }
+
+    @Override
+    public List<MaterialListDto> searchMaterials(String keyword) {
+        List<Material> materials = materialRepository.findByTitleContainingIgnoreCase(keyword);
+        return materials.stream()
+                .map(MaterialListDto::new)
+                .collect(Collectors.toList());
+    }
+
 
 }

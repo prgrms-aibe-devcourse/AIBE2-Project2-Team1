@@ -1,20 +1,17 @@
-package com.example.campy.dto;
+package com.example.campy.dto.material.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class MaterialResponseDto {
-    private Integer materialId;
-    private Integer sellerId;
+public class MaterialRequestDto {
     private String title;
     private String content;
     private String fileUrl;
     private String previewFileUrl;
     private String thumbnailUrl;
     private Integer price;
-    private LocalDateTime createdAt;
 }

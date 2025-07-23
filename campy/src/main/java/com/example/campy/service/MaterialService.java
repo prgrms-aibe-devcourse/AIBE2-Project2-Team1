@@ -1,8 +1,8 @@
 package com.example.campy.service;
 
-import com.example.campy.dto.MaterialListDto;
-import com.example.campy.dto.MaterialRequestDto;
-import com.example.campy.dto.MaterialResponseDto;
+import com.example.campy.dto.material.MaterialListDto;
+import com.example.campy.dto.material.request.MaterialRequestDto;
+import com.example.campy.dto.material.response.MaterialResponseDto;
 
 import java.util.List;
 
@@ -19,4 +19,13 @@ public interface MaterialService {
 
     //자료 수정 메서드
     void updateMaterial(Integer materialId, Integer sellerId, MaterialRequestDto updateDto);
+
+    //자료 상세 조회
+    MaterialResponseDto getMaterialById(Integer materialId);
+
+    List<MaterialListDto> getMaterialsOrderByCreatedAtDesc();
+    List<MaterialListDto> getMaterialsOrderByPriceAsc();
+    List<MaterialListDto> getMaterialsOrderByPriceDesc();
+
+    List<MaterialListDto> searchMaterials(String keyword);
 }

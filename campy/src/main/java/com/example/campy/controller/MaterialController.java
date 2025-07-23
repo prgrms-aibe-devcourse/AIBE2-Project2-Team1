@@ -1,11 +1,8 @@
 package com.example.campy.controller;
 
-import com.example.campy.dto.MaterialListDto;
-import com.example.campy.dto.MaterialRequestDto;
-import com.example.campy.dto.MaterialResponseDto;
-import com.example.campy.entity.User;
-import com.example.campy.jwt.JwtUtil;
-import com.example.campy.repository.UserRepository;
+import com.example.campy.dto.material.MaterialListDto;
+import com.example.campy.dto.material.request.MaterialRequestDto;
+import com.example.campy.dto.material.response.MaterialResponseDto;
 import com.example.campy.service.MaterialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -78,6 +75,43 @@ public class MaterialController {
         materialService.updateMaterial(materialId, sellerId, updateDto);
         return ResponseEntity.ok("자료가 수정되었습니다.");
     }
+
+
+    // 자료 상세 조회
+    @GetMapping("/{materialId}")
+    public ResponseEntity<MaterialResponseDto> getMaterialById(@PathVariable Integer materialId) {
+        MaterialResponseDto responseDto = materialService.getMaterialById(materialId);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    // 최신순 조회
+    @GetMapping("/latest")
+    public ResponseEntity<List<MaterialListDto>> getMaterialsLatest() {
+        List<MaterialListDto> materials = materialService.getMaterialsOrderByCreatedAtDesc();
+        return ResponseEntity.ok(materials);
+    }
+
+    // 가격 낮은순
+    @GetMapping("/price/asc")
+    public ResponseEntity<List<MaterialListDto>> getMaterialsByLowPrice() {
+        List<MaterialListDto> materials = materialService.getMaterialsOrderByPriceAsc();
+        return ResponseEntity.ok(materials);
+    }
+
+    // 가격 높은순
+    @GetMapping("/price/desc")
+    public ResponseEntity<List<MaterialListDto>> getMaterialsByHighPrice() {
+        List<MaterialListDto> materials = materialService.getMaterialsOrderByPriceDesc();
+        return ResponseEntity.ok(materials);
+    }
+
+    //자료 검색
+    @GetMapping("/search")
+    public ResponseEntity<List<MaterialListDto>> searchMaterials(@RequestParam("keyword") String keyword) {
+        List<MaterialListDto> result = materialService.searchMaterials(keyword);
+        return ResponseEntity.ok(result);
+    }
+
 
 
 }
