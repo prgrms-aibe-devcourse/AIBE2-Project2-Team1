@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>학적 처리</title>
+    <style>
+        body {
+            background-color: #f8f2f2;
+            font-family: 'Noto Sans KR', sans-serif;
+            padding: 40px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .box {
+            background-color: white;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            max-width: 900px;
+        }
+
+        .box-label {
+            width: 100px;
+            background-color: #eee;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .box-body {
+            flex: 1;
+            padding-left: 20px;
+        }
+
+        .info {
+            font-size: 13px;
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .notice {
+            font-size: 13px;
+            color: #222;
+            margin: 20px 0 40px;
+        }
+
+        .btn-submit {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 30px;
+            border: 1px solid #333;
+            border-radius: 20px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background-color: #ddd;
+        }
+
+        input[type="file"] {
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+<h2>학적 처리</h2>
+
+<p class="notice">※ 학적 확인을 위해 재학증명서 및 인증 수단을 제출해주세요.</p>
+
+<form id="uploadForm" th:action="@{/academic/upload}" method="post" enctype="multipart/form-data">
+    <div class="box">
+        <div class="box-label">파일 선택</div>
+        <div class="box-body">
+            <input type="file" name="file" required>
+            <p class="info">최대용량: 100MB</p>
+            <p class="info">· 등록가능한 파일형식 : doc, docx, ppt, pptx, xls, xlsx, hwp, hwpx, pdf, 애플문서, 압축파일</p>
+        </div>
+    </div>
+
+    <p class="notice">※ 학적 확인결과는 확인까지 2~3일 정도 소요됩니다.</p>
+
+    <button type="submit" class="btn-submit">등록하기</button>
+</form>
+
+<script>
+    const form = document.getElementById('uploadForm');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => {
+                if (!res.ok) throw new Error('업로드 실패');
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // 업로드 성공 → 리다이렉트
+                    window.location.href = '/mypage/enrollmentSuccess';
+                } else {
+                    alert('업로드에 실패했습니다. 다시 시도해주세요.');
+                }
+            })
+            .catch(() => {
+                alert('서버 오류가 발생했습니다. 다시 시도해주세요.');
+            });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>학적 처리 완료</title>
+  <style>
+    body {
+      background-color: #f8f2f2;
+      font-family: 'Noto Sans KR', sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h2 {
+      font-size: 16px;
+      text-align: left;
+      margin-bottom: 40px;
+    }
+
+    .box {
+      display: inline-flex;
+      align-items: center;
+      background-color: #0f6c98;
+      padding: 20px 30px;
+      border-radius: 12px;
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .box img {
+      width: 45px;
+      height: 45px;
+      margin-right: 10px;
+    }
+
+    .btn-home {
+      margin-top: 30px;
+      padding: 10px 30px;
+      background-color: #fff;
+      border: 1px solid #333;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-home:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+<h2>학적 처리</h2>
+
+<div class="box">
+  <img src="/images/success-bot.png" alt="성공 이모지" th:src="@{/images/success-bot.png}">
+  <span>학적이 정상적으로 처리 되었습니다!</span>
+</div>
+
+<br>
+
+<button class="btn-home" onclick="location.href='/'">홈으로</button>
+</body>
+</html>
