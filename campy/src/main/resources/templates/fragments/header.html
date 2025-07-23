@@ -95,12 +95,12 @@
 
         <!-- 우측 로그인/회원 기능 -->
         <div style="display: flex; gap: 12px;">
-            <span th:if="${loggedInUser}">
+            <span th:if="${loggedInUser}" id="loggedInButtons">
                 <a th:href="@{/mypage}" class="auth-button">마이페이지</a>
                 <a th:href="@{/message}" class="auth-button">쪽지하기</a>
-                <a th:href="@{/logout}" class="auth-button">로그아웃</a>
+                <a th:href="@{/logout}" class="auth-button" onclick="logout(event)">로그아웃</a>
             </span>
-            <span th:unless="${loggedInUser}">
+            <span th:unless="${loggedInUser}" id="loggedOutButtons">
                 <a th:href="@{/login}" class="auth-button">로그인</a>
                 <a th:href="@{/signup}" class="auth-button">가입하기</a>
             </span>
@@ -111,6 +111,28 @@
         function requireLogin(message) {
             alert(message);
             window.location.href = /*[[@{/login}]]*/ '/login';
+        }
+
+        async function logout(event) {
+            event.preventDefault(); // 기본 링크 동작 방지
+
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // 서버에서 쿠키가 삭제되었으므로 페이지 새로고침 (서버에서 loggedInUser 상태를 다시 확인하도록)
+                    window.location.href = '/'; // 메인 페이지로 리다이렉트
+                } else {
+                    console.error('로그아웃 실패:', await response.text());
+                }
+            } catch (error) {
+                console.error('네트워크 오류:', error);
+            }
         }
     </script>
 </div>
