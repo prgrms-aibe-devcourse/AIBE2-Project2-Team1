@@ -5,6 +5,7 @@ import com.example.campy.repository.UserRepository;
 import com.example.campy.dto.user.response.UserResponseDto;
 import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
+import com.example.campy.dto.review.request.ReviewCreateRequest; // ReviewCreateRequest import 추가
 import com.example.campy.dto.user.request.UserUpdateRequest;
 import com.example.campy.entity.Review;
 import com.example.campy.entity.User;
@@ -133,5 +134,26 @@ public class AdminService {
         reviewRepository.save(review);
     }
 
+    // 새로운 리뷰 생성 메서드 추가
+    @Transactional
+    public ReviewResponseDto createReview(ReviewCreateRequest request) {
+        User author = userRepository.findById(request.authorId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "작성자 사용자를 찾을 수 없습니다."));
+        User targetUser = userRepository.findById(request.targetUserId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "대상 사용자를 찾을 수 없습니다."));
 
+        Review newReview = Review.builder()
+                .author(author)
+                .targetUser(targetUser)
+                .targetId(request.targetId())
+                .rating(request.rating())
+                .category(request.category())
+                .content(request.content())
+                .createdAt(LocalDateTime.now()) // 생성 시간 설정
+                .updatedAt(LocalDateTime.now()) // 업데이트 시간 설정
+                .build();
+
+        Review savedReview = reviewRepository.save(newReview);
+        return ReviewResponseDto.from(savedReview);
+    }
 }

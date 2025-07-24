@@ -1,13 +1,14 @@
 package com.example.campy.controller;
 
 import com.example.campy.service.AdminService;
-import com.example.campy.service.BoardService; // BoardService import 추가
+import com.example.campy.service.BoardService;
 import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
+import com.example.campy.dto.review.request.ReviewCreateRequest; // ReviewCreateRequest import 추가
 import com.example.campy.dto.user.response.UserResponseDto;
 import com.example.campy.dto.user.request.UserUpdateRequest;
-import com.example.campy.dto.board.response.BoardResponseDto; // BoardResponseDto import 추가
-import com.example.campy.dto.board.request.BoardUpdateRequest; // BoardUpdateRequest import 추가
+import com.example.campy.dto.board.response.BoardResponseDto;
+import com.example.campy.dto.board.request.BoardUpdateRequest;
 import com.example.campy.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -27,7 +28,7 @@ public class AdminController {
 
     private final AdminService adminService;
     private final AdminRepository adminRepository;
-    private final BoardService boardService; // BoardService 주입
+    private final BoardService boardService;
 
     @GetMapping
     public String adminPage(Authentication authentication, Model model) {
@@ -49,6 +50,30 @@ public class AdminController {
         model.addAttribute("searchType", searchType);
         model.addAttribute("keyword", keyword);
         return "admin/admin_reviews/admin_reviews";
+    }
+
+    // 리뷰 생성 폼을 보여주는 GET 엔드포인트 추가
+    @GetMapping("/reviews/new")
+    public String createReviewForm(Model model) {
+        model.addAttribute("reviewCreateRequest", new ReviewCreateRequest(null, null, null, null, null, null)); // 빈 DTO 전달
+        // 사용자 목록을 드롭다운으로 제공하기 위해 모든 사용자 정보를 가져와 모델에 추가
+        List<UserResponseDto> users = adminService.getAllUsers();
+        model.addAttribute("users", users);
+        return "admin/admin_reviews/admin_review_new";
+    }
+
+    // 리뷰 생성 폼 제출을 처리하는 POST 엔드포인트 추가
+    @PostMapping("/reviews/new")
+    public String createReview(@Valid @ModelAttribute ReviewCreateRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            // 유효성 검사 실패 시, 다시 폼 페이지로 돌아가면서 에러 메시지 표시
+            List<UserResponseDto> users = adminService.getAllUsers(); // 사용자 목록 다시 로드
+            model.addAttribute("users", users);
+            return "admin/admin_reviews/admin_review_new";
+        }
+        adminService.createReview(request);
+        redirectAttributes.addFlashAttribute("message", "리뷰가 성공적으로 생성되었습니다.");
+        return "redirect:/admin/reviews";
     }
 
     @GetMapping("/reviews/{reviewId}/edit")
@@ -96,7 +121,7 @@ public class AdminController {
                 .profileImg(userResponseDto.profileImg())
                 .intro(userResponseDto.intro())
                 .build();
-        model.addAttribute("user", userResponseDto); // user ID for form action
+        model.addAttribute("user", userResponseDto);
         model.addAttribute("userUpdateRequest", userUpdateRequest);
         return "admin/admin_users/admin_user_edit";
     }
@@ -106,8 +131,8 @@ public class AdminController {
         if (bindingResult.hasErrors()) {
             System.out.println("Validation Errors:");
             bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
-            model.addAttribute("user", adminService.getUserById(userId)); // 기존 사용자 정보 유지
-            model.addAttribute("userUpdateRequest", request); // 입력했던 데이터 유지
+            model.addAttribute("user", adminService.getUserById(userId));
+            model.addAttribute("userUpdateRequest", request);
             return "admin/admin_users/admin_user_edit";
         }
         adminService.updateUser(userId, request);
@@ -133,7 +158,6 @@ public class AdminController {
     public String editBoardForm(@PathVariable Integer boardId, Model model) {
         BoardResponseDto board = boardService.getBoardById(boardId);
         model.addAttribute("board", board);
-        // BoardUpdateRequest DTO를 모델에 추가하여 폼 바인딩에 사용
         BoardUpdateRequest boardUpdateRequest = BoardUpdateRequest.builder()
                 .school(board.school())
                 .category(board.category())
@@ -148,8 +172,8 @@ public class AdminController {
     @PostMapping("/boards/{boardId}/update")
     public String updateBoard(@PathVariable Integer boardId, @Valid @ModelAttribute BoardUpdateRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("board", boardService.getBoardById(boardId)); // 기존 게시글 정보 유지
-            model.addAttribute("boardUpdateRequest", request); // 입력했던 데이터 유지
+            model.addAttribute("board", boardService.getBoardById(boardId));
+            model.addAttribute("boardUpdateRequest", request);
             return "admin/admin_boards/admin_board_edit";
         }
         boardService.updateBoard(boardId, request);
