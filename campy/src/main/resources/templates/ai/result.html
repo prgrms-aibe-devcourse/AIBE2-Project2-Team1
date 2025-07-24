@@ -23,7 +23,7 @@
         .description-text {
             background-color: white;
             padding: 8px 12px;
-            border-radius: 0px 12px 12px 12px;
+            border-radius: 12px;
             display: inline-block;
             word-break: break-word;
         }
@@ -37,6 +37,12 @@
             margin: 0 auto;
         }
 
+        .mentor-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
         .mentor-card {
             background-color: white;
             width: 260px;
@@ -45,6 +51,11 @@
             display: flex;
             align-items: center;
             border: 2px solid #787878;
+            transition: transform 0.3s;
+        }
+
+        .mentor-card:hover {
+            transform: scale(1.02);
         }
 
         .mentor-info {
@@ -103,95 +114,80 @@
 
         <!-- 카드 컨테이너 -->
         <div id="step2" class="card-container fade-in">
-            <!-- mentor-card들 반복 -->
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <strong>수지 멘토</strong><br>
-                    <span>⭐ 5.0 (1,023)</span>
-                    <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
-                    <div>#컴공 #포폴 #상담</div>
+
+            <!-- 반복되는 멘토 카드 예시 -->
+            <a href="/mentor/1" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
                 </div>
-                <img src="/images/mentor6.jpg" class="mentor-image">
-            </div>
-            <!-- 나머지 카드 생략 없이 그대로 복붙 -->
-            <!-- mentor-card들 반복 -->
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <strong>수지 멘토</strong><br>
-                    <span>⭐ 5.0 (1,023)</span>
-                    <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
-                    <div>#컴공 #포폴 #상담</div>
+            </a>
+
+            <a href="/mentor/2" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
                 </div>
-                <img src="/images/mentor6.jpg" class="mentor-image">
-            </div>
-            <!-- 나머지 카드 생략 없이 그대로 복붙 -->
-            <!-- mentor-card들 반복 -->
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <strong>수지 멘토</strong><br>
-                    <span>⭐ 5.0 (1,023)</span>
-                    <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
-                    <div>#컴공 #포폴 #상담</div>
+            </a>
+
+            <a href="/mentor/3" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
                 </div>
-                <img src="/images/mentor6.jpg" class="mentor-image">
-            </div>
-            <!-- 나머지 카드 생략 없이 그대로 복붙 -->
-            <!-- mentor-card들 반복 -->
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <strong>수지 멘토</strong><br>
-                    <span>⭐ 5.0 (1,023)</span>
-                    <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
-                    <div>#컴공 #포폴 #상담</div>
+            </a>
+
+            <a href="/mentor/4" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
                 </div>
-                <img src="/images/mentor6.jpg" class="mentor-image">
-            </div>
-            <!-- 나머지 카드 생략 없이 그대로 복붙 -->
-            <!-- mentor-card들 반복 -->
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <strong>수지 멘토</strong><br>
-                    <span>⭐ 5.0 (1,023)</span>
-                    <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
-                    <div>#컴공 #포폴 #상담</div>
+            </a>
+
+            <a href="/mentor/5" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
                 </div>
-                <img src="/images/mentor6.jpg" class="mentor-image">
-            </div>
-            <!-- 나머지 카드 생략 없이 그대로 복붙 -->
-            <!-- mentor-card들 반복 -->
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <strong>수지 멘토</strong><br>
-                    <span>⭐ 5.0 (1,023)</span>
-                    <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
-                    <div>#컴공 #포폴 #상담</div>
+            </a>
+
+            <a href="/mentor/6" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
                 </div>
-                <img src="/images/mentor6.jpg" class="mentor-image">
-            </div>
-            <!-- 나머지 카드 생략 없이 그대로 복붙 -->
-            <!-- mentor-card들 반복 -->
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <strong>수지 멘토</strong><br>
-                    <span>⭐ 5.0 (1,023)</span>
-                    <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
-                    <div>#컴공 #포폴 #상담</div>
-                </div>
-                <img src="/images/mentor6.jpg" class="mentor-image">
-            </div>
-            <!-- 나머지 카드 생략 없이 그대로 복붙 -->
-            <!-- mentor-card들 반복 -->
-            <div class="mentor-card">
-                <div class="mentor-info">
-                    <strong>수지 멘토</strong><br>
-                    <span>⭐ 5.0 (1,023)</span>
-                    <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
-                    <div>#컴공 #포폴 #상담</div>
-                </div>
-                <img src="/images/mentor6.jpg" class="mentor-image">
-            </div>
-            <!-- 나머지 카드 생략 없이 그대로 복붙 -->
-            <!-- ... -->
+            </a>
+
         </div>
     </div>
 </main>
