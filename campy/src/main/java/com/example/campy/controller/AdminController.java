@@ -10,6 +10,7 @@ import com.example.campy.dto.user.request.UserUpdateRequest;
 import com.example.campy.dto.user.request.UserCreateRequest; // UserCreateRequest import 추가
 import com.example.campy.dto.board.response.BoardResponseDto;
 import com.example.campy.dto.board.request.BoardUpdateRequest;
+import com.example.campy.dto.board.request.BoardCreateRequest; // BoardCreateRequest import 추가
 import com.example.campy.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -102,14 +103,12 @@ public class AdminController {
         return "admin/admin_users/admin_users";
     }
 
-    // 회원 생성 폼을 보여주는 GET 엔드포인트 추가
     @GetMapping("/users/new")
     public String createUserForm(Model model) {
-        model.addAttribute("userCreateRequest", new UserCreateRequest(null, null, null, null, null, null, null, null)); // 빈 DTO 전달
+        model.addAttribute("userCreateRequest", new UserCreateRequest(null, null, null, null, null, null, null, null));
         return "admin/admin_users/admin_user_new";
     }
 
-    // 회원 생성 폼 제출을 처리하는 POST 엔드포인트 추가
     @PostMapping("/users/new")
     public String createUser(@Valid @ModelAttribute UserCreateRequest request, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -167,6 +166,26 @@ public class AdminController {
         List<BoardResponseDto> boards = boardService.getAllBoards();
         model.addAttribute("boards", boards);
         return "admin/admin_boards/admin_boards";
+    }
+
+    @GetMapping("/boards/new")
+    public String createBoardForm(Model model) {
+        model.addAttribute("boardCreateRequest", new BoardCreateRequest(null, null, null, null, null)); // 빈 DTO 전달
+        List<UserResponseDto> users = adminService.getAllUsers();
+        model.addAttribute("users", users);
+        return "admin/admin_boards/admin_board_new";
+    }
+
+    @PostMapping("/boards/new")
+    public String createBoard(@Valid @ModelAttribute BoardCreateRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            List<UserResponseDto> users = adminService.getAllUsers();
+            model.addAttribute("users", users);
+            return "admin/admin_boards/admin_board_new";
+        }
+        boardService.createBoard(request);
+        redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 생성되었습니다.");
+        return "redirect:/admin/boards";
     }
 
     @GetMapping("/boards/{boardId}/edit")
