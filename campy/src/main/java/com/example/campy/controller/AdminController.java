@@ -1,12 +1,13 @@
 package com.example.campy.controller;
 
 import com.example.campy.service.AdminService;
-
-import com.example.campy.service.AdminService;
+import com.example.campy.service.BoardService; // BoardService import 추가
 import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
 import com.example.campy.dto.user.response.UserResponseDto;
 import com.example.campy.dto.user.request.UserUpdateRequest;
+import com.example.campy.dto.board.response.BoardResponseDto; // BoardResponseDto import 추가
+import com.example.campy.dto.board.request.BoardUpdateRequest; // BoardUpdateRequest import 추가
 import com.example.campy.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,7 @@ public class AdminController {
 
     private final AdminService adminService;
     private final AdminRepository adminRepository;
+    private final BoardService boardService; // BoardService 주입
 
     @GetMapping
     public String adminPage(Authentication authentication, Model model) {
@@ -121,8 +123,45 @@ public class AdminController {
     }
 
     @GetMapping("/boards")
-    public String adminBoardsPage() {
+    public String adminBoardsPage(Model model) {
+        List<BoardResponseDto> boards = boardService.getAllBoards();
+        model.addAttribute("boards", boards);
         return "admin/admin_boards/admin_boards";
+    }
+
+    @GetMapping("/boards/{boardId}/edit")
+    public String editBoardForm(@PathVariable Integer boardId, Model model) {
+        BoardResponseDto board = boardService.getBoardById(boardId);
+        model.addAttribute("board", board);
+        // BoardUpdateRequest DTO를 모델에 추가하여 폼 바인딩에 사용
+        BoardUpdateRequest boardUpdateRequest = BoardUpdateRequest.builder()
+                .school(board.school())
+                .category(board.category())
+                .title(board.title())
+                .content(board.content())
+                .isDeleted(board.isDeleted())
+                .build();
+        model.addAttribute("boardUpdateRequest", boardUpdateRequest);
+        return "admin/admin_boards/admin_board_edit";
+    }
+
+    @PostMapping("/boards/{boardId}/update")
+    public String updateBoard(@PathVariable Integer boardId, @Valid @ModelAttribute BoardUpdateRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("board", boardService.getBoardById(boardId)); // 기존 게시글 정보 유지
+            model.addAttribute("boardUpdateRequest", request); // 입력했던 데이터 유지
+            return "admin/admin_boards/admin_board_edit";
+        }
+        boardService.updateBoard(boardId, request);
+        redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 수정되었습니다.");
+        return "redirect:/admin/boards";
+    }
+
+    @PostMapping("/boards/{boardId}/delete")
+    public String deleteBoard(@PathVariable Integer boardId, RedirectAttributes redirectAttributes) {
+        boardService.deleteBoard(boardId);
+        redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 삭제되었습니다.");
+        return "redirect:/admin/boards";
     }
 
     @GetMapping("/talents")

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<head>
+    <title>관리자 - 게시글 수정</title>
+    <th:block th:fragment="head-extra">
+        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="content">
+        <div class="container">
+            <h1>게시글 수정</h1>
+
+            <form th:action="@{/admin/boards/{boardId}/update(boardId=${board.boardId})}" th:object="${boardUpdateRequest}" method="post">
+                <div th:if="${#fields.hasErrors()}" class="alert alert-danger" role="alert">
+                    <p th:each="err : ${#fields.errors()}" th:text="${err}"></p>
+                </div>
+                <div class="mb-3">
+                    <label for="boardId" class="form-label">게시글 ID</label>
+                    <input type="text" class="form-control" id="boardId" th:value="${board.boardId}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">작성자</label>
+                    <input type="text" class="form-control" id="username" th:value="${board.username}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="school" class="form-label">학교</label>
+                    <input type="text" class="form-control" id="school" th:field="*{school}">
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">카테고리</label>
+                    <input type="text" class="form-control" id="category" th:field="*{category}">
+                </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">제목</label>
+                    <input type="text" class="form-control" id="title" th:field="*{title}">
+                </div>
+                <div class="mb-3">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" id="content" rows="5" th:field="*{content}"></textarea>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="isDeleted" th:field="*{isDeleted}">
+                    <label class="form-check-label" for="isDeleted">삭제 여부</label>
+                </div>
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a th:href="@{/admin/boards}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </th:block>
+    <th:block th:fragment="body-extra">
+        <!-- 이 페이지에만 필요한 추가 JS -->
+    </th:block>
+</body>
+</html>
