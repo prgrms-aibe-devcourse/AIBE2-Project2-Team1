@@ -11,17 +11,19 @@ import java.time.LocalDateTime;
 @Builder
 public class MentoringMatchMemberResponse {
 
+    private Integer matchId;
     private Integer userId;
     private String userName;
     private MatchRole role;
     private LocalDateTime joinedAt;
 
-    public static MentoringMatchMemberResponse from(MentoringMatchMember member){
+    public static MentoringMatchMemberResponse from(MentoringMatchMember entity) {
         return MentoringMatchMemberResponse.builder()
-                .userId(member.getUser().getUserId())
-                // .userName(member.getUser().getName()) // 이름도 받을지는 보류
-                .role(member.getRole())
-                .joinedAt(member.getJoinedAt())
+                .matchId(entity.getMentoringMatch().getMatchId())
+                .userId(entity.getUser().getUserId())
+               // .userName(entity.getUser().getName()) // 추후 논의해서 추가
+                .role(entity.getRole())
+                .joinedAt(entity.getJoinedAt())
                 .build();
     }
 
