@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,8 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class MentoringOfferCreateRequest {
-
-    
 
     @NotBlank
     private String title;
@@ -29,7 +28,11 @@ public class MentoringOfferCreateRequest {
     private String location;
     private Integer maxParticipants;
 
+    // 멘토링 해시태그
+    private List<String> tags;
+
     public MentoringOffer toEntity(User user) {
+
         return MentoringOffer.builder()
                 .user(user) //
                 .title(this.title)
