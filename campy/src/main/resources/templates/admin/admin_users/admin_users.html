@@ -11,6 +11,11 @@
     <th:block th:fragment="content">
         <div class="container">
             <h1>회원 관리</h1>
+
+            <div style="margin-bottom: 20px;">
+                <a th:href="@{/admin/users/new}" class="button">새 회원 추가</a>
+            </div>
+
             <table>
                 <thead>
                     <tr>

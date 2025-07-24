@@ -5,13 +5,15 @@ import com.example.campy.repository.UserRepository;
 import com.example.campy.dto.user.response.UserResponseDto;
 import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
-import com.example.campy.dto.review.request.ReviewCreateRequest; // ReviewCreateRequest import 추가
+import com.example.campy.dto.review.request.ReviewCreateRequest;
 import com.example.campy.dto.user.request.UserUpdateRequest;
+import com.example.campy.dto.user.request.UserCreateRequest; // UserCreateRequest import 추가
 import com.example.campy.entity.Review;
 import com.example.campy.entity.User;
 import com.example.campy.exception.GeneralException;
 import com.example.campy.constant.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder; // PasswordEncoder import 추가
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ public class AdminService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입
 
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findByDeletedAtIsNull().stream()
@@ -155,5 +158,35 @@ public class AdminService {
 
         Review savedReview = reviewRepository.save(newReview);
         return ReviewResponseDto.from(savedReview);
+    }
+
+    // 새로운 사용자 생성 메서드 추가
+    @Transactional
+    public UserResponseDto createUser(UserCreateRequest request) {
+        // 이메일 중복 확인
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new GeneralException(ErrorCode.DUPLICATE_EMAIL);
+        }
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.password());
+
+        User newUser = User.builder()
+                .username(request.username())
+                .email(request.email())
+                .password(encodedPassword)
+                .name(request.name())
+                .nickname(request.nickname())
+                .school(request.school())
+                .major(request.major())
+                .entranceYear(request.entranceYear())
+                .role("USER") // 기본 역할 부여
+                .isVerified(false) // 기본적으로 미인증 상태
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        User savedUser = userRepository.save(newUser);
+        return UserResponseDto.from(savedUser);
     }
 }
