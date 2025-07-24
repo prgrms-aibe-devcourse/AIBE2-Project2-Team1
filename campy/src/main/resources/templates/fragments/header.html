@@ -1,0 +1,138 @@
+<!-- templates/fragments/header.html -->
+<div th:fragment="header">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .auth-button {
+            background-color: #146C94;
+            color: white;
+            border: 3px solid white;
+            border-radius: 12px;
+            padding: 6px 12px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .auth-button:hover {
+            background-color: #094B69;
+        }
+
+        .custom-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px; /* 세로 높이 줄임 */
+            background-color: #AFD3E2;
+            border-bottom: 8px solid #19A7CE;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-section {
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-image {
+            height: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex: 1;
+            gap: 46px; /* 항목 사이 간격 */
+            margin-left: 76px; /* 로고로부터 간격 */
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #515151;
+            font-weight: bold;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #146C94;
+        }
+    </style>
+
+    <header class="custom-header">
+        <!-- 좌측 로고 -->
+        <div class="logo-section">
+            <a th:href="@{/}">
+                <img src="/images/logo.png" alt="Campy Logo" class="logo-image">
+            </a>
+        </div>
+
+        <!-- 중앙 카테고리 -->
+        <nav class="nav-links">
+            <a th:href="@{/about}">소개</a>
+            <a th:if="${loggedInUser}" th:href="@{/mentors}">멘토</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('멘토 페이지는 로그인 후 이용 가능합니다')">멘토</a>
+            <a th:if="${loggedInUser}" th:href="@{/talents}">재능</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('재능 페이지는 로그인 후 이용 가능합니다')">재능</a>
+            <a th:if="${loggedInUser}" th:href="@{/boards}">게시판</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('게시판은 로그인 후 이용 가능합니다')">게시판</a>
+            <a th:if="${loggedInUser}" th:href="@{/materials}">자료</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('자료 페이지는 로그인 후 이용 가능합니다')">자료</a>
+            <a th:if="${loggedInUser}" th:href="@{/reviews}">리뷰</a>
+            <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('리뷰는 로그인 후 이용 가능합니다')">리뷰</a>
+        </nav>
+
+        <!-- 우측 로그인/회원 기능 -->
+        <div style="display: flex; gap: 12px;">
+            <span th:if="${loggedInUser}" id="loggedInButtons">
+                <a th:href="@{/mypage}" class="auth-button">마이페이지</a>
+                <a th:href="@{/message}" class="auth-button">쪽지하기</a>
+                <a th:href="@{/logout}" class="auth-button" onclick="logout(event)">로그아웃</a>
+            </span>
+            <span th:unless="${loggedInUser}" id="loggedOutButtons">
+                <a th:href="@{/login}" class="auth-button">로그인</a>
+                <a th:href="@{/signup}" class="auth-button">가입하기</a>
+            </span>
+        </div>
+    </header>
+
+    <script th:inline="javascript">
+        function requireLogin(message) {
+            alert(message);
+            window.location.href = /*[[@{/login}]]*/ '/login';
+        }
+
+        async function logout(event) {
+            event.preventDefault(); // 기본 링크 동작 방지
+
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // 서버에서 쿠키가 삭제되었으므로 페이지 새로고침 (서버에서 loggedInUser 상태를 다시 확인하도록)
+                    window.location.href = '/'; // 메인 페이지로 리다이렉트
+                } else {
+                    console.error('로그아웃 실패:', await response.text());
+                }
+            } catch (error) {
+                console.error('네트워크 오류:', error);
+            }
+        }
+    </script>
+</div>

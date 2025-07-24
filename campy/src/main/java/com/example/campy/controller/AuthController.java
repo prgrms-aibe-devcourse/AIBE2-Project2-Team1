@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,5 +37,20 @@ public class AuthController {
     public ResponseEntity<?> signup(@RequestBody @Valid SignUpForm form) {
         authService.signUp(form);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        // JWT 쿠키 삭제
+        Cookie cookie = new Cookie("jwtToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // 쿠키 즉시 만료
+        response.addCookie(cookie);
+
+        // Spring Security 컨텍스트에서 인증 정보 제거
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.ok().body("Logout successful");
     }
 }
