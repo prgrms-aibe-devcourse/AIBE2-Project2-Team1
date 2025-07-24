@@ -1,0 +1,44 @@
+<!-- loading.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>AI 추천 로딩 페이지</title>
+    <link rel="stylesheet" href="/css/ai.css">
+    <script>
+        setTimeout(() => {
+            window.location.href = "/ai/result";
+        }, 3000); // 3초 뒤 이동
+    </script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #ffffff;
+        }
+        .loading-box {
+            width: 400px;
+            height: 600px;
+            padding: 20px;
+            border-radius: 20px;
+            background: linear-gradient(#CDEDF6, #97C8DF) padding-box,
+            white border-box;
+            border: 5px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+    </style>
+</head>
+<body>
+<!--<div th:replace="~{fragments/header :: header}"></div>-->
+
+<main style="display: flex; justify-content: center; padding: 40px; border-radius: 12px;">
+    <div class="loading-box">
+        <img src="/gif/loading.gif" style="width: 80px; margin-bottom: 20px; border-radius: 50%;">
+        <p style="font-weight: bold;">3초만 기다려주세요...!</p>
+    </div>
+</main>
+</body>
+</html>
