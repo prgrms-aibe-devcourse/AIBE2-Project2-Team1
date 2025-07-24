@@ -25,7 +25,7 @@ public class AuthService {
         return userRepository.findByUsername(form.getUsername())
                 .map(user -> {
                     if (!passwordEncoder.matches(form.getPassword(), user.getPassword())) {
-                        throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+                        throw new IllegalArgumentException("로그인 정보가 일치하지 않습니다.");
                     }
                     return jwtUtil.createToken(user.getUsername(), user.getEmail(), user.getRole());
                 })
