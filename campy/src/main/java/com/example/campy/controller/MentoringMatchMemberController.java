@@ -43,6 +43,11 @@ public class MentoringMatchMemberController {
         return ResponseEntity.ok(memberService.findByMatchIdAndRole(matchId, role));
     }
 
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<Void> delete(@PathVariable Integer memberId) {
+        memberService.delete(memberId);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }

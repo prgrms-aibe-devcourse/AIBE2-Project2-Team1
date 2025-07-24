@@ -70,4 +70,11 @@ public class MentoringMatchMemberService {
                 .toList();
     }
 
+    public void delete(Integer memberId) {
+        if (!memberRepo.existsById(memberId)) {
+            throw new GeneralException(ErrorCode.NOT_FOUND, "매칭 멤버가 존재하지 않습니다.");
+        }
+        memberRepo.deleteById(memberId);
+    }
+
 }
