@@ -1,6 +1,7 @@
 package com.example.campy.dto.mentoring.request;
 
 import com.example.campy.constant.MentoringType;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -16,5 +17,7 @@ public class MentoringMatchCreateRequest {
 
     @NotNull
     private MentoringType type;
+
+
 
 }
