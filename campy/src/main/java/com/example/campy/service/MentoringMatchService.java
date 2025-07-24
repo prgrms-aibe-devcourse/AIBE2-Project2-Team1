@@ -3,6 +3,7 @@ package com.example.campy.service;
 import com.example.campy.constant.ErrorCode;
 import com.example.campy.constant.MentoringStatus;
 import com.example.campy.dto.mentoring.request.MentoringMatchCreateRequest;
+import com.example.campy.dto.mentoring.request.MentoringMatchDetailCreateRequest;
 import com.example.campy.dto.mentoring.request.MentoringMatchUpdateRequest;
 import com.example.campy.dto.mentoring.response.MentoringMatchResponse;
 import com.example.campy.entity.MentoringMatch;
@@ -24,12 +25,15 @@ public class MentoringMatchService {
 
     private final MentoringMatchRepository matchRepo;
     private final MentoringOfferRepository offerRepo;
+    private final MentoringMatchDetailService detailService;
 
-    @Transactional
-    public MentoringMatchResponse createMatch(MentoringMatchCreateRequest req){
+    // detail 없이 match만 생성
+    public MentoringMatchResponse createMatch(MentoringMatchCreateRequest req) {
         MentoringOffer offer = offerRepo.findById(req.getMentoringOfferId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND,"해당 멘토링이 존재하지 않습니다."));
+                .filter(o -> o.getStatus() != MentoringStatus.DELETED)
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "해당 멘토링이 존재하지 않습니다."));
 
+        // 매칭 생성
         MentoringMatch match = MentoringMatch.builder()
                 .mentoringOffer(offer)
                 .status(MentoringStatus.WAITING_FOR_MENTOR)
@@ -39,7 +43,6 @@ public class MentoringMatchService {
 
         matchRepo.save(match);
 
-        // 넘겨주는 정보는 프론트랑 맞춰봐야함
         return MentoringMatchResponse.builder()
                 .matchId(match.getMatchId())
                 .mentoringOfferId(match.getMentoringOffer().getOfferId())
@@ -48,6 +51,38 @@ public class MentoringMatchService {
                 .createdAt(match.getCreatedAt())
                 .build();
     }
+
+    // detail 포함한 match 생성
+    @Transactional
+    public MentoringMatchResponse createMatchWithDetail(MentoringMatchCreateRequest req, MentoringMatchDetailCreateRequest detailReq){
+
+        MentoringOffer offer = offerRepo.findById(req.getMentoringOfferId())
+                .filter(o -> o.getStatus() != MentoringStatus.DELETED)
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "해당 멘토링이 존재하지 않습니다."));
+
+        // 매칭 생성
+        MentoringMatch match = MentoringMatch.builder()
+                .mentoringOffer(offer)
+                .status(MentoringStatus.WAITING_FOR_MENTOR)
+                .type(req.getType())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        matchRepo.save(match);
+
+        detailService.createDetail(match, detailReq);
+
+        return MentoringMatchResponse.builder()
+                .matchId(match.getMatchId())
+                .mentoringOfferId(offer.getOfferId())
+                .status(match.getStatus().getLabel())
+                .type(match.getType().getLabel())
+                .createdAt(match.getCreatedAt())
+                .build();
+
+    }
+
+
 
     // 전체 매칭 조회 + 페이징
     public Page<MentoringMatchResponse> findAll(Pageable pageable) {

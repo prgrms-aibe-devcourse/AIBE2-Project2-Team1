@@ -1,6 +1,7 @@
 package com.example.campy.controller;
 
 import com.example.campy.constant.MentoringStatus;
+import com.example.campy.dto.mentoring.request.MentoringMatchCreateCombinedRequest;
 import com.example.campy.dto.mentoring.request.MentoringMatchCreateRequest;
 import com.example.campy.dto.mentoring.request.MentoringMatchUpdateRequest;
 import com.example.campy.dto.mentoring.response.MentoringMatchResponse;
@@ -23,9 +24,10 @@ public class MentoringMatchController {
     private final MentoringMatchService matchService;
 
     @PostMapping
-    public ResponseEntity<MentoringMatchResponse> createMatch(@RequestBody @Valid MentoringMatchCreateRequest req){
+    public ResponseEntity<MentoringMatchResponse> createMatch(@RequestBody @Valid MentoringMatchCreateCombinedRequest req){
 
-        MentoringMatchResponse res = matchService.createMatch(req);
+        MentoringMatchResponse res = matchService.createMatchWithDetail(req.getMatchRequest(), req.getDetailRequest());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
 
     }
