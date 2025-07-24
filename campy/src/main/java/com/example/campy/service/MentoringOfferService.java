@@ -14,11 +14,15 @@ import com.example.campy.entity.User;
 import com.example.campy.repository.MentoringTagPostRepository;
 import com.example.campy.repository.MentoringTagRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -58,15 +62,24 @@ public class MentoringOfferService {
         return MentoringOfferResponse.from(saved); // Entity -> Response DTO
     }
 
-    public List<MentoringOfferResponse> findAll(){
-        return offerRepo.findByIsDeletedFalse()
-                .stream()
-                .map(offer -> {
-                    List<String> tagNames = tagPostRepo.findTagNamesByOfferId(offer.getOfferId());
+    // 전체 멘토링 제안 리스트
+    public Page<MentoringOfferResponse> findAll(Pageable pageable){
+        Page<MentoringOffer> offerPage = offerRepo.findByIsDeletedFalse(pageable);
 
-                    return MentoringOfferResponse.from(offer, tagNames);
+        List<Integer> offerIds = offerPage.getContent().stream()
+                .map(MentoringOffer::getOfferId)
+                .toList();
+
+        Map<Integer, List<String>> tagMap = tagPostRepo.findTagNamesGroupedByOfferIds(offerIds);
+
+        List<MentoringOfferResponse> content = offerPage.getContent().stream()
+                .map(offer -> {
+                    List<String> tags = tagMap.getOrDefault(offer.getOfferId(), List.of());
+                    return MentoringOfferResponse.from(offer, tags);
                 })
                 .toList();
+
+        return new PageImpl<>(content, pageable, offerPage.getTotalElements());
     }
 
     public MentoringOfferResponse findById(Integer offerId){
@@ -135,6 +148,26 @@ public class MentoringOfferService {
         offer.setIsDeleted(true);
         offer.setUpdatedAt(LocalDateTime.now());
 
+    }
+
+    // 키워드 검색
+    public Page<MentoringOfferResponse> searchOffers(String keyword, Pageable pageable){
+        Page<MentoringOffer> offers = offerRepo.searchWithKeyword(keyword, pageable);
+
+        return offers.map(offer -> {
+            List<String> tagNames = tagPostRepo.findTagNamesByOfferId(offer.getOfferId());
+            return MentoringOfferResponse.from(offer, tagNames);
+        });
+    }
+
+    // 해시태그 검색
+    public Page<MentoringOfferResponse> searchByTag(String tagKeyword, Pageable pageable){
+        Page<MentoringOffer> offers = offerRepo.searchByTag(tagKeyword, pageable);
+
+        return offers.map(offer -> {
+            List<String> tagNames = tagPostRepo.findTagNamesByOfferId(offer.getOfferId());
+            return MentoringOfferResponse.from(offer, tagNames);
+        });
     }
 
 }
