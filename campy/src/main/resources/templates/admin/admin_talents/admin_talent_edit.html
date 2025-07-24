@@ -1,12 +1,16 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
 <head>
     <meta charset="UTF-8">
     <title>재능 수정</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <th:block th:fragment="head-extra">
+        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
+    </th:block>
 </head>
 <body>
-<div th:replace="~{admin/fragments/admin_layout :: adminHeader}"></div>
+
 <div class="container">
     <h1>재능 수정</h1>
     <form th:action="@{/admin/talents/{talentId}/update(talentId=${talent.talentId})}" th:object="${talentUpdateRequest}" method="post">

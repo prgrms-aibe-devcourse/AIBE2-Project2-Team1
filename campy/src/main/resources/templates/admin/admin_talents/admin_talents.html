@@ -11,7 +11,38 @@
     <th:block th:fragment="content">
         <div class="container">
             <h1>재능 관리</h1>
-            <!-- 재능 관리 내용 -->
+            <a th:href="@{/admin/talents/new}" class="btn btn-primary">재능 등록</a>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>제목</th>
+                    <th>카테고리</th>
+                    <th>상태</th>
+                    <th>삭제 여부</th>
+                    <th>생성일</th>
+                    <th>수정일</th>
+                    <th>작업</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="talent : ${talents}">
+                    <td th:text="${talent.talentId}"></td>
+                    <td th:text="${talent.title}"></td>
+                    <td th:text="${talent.category}"></td>
+                    <td th:text="${talent.status}"></td>
+                    <td th:text="${talent.isDeleted} ? '예' : '아니오'"></td>
+                    <td th:text="${#temporals.format(talent.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(talent.updatedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <a th:href="@{/admin/talents/{talentId}/edit(talentId=${talent.talentId})}" class="btn btn-sm btn-info">수정</a>
+                        <form th:action="@{/admin/talents/{talentId}/delete(talentId=${talent.talentId})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </th:block>
     <th:block th:fragment="body-extra">

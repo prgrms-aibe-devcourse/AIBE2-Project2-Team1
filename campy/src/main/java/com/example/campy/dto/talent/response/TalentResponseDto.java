@@ -25,7 +25,7 @@ public record TalentResponseDto(
     public static TalentResponseDto fromEntity(Talent talent) {
         return TalentResponseDto.builder()
                 .talentId(talent.getTalentId())
-                .user(UserResponseDto.fromEntity(talent.getUser()))
+                .user(UserResponseDto.from(talent.getUser()))
                 .title(talent.getTitle())
                 .description(talent.getDescription())
                 .price(talent.getPrice())
