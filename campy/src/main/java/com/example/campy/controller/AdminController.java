@@ -12,6 +12,10 @@ import com.example.campy.dto.board.response.BoardResponseDto;
 import com.example.campy.dto.board.request.BoardUpdateRequest;
 import com.example.campy.dto.board.request.BoardCreateRequest; // BoardCreateRequest import 추가
 import com.example.campy.repository.AdminRepository;
+import com.example.campy.service.TalentService;
+import com.example.campy.dto.talent.request.TalentCreateRequest;
+import com.example.campy.dto.talent.request.TalentUpdateRequest;
+import com.example.campy.dto.talent.response.TalentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -31,6 +35,7 @@ public class AdminController {
     private final AdminService adminService;
     private final AdminRepository adminRepository;
     private final BoardService boardService;
+    private final TalentService talentService;
 
     @GetMapping
     public String adminPage(Authentication authentication, Model model) {
@@ -223,8 +228,64 @@ public class AdminController {
     }
 
     @GetMapping("/talents")
-    public String adminTalentsPage() {
+    public String adminTalentsPage(Model model) {
+        List<TalentResponseDto> talents = talentService.getAllTalents();
+        model.addAttribute("talents", talents);
         return "admin/admin_talents/admin_talents";
+    }
+
+    @GetMapping("/talents/new")
+    public String createTalentForm(Model model) {
+        model.addAttribute("talentCreateRequest", new TalentCreateRequest(null, null, null, null, null, null, null, null, null));
+        return "admin/admin_talents/admin_talent_new";
+    }
+
+    @PostMapping("/talents/new")
+    public String createTalent(@Valid @ModelAttribute TalentCreateRequest request, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "admin/admin_talents/admin_talent_new";
+        }
+        talentService.createTalent(request);
+        redirectAttributes.addFlashAttribute("message", "재능이 성공적으로 생성되었습니다.");
+        return "redirect:/admin/talents";
+    }
+
+    @GetMapping("/talents/{talentId}/edit")
+    public String editTalentForm(@PathVariable Integer talentId, Model model) {
+        TalentResponseDto talent = talentService.getTalentById(talentId);
+        model.addAttribute("talent", talent);
+        TalentUpdateRequest talentUpdateRequest = TalentUpdateRequest.builder()
+                .title(talent.title())
+                .description(talent.description())
+                .price(talent.price())
+                .availableDays(talent.availableDays())
+                .offlineLocation(talent.offlineLocation())
+                .status(talent.status())
+                .isDeleted(talent.isDeleted())
+                .imagePath(talent.imagePath())
+                .category(talent.category())
+                .build();
+        model.addAttribute("talentUpdateRequest", talentUpdateRequest);
+        return "admin/admin_talents/admin_talent_edit";
+    }
+
+    @PostMapping("/talents/{talentId}/update")
+    public String updateTalent(@PathVariable Integer talentId, @Valid @ModelAttribute TalentUpdateRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("talent", talentService.getTalentById(talentId));
+            model.addAttribute("talentUpdateRequest", request);
+            return "admin/admin_talents/admin_talent_edit";
+        }
+        talentService.updateTalent(talentId, request);
+        redirectAttributes.addFlashAttribute("message", "재능이 성공적으로 수정되었습니다.");
+        return "redirect:/admin/talents";
+    }
+
+    @PostMapping("/talents/{talentId}/delete")
+    public String deleteTalent(@PathVariable Integer talentId, RedirectAttributes redirectAttributes) {
+        talentService.deleteTalent(talentId);
+        redirectAttributes.addFlashAttribute("message", "재능이 성공적으로 삭제되었습니다.");
+        return "redirect:/admin/talents";
     }
 
     @GetMapping("/mentoring-offers")

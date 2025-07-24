@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>재능 수정</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/fragments/admin_layout :: adminHeader}"></div>
+<div class="container">
+    <h1>재능 수정</h1>
+    <form th:action="@{/admin/talents/{talentId}/update(talentId=${talent.talentId})}" th:object="${talentUpdateRequest}" method="post">
+        <input type="hidden" th:field="*{title}">
+        <input type="hidden" th:field="*{description}">
+        <input type="hidden" th:field="*{price}">
+        <input type="hidden" th:field="*{availableDays}">
+        <input type="hidden" th:field="*{offlineLocation}">
+        <input type="hidden" th:field="*{status}">
+        <input type="hidden" th:field="*{isDeleted}">
+        <input type="hidden" th:field="*{imagePath}">
+        <input type="hidden" th:field="*{category}">
+
+        <div class="form-group">
+            <label for="talentId">재능 ID:</label>
+            <input type="text" id="talentId" th:value="${talent.talentId}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="userId">사용자 ID:</label>
+            <input type="text" id="userId" th:value="${talent.user.userId}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="title">제목:</label>
+            <input type="text" id="title" th:field="*{title}" required>
+            <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label for="description">설명:</label>
+            <textarea id="description" th:field="*{description}" required></textarea>
+            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label for="price">가격:</label>
+            <input type="number" id="price" th:field="*{price}" required>
+            <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error-message"></div>
+        </div>
+        <div class="form-group">
+            <label for="availableDays">이용 가능 요일:</label>
+            <input type="text" id="availableDays" th:field="*{availableDays}">
+        </div>
+        <div class="form-group">
+            <label for="offlineLocation">오프라인 장소:</label>
+            <input type="text" id="offlineLocation" th:field="*{offlineLocation}">
+        </div>
+        <div class="form-group">
+            <label for="status">상태:</label>
+            <input type="text" id="status" th:field="*{status}">
+        </div>
+        <div class="form-group">
+            <label for="isDeleted">삭제 여부:</label>
+            <input type="checkbox" id="isDeleted" th:field="*{isDeleted}">
+        </div>
+        <div class="form-group">
+            <label for="imagePath">이미지 경로:</label>
+            <input type="text" id="imagePath" th:field="*{imagePath}">
+        </div>
+        <div class="form-group">
+            <label for="category">카테고리:</label>
+            <input type="text" id="category" th:field="*{category}" required>
+            <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="error-message"></div>
+        </div>
+        <button type="submit" class="btn btn-primary">수정</button>
+        <a th:href="@{/admin/talents}" class="btn btn-secondary">취소</a>
+    </form>
+</div>
+<div th:replace="~{admin/fragments/admin_layout :: adminFooter}"></div>
+</body>
+</html>
