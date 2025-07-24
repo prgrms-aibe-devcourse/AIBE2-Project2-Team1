@@ -20,6 +20,23 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    // AuthService용: userId 없이
+    public String createToken(String username, String email, String role) {
+        Date now = new Date();
+        long expirationMs = 6 * 60 * 60 * 1000;
+        Date expiryDate = new Date(now.getTime() + expirationMs);
+
+        return Jwts.builder()
+                .subject(username)
+                .claim("email", email)
+                .claim("role", role)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(secretKey)
+                .compact();
+    }
+
+    // TalentController용: userId 포함
     public String createToken(Integer userId, String username, String email, String role) {
         Date now = new Date();
         long expirationMs = 6 * 60 * 60 * 1000;

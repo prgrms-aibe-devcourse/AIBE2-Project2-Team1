@@ -72,3 +72,4 @@ public class QTalent extends EntityPathBase<Talent> {
     }
 
 }
+

@@ -3,8 +3,11 @@ package com.example.campy.controller;
 import com.example.campy.dto.TalentRequestDto;
 import com.example.campy.entity.Tag;
 import com.example.campy.entity.Talent;
+import com.example.campy.entity.User;
+import com.example.campy.jwt.JwtUtil;
 import com.example.campy.repository.TagRepository;
 import com.example.campy.repository.TalentRepository;
+import com.example.campy.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,11 +29,26 @@ public class TalentController {
 
     private final TalentRepository talentRepository;
     private final TagRepository tagRepository;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Value("${upload.path}")
     private String uploadPath;
 
-    // 전체 조회 (정렬, 필터링 포함)
+    private User extractUserFromRequest(HttpServletRequest servletRequest) {
+        String token = servletRequest.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new RuntimeException("토큰 누락");
+        }
+        token = token.substring(7);
+        if (!jwtUtil.validateToken(token)) {
+            throw new RuntimeException("유효하지 않은 토큰");
+        }
+        Integer userId = jwtUtil.getUserId(token);
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
+    }
+
     @GetMapping
     public ResponseEntity<Page<Talent>> getAllTalents(
             @RequestParam(defaultValue = "0") int page,
@@ -50,7 +68,7 @@ public class TalentController {
         if (tag != null && category != null) {
             talents = talentRepository.findByTags_NameAndCategoryAndIsDeletedFalse(tag, category, pageable);
         } else if (tag != null) {
-            talents = talentRepository.findByTags_NameAndIsDeletedFalse(tag, pageable); // ✅ 여기 수정
+            talents = talentRepository.findByTags_NameAndIsDeletedFalse(tag, pageable);
         } else if (status != null && category != null) {
             talents = talentRepository.findByIsDeletedFalseAndStatusAndCategory(status, category, pageable);
         } else if (status != null) {
@@ -64,7 +82,6 @@ public class TalentController {
         return ResponseEntity.ok(talents);
     }
 
-    // 단건 조회
     @GetMapping("/{id}")
     public ResponseEntity<Talent> getTalentById(@PathVariable Integer id) {
         return talentRepository.findById(id)
@@ -73,7 +90,6 @@ public class TalentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // 태그로 검색
     @GetMapping("/search")
     public ResponseEntity<Page<Talent>> searchByTag(
             @RequestParam String tag,
@@ -85,14 +101,18 @@ public class TalentController {
         return ResponseEntity.ok(talents);
     }
 
-    // 등록 + 이미지 + 태그 처리
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<Talent> registerTalent(
             @RequestPart("data") TalentRequestDto request,
             @RequestPart(value = "image", required = false) MultipartFile image,
             HttpServletRequest servletRequest) throws IOException {
 
-        Integer userId = 1; // JWT 사용 시 교체
+        User user;
+        try {
+            user = extractUserFromRequest(servletRequest);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).build();
+        }
 
         String imagePath = null;
         if (image != null && !image.isEmpty()) {
@@ -110,7 +130,7 @@ public class TalentController {
         }
 
         Talent talent = Talent.builder()
-                .userId(userId)
+                .user(user)
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .price(request.getPrice())
@@ -128,15 +148,19 @@ public class TalentController {
         return ResponseEntity.ok(talentRepository.save(talent));
     }
 
-    // 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Talent> updateTalent(@PathVariable Integer id, @RequestBody TalentRequestDto request) {
-        Integer userId = 1;
+    public ResponseEntity<Talent> updateTalent(@PathVariable Integer id, @RequestBody TalentRequestDto request, HttpServletRequest servletRequest) {
+        User user;
+        try {
+            user = extractUserFromRequest(servletRequest);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).build();
+        }
 
         return talentRepository.findById(id)
                 .filter(talent -> !Boolean.TRUE.equals(talent.getIsDeleted()))
                 .map(talent -> {
-                    if (!talent.getUserId().equals(userId)) {
+                    if (!talent.getUser().getUserId().equals(user.getUserId())) {
                         return ResponseEntity.status(403).<Talent>build();
                     }
                     talent.setTitle(request.getTitle());
@@ -150,15 +174,19 @@ public class TalentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTalent(@PathVariable Integer id) {
-        Integer userId = 1;
+    public ResponseEntity<Void> deleteTalent(@PathVariable Integer id, HttpServletRequest servletRequest) {
+        User user;
+        try {
+            user = extractUserFromRequest(servletRequest);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).build();
+        }
 
         return talentRepository.findById(id)
                 .filter(talent -> !Boolean.TRUE.equals(talent.getIsDeleted()))
                 .map(talent -> {
-                    if (!talent.getUserId().equals(userId)) {
+                    if (!talent.getUser().getUserId().equals(user.getUserId())) {
                         return ResponseEntity.status(403).<Void>build();
                     }
                     talent.setIsDeleted(true);
