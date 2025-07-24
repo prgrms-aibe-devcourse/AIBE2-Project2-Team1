@@ -26,7 +26,7 @@ public class MentoringMatchController {
     @PostMapping
     public ResponseEntity<MentoringMatchResponse> createMatch(@RequestBody @Valid MentoringMatchCreateCombinedRequest req){
 
-        MentoringMatchResponse res = matchService.createMatchWithDetail(req.getMatchRequest(), req.getDetailRequest());
+        MentoringMatchResponse res = matchService.createMatchWithDetail(req);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
 

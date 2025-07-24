@@ -2,9 +2,7 @@ package com.example.campy.service;
 
 import com.example.campy.constant.ErrorCode;
 import com.example.campy.constant.MentoringStatus;
-import com.example.campy.dto.mentoring.request.MentoringMatchCreateRequest;
-import com.example.campy.dto.mentoring.request.MentoringMatchDetailCreateRequest;
-import com.example.campy.dto.mentoring.request.MentoringMatchUpdateRequest;
+import com.example.campy.dto.mentoring.request.*;
 import com.example.campy.dto.mentoring.response.MentoringMatchResponse;
 import com.example.campy.entity.MentoringMatch;
 import com.example.campy.entity.MentoringOffer;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +25,7 @@ public class MentoringMatchService {
     private final MentoringMatchRepository matchRepo;
     private final MentoringOfferRepository offerRepo;
     private final MentoringMatchDetailService detailService;
+    private final MentoringMatchMemberService memberService;
 
     // detail 없이 match만 생성
     public MentoringMatchResponse createMatch(MentoringMatchCreateRequest req) {
@@ -41,6 +41,8 @@ public class MentoringMatchService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
+
+
         matchRepo.save(match);
 
         return MentoringMatchResponse.builder()
@@ -52,11 +54,14 @@ public class MentoringMatchService {
                 .build();
     }
 
-    // detail 포함한 match 생성
+    // detail, member 포함한 match 생성
     @Transactional
-    public MentoringMatchResponse createMatchWithDetail(MentoringMatchCreateRequest req, MentoringMatchDetailCreateRequest detailReq){
+    public MentoringMatchResponse createMatchWithDetail(MentoringMatchCreateCombinedRequest req){
+        MentoringMatchCreateRequest matchReq = req.getMatchRequest();
+        MentoringMatchDetailCreateRequest detailReq = req.getDetailRequest();
+        List<MentoringMatchMemberCreateRequest> memberReqs = req.getMembers();
 
-        MentoringOffer offer = offerRepo.findById(req.getMentoringOfferId())
+        MentoringOffer offer = offerRepo.findById(matchReq.getMentoringOfferId())
                 .filter(o -> o.getStatus() != MentoringStatus.DELETED)
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "해당 멘토링이 존재하지 않습니다."));
 
@@ -64,13 +69,15 @@ public class MentoringMatchService {
         MentoringMatch match = MentoringMatch.builder()
                 .mentoringOffer(offer)
                 .status(MentoringStatus.WAITING_FOR_MENTOR)
-                .type(req.getType())
+                .type(matchReq.getType())
                 .createdAt(LocalDateTime.now())
                 .build();
 
         matchRepo.save(match);
 
         detailService.createDetail(match, detailReq);
+        memberService.createMembers(match, memberReqs);
+
 
         return MentoringMatchResponse.builder()
                 .matchId(match.getMatchId())
