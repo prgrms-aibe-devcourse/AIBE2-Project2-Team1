@@ -10,7 +10,7 @@ public class MaterialResponseDto {
     private final Integer materialId;
     private final Integer sellerId;
     private final String title;
-    private final String content; // 🔄 description → content로 변경
+    private final String content;
     private final String fileUrl;
     private final String previewFileUrl;
     private final String thumbnailUrl;
@@ -19,7 +19,7 @@ public class MaterialResponseDto {
 
     public MaterialResponseDto(Material material) {
         this.materialId = material.getMaterialId();
-        this.sellerId = material.getSellerId();
+        this.sellerId = material.getSeller().getUserId();
         this.title = material.getTitle();
         this.content = material.getContent();
         this.fileUrl = material.getFileUrl();

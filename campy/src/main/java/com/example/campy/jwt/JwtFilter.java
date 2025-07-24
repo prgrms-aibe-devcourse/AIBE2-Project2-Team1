@@ -1,8 +1,10 @@
 package com.example.campy.jwt;
 
+import com.example.campy.service.CustomUserDetails;
+import com.example.campy.service.CustomUserDetailsService;
+import jakarta.servlet.ServletException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -11,20 +13,25 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
     // 매 요청마다 실행되는 필터 로직
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
-            throws IOException {
+            throws IOException, ServletException {
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);  // 로그인, 회원가입은 토큰 없이 허용
+            return;
+        }
 
         try {
             String token = resolveToken(request);
@@ -34,11 +41,13 @@ public class JwtFilter extends OncePerRequestFilter {
                     String username = jwtUtil.getUsername(token);
                     String role = jwtUtil.getRole(token);
 
+                    CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
-                                    username,
+                                    userDetails,  // ✅ 이제 진짜 사용자 정보가 들어감
                                     null,
-                                    Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role))
+                                    userDetails.getAuthorities()
                             );
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);

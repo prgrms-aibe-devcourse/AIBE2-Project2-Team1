@@ -15,6 +15,7 @@ public class MaterialListDto {
     private String title;
     private String thumbnailUrl;
     private Integer price;
+    private String sellerNickname;
     private LocalDateTime createdAt;
 
     public MaterialListDto(Material material) {
@@ -22,6 +23,7 @@ public class MaterialListDto {
         this.title = material.getTitle();
         this.thumbnailUrl = material.getThumbnailUrl();
         this.price = material.getPrice();
+        this.sellerNickname = material.getSeller().getNickname();
         this.createdAt = material.getCreatedAt();
     }
 }

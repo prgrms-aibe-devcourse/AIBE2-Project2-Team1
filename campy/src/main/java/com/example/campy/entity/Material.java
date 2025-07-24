@@ -1,9 +1,9 @@
 package com.example.campy.entity;
 
 import jakarta.persistence.*;
-        import lombok.*;
+import lombok.*;
 
-        import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "materials")
@@ -19,8 +19,9 @@ public class Material {
     @Column(name = "material_id")
     private Integer materialId;
 
-    @Column(name = "seller_id", nullable = false)
-    private Integer sellerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private User seller;
 
     @Column(name = "title", length = 255)
     private String title;
