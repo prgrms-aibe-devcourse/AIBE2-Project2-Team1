@@ -1,5 +1,6 @@
 package com.example.campy.controller;
 
+import com.example.campy.constant.MentoringStatus;
 import com.example.campy.dto.mentoring.request.MentoringOfferCreateRequest;
 import com.example.campy.dto.mentoring.request.MentoringOfferUpdateRequest;
 import com.example.campy.dto.mentoring.response.MentoringOfferResponse;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -85,5 +87,15 @@ public class MentoringOfferController {
             Pageable pageable
     ){
         return ResponseEntity.ok(mentoringOfferService.searchByTag(tag, pageable));
+    }
+
+    // 상태별 조회
+    @GetMapping("/status")
+    public ResponseEntity<Page<MentoringOfferResponse>> getOffersByStatus(
+            @RequestParam MentoringStatus status,
+            Pageable pageable
+            ){
+        return ResponseEntity.ok(mentoringOfferService.findByStatus(status, pageable));
+
     }
 }

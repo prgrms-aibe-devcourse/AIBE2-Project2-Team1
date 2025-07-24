@@ -1,6 +1,7 @@
 package com.example.campy.service;
 
 import com.example.campy.constant.ErrorCode;
+import com.example.campy.constant.MentoringStatus;
 import com.example.campy.dto.mentoring.request.MentoringOfferCreateRequest;
 import com.example.campy.dto.mentoring.request.MentoringOfferUpdateRequest;
 import com.example.campy.dto.mentoring.response.MentoringOfferResponse;
@@ -163,6 +164,16 @@ public class MentoringOfferService {
     // 해시태그 검색
     public Page<MentoringOfferResponse> searchByTag(String tagKeyword, Pageable pageable){
         Page<MentoringOffer> offers = offerRepo.searchByTag(tagKeyword, pageable);
+
+        return offers.map(offer -> {
+            List<String> tagNames = tagPostRepo.findTagNamesByOfferId(offer.getOfferId());
+            return MentoringOfferResponse.from(offer, tagNames);
+        });
+    }
+
+    // 상태별 조회
+    public Page<MentoringOfferResponse> findByStatus(MentoringStatus status, Pageable pageable){
+        Page<MentoringOffer> offers = offerRepo.findByStatusAndIsDeletedFalse(status, pageable);
 
         return offers.map(offer -> {
             List<String> tagNames = tagPostRepo.findTagNamesByOfferId(offer.getOfferId());
