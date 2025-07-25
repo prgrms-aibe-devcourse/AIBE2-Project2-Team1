@@ -23,6 +23,15 @@
 </div>
 
 <table class="board-table">
+    <colgroup>
+        <col style="width: 3%">
+        <col style="width: 10%">
+        <col style="width: 8%">
+        <col style="width: 10%">
+        <col style="width: 51%">
+        <col style="width: 8%">
+        <col style="width: 10%">
+    </colgroup>
     <thead>
     <tr>
         <th>NO</th>
@@ -40,7 +49,7 @@
         <td th:text="${review.category}">카테고리</td>
         <td th:text="${review.targetName}">사용자</td>
         <td th:text="${review.stars}">⭐⭐⭐⭐⭐</td>
-        <td th:text="${review.content}">내용</td>
+        <td class="left-align" th:text="${review.content}">내용</td>
         <td th:text="${review.writer}">작성자</td>
         <td th:text="${#dates.format(review.createdDate, 'yyyy-MM-dd')}">9999-12-31</td>
     </tr>
