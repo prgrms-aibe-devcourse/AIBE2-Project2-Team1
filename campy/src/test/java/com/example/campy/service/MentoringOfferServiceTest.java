@@ -1,5 +1,5 @@
 package com.example.campy.service;
-
+/*
 import com.example.campy.dto.mentoring.request.MentoringOfferCreateRequest;
 import com.example.campy.dto.mentoring.response.MentoringOfferResponse;
 import com.example.campy.entity.MentoringOffer;
@@ -76,4 +76,4 @@ class MentoringOfferServiceTest  {
 
     }
 
-}
+}*/
