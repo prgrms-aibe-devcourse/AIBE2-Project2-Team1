@@ -62,7 +62,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
     // Querydsl
-	implementation "com.querydsl:querydsl-jpa"
+	implementation "com.querydsl:querydsl-jpa:${querydslVersion}:jakarta"
 	implementation "com.querydsl:querydsl-collections"
 	annotationProcessor "com.querydsl:querydsl-apt:${querydslVersion}:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
