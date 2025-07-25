@@ -12,9 +12,9 @@ import com.example.campy.dto.user.request.UserCreateRequest; // UserCreateReques
 import com.example.campy.dto.board.response.BoardResponseDto;
 import com.example.campy.dto.board.request.BoardUpdateRequest;
 import com.example.campy.dto.board.request.BoardCreateRequest; // BoardCreateRequest import 추가
-import com.example.campy.dto.talent.TalentCreateRequest;
-import com.example.campy.dto.talent.TalentResponseDto;
-import com.example.campy.dto.talent.TalentUpdateRequest;
+import com.example.campy.dto.talent.request.TalentCreateRequest;
+import com.example.campy.dto.talent.response.TalentResponseDto;
+import com.example.campy.dto.talent.request.TalentUpdateRequest;
 import com.example.campy.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -253,7 +253,7 @@ public class AdminController {
 
     @GetMapping("/talents/new")
     public String adminTalentNewPage(Model model) {
-        model.addAttribute("talentCreateRequest", new TalentCreateRequest());
+        model.addAttribute("talentRequestDto", new TalentCreateRequest());
         return "admin/admin_talents/admin_talent_new";
     }
 
@@ -272,7 +272,7 @@ public class AdminController {
                 .category(talent.getCategory())
                 .tagNames(talent.getTagNames())
                 .build();
-        model.addAttribute("talentUpdateRequest", talentUpdateRequest);
+        model.addAttribute("talentRequestDto", talentUpdateRequest);
         return "admin/admin_talents/admin_talent_edit";
     }
 
@@ -280,12 +280,14 @@ public class AdminController {
     public String createTalent(
             @ModelAttribute @Valid TalentCreateRequest talentCreateRequest,
             @RequestParam(value = "image", required = false) MultipartFile image,
-            BindingResult bindingResult
+            BindingResult bindingResult,
+            Authentication authentication
     ) throws IOException {
         if (bindingResult.hasErrors()) {
             return "admin/admin_talents/admin_talent_new";
         }
-        talentService.createTalent(talentCreateRequest, image);
+        // 현재 로그인한 사용자 정보를 서비스로 전달
+        talentService.createTalent(talentCreateRequest, image, authentication);
         return "redirect:/admin/talents";
     }
 
@@ -294,19 +296,19 @@ public class AdminController {
             @PathVariable Integer id,
             @ModelAttribute @Valid TalentUpdateRequest talentUpdateRequest,
             @RequestParam(value = "image", required = false) MultipartFile image,
-            BindingResult bindingResult
+            BindingResult bindingResult,
+            Authentication authentication
     ) throws IOException {
         if (bindingResult.hasErrors()) {
             return "admin/admin_talents/admin_talent_edit";
         }
-        talentService.updateTalent(id, talentUpdateRequest, image);
+        talentService.adminUpdateTalent(id, talentUpdateRequest, image);
         return "redirect:/admin/talents";
     }
 
     @PostMapping("/talents/{id}/delete")
-    public String deleteTalent(@PathVariable Integer id) {
-        Integer userId = 1; // JWT 사용 시 교체
-        talentService.deleteTalent(id, userId);
+    public String deleteTalent(@PathVariable Integer id, Authentication authentication) {
+        talentService.adminDeleteTalent(id);
         return "redirect:/admin/talents";
     }
 

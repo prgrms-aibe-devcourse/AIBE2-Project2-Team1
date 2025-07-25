@@ -1,9 +1,8 @@
 package com.example.campy.service;
 
-import com.example.campy.dto.talent.TalentCreateRequest;
-import com.example.campy.dto.talent.TalentResponseDto;
-import com.example.campy.dto.talent.TalentUpdateRequest;
-import com.example.campy.dto.talent.TalentUpdateRequest;
+import com.example.campy.dto.talent.request.TalentCreateRequest;
+import com.example.campy.dto.talent.response.TalentResponseDto;
+import com.example.campy.dto.talent.request.TalentUpdateRequest;
 import com.example.campy.dto.user.response.UserResponseDto;
 import com.example.campy.entity.Tag;
 import com.example.campy.entity.Talent;
@@ -18,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,9 +41,10 @@ public class TalentServiceImpl implements TalentService {
     private String uploadPath;
 
     @Override
-    public TalentResponseDto createTalent(TalentCreateRequest request, MultipartFile image) throws IOException {
-        Integer userId = 1; // JWT 사용 시 교체
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    public TalentResponseDto createTalent(TalentCreateRequest request, MultipartFile image, Authentication authentication) throws IOException {
+        String username = authentication.getName(); // 현재 로그인한 사용자의 username 가져오기
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
         String imagePath = null;
         if (image != null && !image.isEmpty()) {
@@ -69,7 +71,7 @@ public class TalentServiceImpl implements TalentService {
                 .availableDays(request.getAvailableDays())
                 .offlineLocation(request.getOfflineLocation())
                 .status("요청중")
-                .isDeleted(false)
+                .deleted(false)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .imagePath(imagePath)
@@ -92,30 +94,32 @@ public class TalentServiceImpl implements TalentService {
     public Page<TalentResponseDto> getAllTalents(Pageable pageable, String status, String category, String tag) {
         Page<Talent> talentsPage;
         if (tag != null && category != null) {
-            talentsPage = talentRepository.findByTags_NameAndCategoryAndIsDeletedFalse(tag, category, pageable);
+            talentsPage = talentRepository.findByTags_NameAndCategoryAndDeletedFalse(tag, category, pageable);
         } else if (tag != null) {
-            talentsPage = talentRepository.findByTags_NameAndIsDeletedFalse(tag, pageable);
+            talentsPage = talentRepository.findByTags_NameAndDeletedFalse(tag, pageable);
         } else if (status != null && category != null) {
-            talentsPage = talentRepository.findByIsDeletedFalseAndStatusAndCategory(status, category, pageable);
+            talentsPage = talentRepository.findByDeletedFalseAndStatusAndCategory(status, category, pageable);
         } else if (status != null) {
-            talentsPage = talentRepository.findByIsDeletedFalseAndStatus(status, pageable);
+            talentsPage = talentRepository.findByDeletedFalseAndStatus(status, pageable);
         } else if (category != null) {
-            talentsPage = talentRepository.findByIsDeletedFalseAndCategory(category, pageable);
+            talentsPage = talentRepository.findByDeletedFalseAndCategory(category, pageable);
         } else {
-            talentsPage = talentRepository.findByIsDeletedFalse(pageable);
+            talentsPage = talentRepository.findByDeletedFalse(pageable);
         }
         return talentsPage.map(this::toResponseDto);
     }
 
     @Override
-    public TalentResponseDto updateTalent(Integer id, TalentUpdateRequest request, MultipartFile image) throws IOException {
-        Integer userId = 1; // JWT 사용 시 교체
+    public TalentResponseDto updateTalent(Integer id, TalentUpdateRequest request, MultipartFile image, Authentication authentication) throws IOException {
+        String username = authentication.getName(); // 현재 로그인한 사용자의 username 가져오기
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
         Talent existingTalent = talentRepository.findById(id)
-                .filter(talent -> !Boolean.TRUE.equals(talent.getIsDeleted()))
+                .filter(talent -> !Boolean.TRUE.equals(talent.getDeleted()))
                 .orElseThrow(() -> new RuntimeException("Talent not found with id " + id));
 
-        if (!existingTalent.getUser().getUserId().equals(userId)) {
+        if (!existingTalent.getUser().getUserId().equals(currentUser.getUserId())) {
             throw new RuntimeException("Unauthorized to update this talent");
         }
 
@@ -153,15 +157,70 @@ public class TalentServiceImpl implements TalentService {
     }
 
     @Override
-    public void deleteTalent(Integer talentId, Integer userId) {
+    public void deleteTalent(Integer talentId, Authentication authentication) {
+        String username = authentication.getName(); // 현재 로그인한 사용자의 username 가져오기
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
         Talent talent = talentRepository.findById(talentId)
                 .orElseThrow(() -> new RuntimeException("Talent not found with id " + talentId));
 
-        if (!talent.getUser().getUserId().equals(userId)) {
+        if (!talent.getUser().getUserId().equals(currentUser.getUserId())) {
             throw new RuntimeException("Unauthorized to delete this talent");
         }
 
-        talent.setIsDeleted(true);
+        talent.setDeleted(true);
+        talent.setUpdatedAt(LocalDateTime.now());
+        talentRepository.save(talent);
+    }
+
+    // Admin 전용 updateTalent 메소드 (소유자 확인 로직 없음)
+    @Override
+    public TalentResponseDto adminUpdateTalent(Integer id, TalentUpdateRequest request, MultipartFile image) throws IOException {
+        Talent existingTalent = talentRepository.findById(id)
+                .filter(talent -> !Boolean.TRUE.equals(talent.getDeleted()))
+                .orElseThrow(() -> new RuntimeException("Talent not found with id " + id));
+
+        existingTalent.setTitle(request.getTitle());
+        existingTalent.setDescription(request.getDescription());
+        existingTalent.setPrice(request.getPrice());
+        existingTalent.setAvailableDays(request.getAvailableDays());
+        existingTalent.setOfflineLocation(request.getOfflineLocation());
+        existingTalent.setCategory(request.getCategory());
+
+        // 이미지 처리
+        String imagePath = existingTalent.getImagePath();
+        if (image != null && !image.isEmpty()) {
+            String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(image.getOriginalFilename());
+            File dest = new File(uploadPath, fileName);
+            image.transferTo(dest);
+            imagePath = dest.getAbsolutePath();
+        }
+        existingTalent.setImagePath(imagePath);
+
+        // 태그 처리
+        List<Tag> tagEntities = new ArrayList<>();
+        if (request.getTagNames() != null) {
+            for (String tagName : request.getTagNames()) {
+                Tag tag = tagRepository.findByName(tagName)
+                        .orElseGet(() -> tagRepository.save(Tag.builder().name(tagName).build()));
+                tagEntities.add(tag);
+            }
+        }
+        existingTalent.setTags(new HashSet<>(tagEntities));
+
+        existingTalent.setUpdatedAt(LocalDateTime.now());
+        Talent updatedTalent = talentRepository.save(existingTalent);
+        return toResponseDto(updatedTalent);
+    }
+
+    // Admin 전용 deleteTalent 메소드 (소유자 확인 로직 없음)
+    @Override
+    public void adminDeleteTalent(Integer talentId) {
+        Talent talent = talentRepository.findById(talentId)
+                .orElseThrow(() -> new RuntimeException("Talent not found with id " + talentId));
+
+        talent.setDeleted(true);
         talent.setUpdatedAt(LocalDateTime.now());
         talentRepository.save(talent);
     }

@@ -43,8 +43,9 @@ public class Talent {
     @Column(name = "status", length = 20)
     private String status; // 예: 요청중, 진행중, 완료
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    @Column(name = "is_deleted", nullable = false)
+    @org.hibernate.annotations.ColumnDefault("false")
+    private Boolean deleted;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

@@ -1,4 +1,4 @@
-package com.example.campy.dto.talent;
+package com.example.campy.dto.talent.response;
 
 import com.example.campy.dto.user.response.UserResponseDto;
 import lombok.AllArgsConstructor;

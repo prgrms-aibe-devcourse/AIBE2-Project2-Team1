@@ -1,4 +1,4 @@
-package com.example.campy.dto.talent;
+package com.example.campy.dto.talent.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,10 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TalentUpdateRequest {
-    @NotNull(message = "재능 ID는 필수입니다.")
-    private Integer talentId;
-
+public class TalentCreateRequest {
     @NotBlank(message = "제목은 필수입니다.")
     private String title;
 
