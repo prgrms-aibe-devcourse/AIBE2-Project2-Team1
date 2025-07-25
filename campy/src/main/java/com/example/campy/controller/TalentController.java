@@ -35,6 +35,7 @@ public class TalentController {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final TalentService talentService;
 
     @Value("${upload.path}")
     private String uploadPath;
