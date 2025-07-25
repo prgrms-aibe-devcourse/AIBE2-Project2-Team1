@@ -37,4 +37,15 @@ public class AuthController {
         authService.signUp(form);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("jwtToken", null);  // 이름은 기존과 같게
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);  // 즉시 만료
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok("Logout successful");
+    }
 }

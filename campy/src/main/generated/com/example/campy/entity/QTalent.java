@@ -28,11 +28,11 @@ public class QTalent extends EntityPathBase<Talent> {
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
+    public final BooleanPath deleted = createBoolean("deleted");
+
     public final StringPath description = createString("description");
 
     public final StringPath imagePath = createString("imagePath");
-
-    public final BooleanPath isDeleted = createBoolean("isDeleted");
 
     public final StringPath offlineLocation = createString("offlineLocation");
 
