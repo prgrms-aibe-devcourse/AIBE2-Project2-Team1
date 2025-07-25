@@ -1,28 +1,32 @@
 package com.example.campy.service;
 
+import com.example.campy.dto.talent.TalentCreateRequest;
+import com.example.campy.dto.talent.TalentResponseDto;
+import com.example.campy.dto.talent.TalentUpdateRequest;
+import com.example.campy.dto.talent.TalentUpdateRequest;
+import com.example.campy.dto.user.response.UserResponseDto;
+import com.example.campy.entity.Tag;
 import com.example.campy.entity.Talent;
-import com.example.campy.repository.TalentRepository;
+import com.example.campy.entity.User;
 import com.example.campy.repository.TagRepository;
+import com.example.campy.repository.TalentRepository;
 import com.example.campy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.data.domain.Page;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.UUID;
-import java.util.Optional;
-import com.example.campy.entity.Tag;
-import com.example.campy.entity.User;
-import com.example.campy.dto.TalentRequestDto;
-
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,81 +40,7 @@ public class TalentServiceImpl implements TalentService {
     private String uploadPath;
 
     @Override
-    public Talent createTalent(Talent talent) {
-        return talentRepository.save(talent);
-    }
-
-    @Override
-    public Talent getTalentById(Integer talentId) {
-        return talentRepository.findById(talentId)
-                .orElseThrow(() -> new RuntimeException("Talent not found with id " + talentId));
-    }
-
-    @Override
-    public List<Talent> getAllTalents() {
-        return talentRepository.findAll();
-    }
-
-    @Override
-    public Page<Talent> getAllTalents(org.springframework.data.domain.Pageable pageable, String status, String category, String tag) {
-        if (tag != null && category != null) {
-            return talentRepository.findByTags_NameAndCategoryAndIsDeletedFalse(tag, category, pageable);
-        } else if (tag != null) {
-            return talentRepository.findByTags_NameAndIsDeletedFalse(tag, pageable);
-        } else if (status != null && category != null) {
-            return talentRepository.findByIsDeletedFalseAndStatusAndCategory(status, category, pageable);
-        } else if (status != null) {
-            return talentRepository.findByIsDeletedFalseAndStatus(status, pageable);
-        } else if (category != null) {
-            return talentRepository.findByIsDeletedFalseAndCategory(category, pageable);
-        } else {
-            return talentRepository.findByIsDeletedFalse(pageable);
-        }
-    }
-
-    @Override
-    public Talent updateTalent(Integer talentId, Talent updatedTalent) {
-        Talent existingTalent = talentRepository.findById(talentId)
-                .orElseThrow(() -> new RuntimeException("Talent not found with id " + talentId));
-
-        // Update fields
-        existingTalent.setTitle(updatedTalent.getTitle());
-        existingTalent.setDescription(updatedTalent.getDescription());
-        existingTalent.setPrice(updatedTalent.getPrice());
-        existingTalent.setAvailableDays(updatedTalent.getAvailableDays());
-        existingTalent.setOfflineLocation(updatedTalent.getOfflineLocation());
-        existingTalent.setStatus(updatedTalent.getStatus());
-        existingTalent.setIsDeleted(updatedTalent.getIsDeleted());
-        existingTalent.setImagePath(updatedTalent.getImagePath());
-        existingTalent.setCategory(updatedTalent.getCategory());
-        // Note: User and Tags relationships might need more complex handling depending on requirements
-
-        return talentRepository.save(existingTalent);
-    }
-
-    @Override
-    public void deleteTalent(Integer talentId) {
-        talentRepository.deleteById(talentId);
-    }
-
-    @Override
-    public void deleteTalent(Integer id, Integer userId) {
-        talentRepository.findById(id)
-                .filter(talent -> !Boolean.TRUE.equals(talent.getIsDeleted()))
-                .map(talent -> {
-                    if (!talent.getUser().getUserId().equals(userId)) {
-                        throw new RuntimeException("Unauthorized to delete this talent");
-                    }
-                    talent.setIsDeleted(true);
-                    talent.setUpdatedAt(LocalDateTime.now());
-                    talentRepository.save(talent);
-                    return talent;
-                })
-                .orElseThrow(() -> new RuntimeException("Talent not found with id " + id));
-    }
-
-    @Override
-    public Talent registerTalent(TalentRequestDto request, MultipartFile image) throws IOException {
+    public TalentResponseDto createTalent(TalentCreateRequest request, MultipartFile image) throws IOException {
         Integer userId = 1; // JWT 사용 시 교체
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -123,10 +53,12 @@ public class TalentServiceImpl implements TalentService {
         }
 
         List<Tag> tagEntities = new ArrayList<>();
-        for (String tagName : request.getTagNames()) {
-            Tag tag = tagRepository.findByName(tagName)
-                    .orElseGet(() -> tagRepository.save(Tag.builder().name(tagName).build()));
-            tagEntities.add(tag);
+        if (request.getTagNames() != null) {
+            for (String tagName : request.getTagNames()) {
+                Tag tag = tagRepository.findByName(tagName)
+                        .orElseGet(() -> tagRepository.save(Tag.builder().name(tagName).build()));
+                tagEntities.add(tag);
+            }
         }
 
         Talent talent = Talent.builder()
@@ -145,54 +77,129 @@ public class TalentServiceImpl implements TalentService {
                 .tags(new HashSet<>(tagEntities))
                 .build();
 
-        return talentRepository.save(talent);
+        Talent savedTalent = talentRepository.save(talent);
+        return toResponseDto(savedTalent);
     }
 
     @Override
-    public Talent updateTalent(Integer id, TalentRequestDto request, MultipartFile image) throws IOException {
+    public TalentResponseDto getTalentById(Integer talentId) {
+        Talent talent = talentRepository.findById(talentId)
+                .orElseThrow(() -> new RuntimeException("Talent not found with id " + talentId));
+        return toResponseDto(talent);
+    }
+
+    @Override
+    public Page<TalentResponseDto> getAllTalents(Pageable pageable, String status, String category, String tag) {
+        Page<Talent> talentsPage;
+        if (tag != null && category != null) {
+            talentsPage = talentRepository.findByTags_NameAndCategoryAndIsDeletedFalse(tag, category, pageable);
+        } else if (tag != null) {
+            talentsPage = talentRepository.findByTags_NameAndIsDeletedFalse(tag, pageable);
+        } else if (status != null && category != null) {
+            talentsPage = talentRepository.findByIsDeletedFalseAndStatusAndCategory(status, category, pageable);
+        } else if (status != null) {
+            talentsPage = talentRepository.findByIsDeletedFalseAndStatus(status, pageable);
+        } else if (category != null) {
+            talentsPage = talentRepository.findByIsDeletedFalseAndCategory(category, pageable);
+        } else {
+            talentsPage = talentRepository.findByIsDeletedFalse(pageable);
+        }
+        return talentsPage.map(this::toResponseDto);
+    }
+
+    @Override
+    public TalentResponseDto updateTalent(Integer id, TalentUpdateRequest request, MultipartFile image) throws IOException {
         Integer userId = 1; // JWT 사용 시 교체
 
-        return talentRepository.findById(id)
+        Talent existingTalent = talentRepository.findById(id)
                 .filter(talent -> !Boolean.TRUE.equals(talent.getIsDeleted()))
-                .map(talent -> {
-                    if (!talent.getUser().getUserId().equals(userId)) {
-                        throw new RuntimeException("Unauthorized to update this talent");
-                    }
-                    talent.setTitle(request.getTitle());
-                    talent.setDescription(request.getDescription());
-                    talent.setPrice(request.getPrice());
-                    talent.setAvailableDays(request.getAvailableDays());
-                    talent.setOfflineLocation(request.getOfflineLocation());
-                    talent.setCategory(request.getCategory());
-
-                    // 이미지 처리
-                    String imagePath = talent.getImagePath();
-                    if (image != null && !image.isEmpty()) {
-                        String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(image.getOriginalFilename());
-                        File dest = new File(uploadPath, fileName);
-                        try {
-                            image.transferTo(dest);
-                            imagePath = dest.getAbsolutePath();
-                        } catch (IOException e) {
-                            throw new RuntimeException("Failed to upload image", e);
-                        }
-                    }
-                    talent.setImagePath(imagePath);
-
-                    // 태그 처리
-                    List<Tag> tagEntities = new ArrayList<>();
-                    if (request.getTagNames() != null && !request.getTagNames().isEmpty()) {
-                        for (String tagName : request.getTagNames()) {
-                            Tag tag = tagRepository.findByName(tagName)
-                                    .orElseGet(() -> tagRepository.save(Tag.builder().name(tagName).build()));
-                            tagEntities.add(tag);
-                        }
-                    }
-                    talent.setTags(new HashSet<>(tagEntities));
-
-                    talent.setUpdatedAt(LocalDateTime.now());
-                    return talentRepository.save(talent);
-                })
                 .orElseThrow(() -> new RuntimeException("Talent not found with id " + id));
+
+        if (!existingTalent.getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("Unauthorized to update this talent");
+        }
+
+        existingTalent.setTitle(request.getTitle());
+        existingTalent.setDescription(request.getDescription());
+        existingTalent.setPrice(request.getPrice());
+        existingTalent.setAvailableDays(request.getAvailableDays());
+        existingTalent.setOfflineLocation(request.getOfflineLocation());
+        existingTalent.setCategory(request.getCategory());
+
+        // 이미지 처리
+        String imagePath = existingTalent.getImagePath();
+        if (image != null && !image.isEmpty()) {
+            String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(image.getOriginalFilename());
+            File dest = new File(uploadPath, fileName);
+            image.transferTo(dest);
+            imagePath = dest.getAbsolutePath();
+        }
+        existingTalent.setImagePath(imagePath);
+
+        // 태그 처리
+        List<Tag> tagEntities = new ArrayList<>();
+        if (request.getTagNames() != null) {
+            for (String tagName : request.getTagNames()) {
+                Tag tag = tagRepository.findByName(tagName)
+                        .orElseGet(() -> tagRepository.save(Tag.builder().name(tagName).build()));
+                tagEntities.add(tag);
+            }
+        }
+        existingTalent.setTags(new HashSet<>(tagEntities));
+
+        existingTalent.setUpdatedAt(LocalDateTime.now());
+        Talent updatedTalent = talentRepository.save(existingTalent);
+        return toResponseDto(updatedTalent);
+    }
+
+    @Override
+    public void deleteTalent(Integer talentId, Integer userId) {
+        Talent talent = talentRepository.findById(talentId)
+                .orElseThrow(() -> new RuntimeException("Talent not found with id " + talentId));
+
+        if (!talent.getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("Unauthorized to delete this talent");
+        }
+
+        talent.setIsDeleted(true);
+        talent.setUpdatedAt(LocalDateTime.now());
+        talentRepository.save(talent);
+    }
+
+    private TalentResponseDto toResponseDto(Talent talent) {
+        UserResponseDto userResponseDto = UserResponseDto.builder()
+                .userId(talent.getUser().getUserId())
+                .username(talent.getUser().getUsername())
+                .email(talent.getUser().getEmail())
+                .name(talent.getUser().getName())
+                .nickname(talent.getUser().getNickname())
+                .major(talent.getUser().getMajor())
+                .school(talent.getUser().getSchool())
+                .entranceYear(talent.getUser().getEntranceYear())
+                .role(talent.getUser().getRole())
+                .isVerified(talent.getUser().getIsVerified())
+                .profileImg(talent.getUser().getProfileImg())
+                .intro(talent.getUser().getIntro())
+                .build();
+
+        List<String> tagNames = talent.getTags().stream()
+                .map(Tag::getName)
+                .collect(Collectors.toList());
+
+        return TalentResponseDto.builder()
+                .talentId(talent.getTalentId())
+                .title(talent.getTitle())
+                .description(talent.getDescription())
+                .price(talent.getPrice())
+                .availableDays(talent.getAvailableDays())
+                .offlineLocation(talent.getOfflineLocation())
+                .status(talent.getStatus())
+                .imagePath(talent.getImagePath())
+                .category(talent.getCategory())
+                .createdAt(talent.getCreatedAt())
+                .updatedAt(talent.getUpdatedAt())
+                .user(userResponseDto)
+                .tagNames(tagNames)
+                .build();
     }
 }
