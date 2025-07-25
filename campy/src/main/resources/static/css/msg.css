@@ -79,7 +79,7 @@ th, td {
     font-size: 14px;
 }
 
-tr:hover {
+table tbody tr:hover {
     background-color: #f0f4f7;
 }
 
