@@ -1,0 +1,21 @@
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #F6F1F1;
+}
+
+.auth-button {
+    background-color: #146C94;
+    color: white;
+    border: 2px solid white;
+    border-radius: 12px;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.auth-button:hover {
+    background-color: #0b4f6c;
+}

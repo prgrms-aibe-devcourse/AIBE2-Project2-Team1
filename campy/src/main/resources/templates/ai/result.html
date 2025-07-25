@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>AI 추천 결과 페이지</title>
+    <link rel="stylesheet" href="/css/ai.css">
+    <style>
+        .background-box {
+            background: linear-gradient(#CDEDF6, #97C8DF);
+            width: 90%;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 0 auto;
+        }
+
+        .description-box {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .description-text {
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            word-break: break-word;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            justify-items: center;
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .mentor-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .mentor-card {
+            background-color: white;
+            width: 260px;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            border: 2px solid #787878;
+            transition: transform 0.3s;
+        }
+
+        .mentor-card:hover {
+            transform: scale(1.02);
+        }
+
+        .mentor-info {
+            flex: 1;
+            padding-right: 10px;
+        }
+
+        .mentor-info strong {
+            font-size: 15px;
+        }
+
+        .mentor-info span,
+        .mentor-info p,
+        .mentor-info div {
+            font-size: 12px;
+        }
+
+        .mentor-info div {
+            color: #555;
+        }
+
+        .mentor-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* 애니메이션 효과 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+
+        .show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+<main style="display: flex; flex-direction: column; align-items: center; padding: 40px;">
+
+    <!-- 그라데이션 박스 -->
+    <div class="background-box">
+
+        <!-- 안내 문구 -->
+        <div id="step1" class="description-box fade-in">
+            <img src="/images/ai.png" style="width: 45px;">
+            <span class="description-text">
+                00님께 꼭 맞는 멘토 4분을 찾아왔어요!🎉<br>
+                이제 멘토링으로 더 단단해질 시간⏳ 여러분의 멋진 성장을 응원할게요! 💪🌟
+            </span>
+        </div>
+
+        <!-- 카드 컨테이너 -->
+        <div id="step2" class="card-container fade-in">
+
+            <!-- 반복되는 멘토 카드 예시 -->
+            <a href="/mentor/1" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
+                </div>
+            </a>
+
+            <a href="/mentor/2" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
+                </div>
+            </a>
+
+            <a href="/mentor/3" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
+                </div>
+            </a>
+
+            <a href="/mentor/4" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
+                </div>
+            </a>
+
+            <a href="/mentor/5" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
+                </div>
+            </a>
+
+            <a href="/mentor/6" class="mentor-card-link">
+                <div class="mentor-card">
+                    <div class="mentor-info">
+                        <strong>수지 멘토</strong><br>
+                        <span>⭐ 5.0 (1,023)</span>
+                        <p>컴공 친구들 진로 상담 및 취업 Q&A!...</p>
+                        <div>#컴공 #포폴 #상담</div>
+                    </div>
+                    <img src="/images/mentor6.jpg" class="mentor-image">
+                </div>
+            </a>
+
+        </div>
+    </div>
+</main>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+
+        setTimeout(() => {
+            step1.classList.add('show');
+        }, 800); // 이미지 + 텍스트 등장
+
+        setTimeout(() => {
+            step2.classList.add('show');
+        }, 3000); // 카드 컨테이너 등장
+    });
+</script>
+</body>
+</html>

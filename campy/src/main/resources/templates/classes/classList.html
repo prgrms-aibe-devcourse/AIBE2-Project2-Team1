@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>멘토 리스트</title>
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            background-color: #F6F1F1;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+        }
+
+        .search-box {
+            margin-bottom: 30px;
+        }
+
+        .search-box p {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .search-input-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            height: 30px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            border: 2px solid #00aacc;
+            border-radius: 30px;
+            padding: 10px;
+            background-color: #F6F1F1;
+        }
+
+        .search-input-wrapper input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            background-color: transparent;
+        }
+        .search-button {
+            background-color: #19A7CE;
+            border: none;
+            color: white;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.2s ease;
+        }
+        .search-button:hover {
+            background-color: #146c94;
+        }
+
+        .search-button {
+            width: 36px; /* 원하는 너비 */
+            height: 36px; /* 원하는 높이 */
+            background-color: #1389b2;
+            border: none;
+            padding: 0;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+
+
+        .tag-list {
+            margin-top: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: #19A7CE;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 12px;
+            margin: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .side-images {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .side-images .image-wrapper {
+            position: relative;
+            border: 2px solid #19A7CE;
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: white;
+            width: 150px;
+            height: 150px;
+        }
+
+        .side-images .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 20px;
+        }
+
+        .side-images .image-wrapper .side-button {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #19A7CE;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            padding: 6px 20px; /* ← 가로로 길게 */
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+            width: auto; /* 너비 자동 조정 */
+            max-width: 80%; /* 부모 크기 넘지 않게 */
+        }
+
+        .side-images .image-wrapper .side-button:hover {
+            background-color: #1389b2;
+        }
+
+        .mentor-section {
+            display: flex;
+            gap: 30px;
+        }
+
+        .mentor-list-wrapper {
+            background-color: #fff;
+            padding: 30px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+        .mentor-name {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .mentor-card {
+
+            display: flex;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        .mentor-card .card-content {
+            flex: 1;
+            padding: 15px;
+        }
+
+        .mentor-card .card-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .mentor-card .card-tags {
+            color: #0077aa;
+            font-size: 13px;
+        }
+
+        .mentor-card .card-image {
+            width: 160px;
+            height: 80px;
+            text-align: center;
+            background-color: #f9f9f9;
+            flex-direction: column; /* 세로 정렬 */
+            align-items: center;
+            justify-content: flex-start; /* 이미지 위, 텍스트 아래로 */
+
+        }
+
+        .mentor-card .card-image img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+
+        .mentor-card .card-image p {
+            font-size: 13px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<!-- Header Fragment (메인과 합칠 때 복구) -->
+<!-- <div th:replace="fragments/header :: header"></div> -->
+<div class="container">
+    <div class="search-box">
+        <p>어떤 멘토를 원하시나요?
+            <span style="color: #0077aa; font-size: 14px;">#태그 작성후  엔터를 누르시면 태그로 검색하실 수 있어요!</span>
+        </p>
+        <div class="search-input-wrapper">
+            <input type="text" id="search-input" placeholder="검색어를 입력해주세요" autocomplete="off">
+            <button id="search-btn" class="search-button">
+                <img src="/images/search-icon.png" alt="검색" class="search-icon">
+            </button>
+        </div>
+
+
+        <div class="tag-list" id="tag-list"></div>
+    </div>
+
+    <div class="mentor-section">
+        <div class="side-images">
+            <div class="image-wrapper">
+                <img src="/images/ai-mento.png" alt="AI 멘토 매칭하기">
+                <a href="/ai/start" class="side-button">AI 멘토 매칭하기</a>
+            </div>
+            <div class="image-wrapper">
+                <img src="/images/mentor-register.png" alt="수업 등록하기">
+                <a href="/newClass" class="side-button">수업 등록하기</a>
+            </div>
+        </div>
+
+        <div class="mentor-list-wrapper" style="flex: 2.5;">
+            <div class="mentor-card" data-id="1" data-tags="컴공 포폴 진로 상담">
+                <div class="card-content">
+                    <p class="mentor-name">권은비 멘토</p>
+                    <div class="card-title">컴퓨터 공학과 취업 상담</div>
+                    <p style="color: goldenrod;">⭐ 5.0</p>
+                    <p>컴퓨터공학과 친구들 진로 상담 및 취업 질문 받아요! 대기업 합격 포트 다수 보유하고 있습니다. 과제나 수업 학습 방법 팁들도 알려드립니다...</p>
+                    <p class="card-tags">#컴공 #포폴 #진로 #상담</p>
+                </div>
+                <div class="card-image">
+                    <img src="/images/mentor1.jpg" alt="권은비 멘토">
+                </div>
+            </div>
+
+            <div class="mentor-card" data-id="2" data-tags="컴공 수업">
+                <div class="card-content">
+                    <p class="mentor-name">차은우 멘토</p>
+                    <div class="card-title">컴공 학교 수업 멘토링</div>
+                    <p style="color: goldenrod;">⭐ 4.8</p>
+                    <p>컴퓨터공학과 신입생 여러분~ 어려운 C언어, Java를 쉽게 설명해드릴 수 있습니다. 어떻게 하면 이해하고 실전에 사용할 수 있을지 알려...</p>
+                    <p class="card-tags">#컴공 #수업</p>
+                </div>
+                <div class="card-image">
+                    <img src="/images/mentor2.jpg" alt="차은우 멘토">
+
+                </div>
+            </div>
+
+            <div class="mentor-card" data-id="3" data-tags="컴공 코테">
+                <div class="card-content">
+                    <p class="mentor-name">설윤 멘토</p>
+                    <div class="card-title">코딩 테스트 준비 멘토링</div>
+                    <p style="color: goldenrod;">⭐ 4.9</p>
+                    <p>취업을 위해서 코테를 준비하는 사람 여기 여기 모여라~ 어떻게 코테를 풀면 다양한 유형에 적용할 수 있을지 요약하여 설명해드립니다. 한번...</p>
+                    <p class="card-tags">#컴공 #코테</p>
+                </div>
+                <div class="card-image">
+                    <img src="/images/mentor3.jpg" alt="설윤 멘토">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById('search-input');
+    const tagList = document.getElementById('tag-list');
+    let selectedTags = [];
+
+    searchInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const value = searchInput.value.trim();
+            if (!value) return;
+
+            if (value.startsWith('#')) {
+                addTag(value);
+            } else {
+                selectedTags = [];
+                tagList.innerHTML = '';
+                filterByKeyword(value);
+            }
+            searchInput.value = '';
+        }
+    });
+
+    function addTag(tag) {
+        if (selectedTags.includes(tag)) return;
+        selectedTags.push(tag);
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.textContent = tag;
+
+        span.addEventListener('click', () => {
+            span.remove();
+            selectedTags = selectedTags.filter(t => t !== tag);
+            filterCards();
+        });
+
+        tagList.appendChild(span);
+        filterCards();
+    }
+
+    function filterByKeyword(keyword) {
+        const cards = document.querySelectorAll('.mentor-card');
+        cards.forEach(card => {
+            const title = card.querySelector('.card-title').textContent;
+            card.style.display = title.includes(keyword) ? 'flex' : 'none';
+        });
+    }
+
+    function filterCards() {
+        const cards = document.querySelectorAll('.mentor-card');
+        cards.forEach(card => {
+            const tagsText = card.getAttribute('data-tags');
+            const hasAllTags = selectedTags.every(tag => tagsText.includes(tag.replace('#', '')));
+            card.style.display = hasAllTags ? 'flex' : 'none';
+        });
+    }
+
+    // 검색 버튼 클릭 시도 동일하게 처리
+    document.getElementById('search-btn').addEventListener('click', () => {
+        const value = searchInput.value.trim();
+        if (!value) return;
+
+        if (value.startsWith('#')) {
+            addTag(value);
+        } else {
+            selectedTags = [];
+            tagList.innerHTML = '';
+            filterByKeyword(value);
+        }
+        searchInput.value = '';
+    });
+
+    // 카드 클릭 시 상세 페이지 이동
+    document.querySelectorAll('.mentor-card').forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => {
+            const id = card.getAttribute('data-id');
+            window.location.href = `/class/detail/${id}`;
+        });
+    });
+
+</script>
+<!-- Footer Fragment (메인과 합칠때 복구) -->
+<!-- <div th:replace="fragments/footer :: footer"></div> -->
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>AI 추천 시작 페이지</title>
+    <link rel="stylesheet" href="/css/ai.css">
+    <style>
+        .fade-in {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+        .show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<main style="display: flex; justify-content: center; padding: 40px;">
+    <div style="background: linear-gradient(#CDEDF6, #97C8DF); width: 400px; height: 600px; padding: 20px; border-radius: 12px;">
+
+        <!-- 이미지 -->
+        <div id="step1" class="fade-in" style="text-align: left; margin-bottom: 10px;">
+            <img src="/images/ai.png" style="width: 50px;">
+        </div>
+
+        <!-- 캠피 인사 문구 -->
+        <div id="step2" class="fade-in" style="margin-bottom: 20px;">
+            <span style="background-color: white; padding: 8px 12px; border-radius: 0px 12px 12px 12px; display: inline-block;">
+                안녕하세요! 저는 멘토를 매칭해주는 캠피에요!
+            </span>
+        </div>
+
+        <!-- 멘토링 설명 문구 -->
+        <div id="step3" class="fade-in" style="margin-bottom: 40px;">
+            <span style="background-color: white; padding: 8px 12px; border-radius: 12px; display: inline-block;">
+                원하는 멘토링 내용을 입력해주시면 멘토를 추천해드릴게요!
+            </span>
+        </div>
+
+        <!-- 입력 폼 -->
+        <form id="step4" class="fade-in" action="/ai/loading" method="GET">
+            <textarea placeholder="멘토링 받고 싶은 내용을 적어주세요" style="width: 90%; height: 80px; border-radius: 8px; padding: 20px;"></textarea>
+            <div style="text-align: right;">
+                <button type="submit" class="auth-button" style="margin-top: 10px;">추천받기</button>
+            </div>
+        </form>
+
+    </div>
+</main>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const steps = ['step1', 'step2', 'step3', 'step4'];
+        steps.forEach((id, index) => {
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('show');
+            }, index * 2000);  // 2초 간격으로 등장
+        });
+    });
+</script>
+</body>
+</html>
