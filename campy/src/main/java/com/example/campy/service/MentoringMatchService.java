@@ -148,7 +148,7 @@ public class MentoringMatchService {
 
     // 중복되는 throw 부분 빼둔것 추후 사용
     private MentoringMatch getMatchOrThrow(Integer matchId){
-        return matchRepo.findByIdAndStatusNot(matchId, MentoringStatus.DELETED)
+        return matchRepo.findByMatchIdAndStatusNot(matchId, MentoringStatus.DELETED)
                 .orElseThrow(() ->
                         new GeneralException(ErrorCode.NOT_FOUND, "해당 매칭이 존재하지 않거나 삭제되었습니다."));
     }
