@@ -1,4 +1,4 @@
-package com.example.campy.service;
+package com.example.campy.service.mentoring;
 
 import com.example.campy.constant.MatchRole;
 import com.example.campy.constant.MentoringStatus;
@@ -10,6 +10,9 @@ import com.example.campy.entity.MentoringOffer;
 import com.example.campy.entity.User;
 import com.example.campy.repository.MentoringMatchRepository;
 import com.example.campy.repository.MentoringOfferRepository;
+import com.example.campy.service.MentoringMatchDetailService;
+import com.example.campy.service.MentoringMatchMemberService;
+import com.example.campy.service.MentoringMatchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

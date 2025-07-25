@@ -1,4 +1,4 @@
-package com.example.campy.service;
+package com.example.campy.service.mentoring;
 
 import com.example.campy.constant.MentoringStatus;
 import com.example.campy.dto.mentoring.request.MentoringOfferCreateRequest;
@@ -11,6 +11,7 @@ import com.example.campy.repository.MentoringOfferRepository;
 import com.example.campy.repository.MentoringTagPostRepository;
 import com.example.campy.repository.MentoringTagRepository;
 import com.example.campy.repository.UserRepository;
+import com.example.campy.service.MentoringOfferService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

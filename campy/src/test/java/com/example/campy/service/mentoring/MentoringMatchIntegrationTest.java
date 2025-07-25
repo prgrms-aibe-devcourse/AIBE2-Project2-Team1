@@ -1,4 +1,4 @@
-package com.example.campy.service;
+package com.example.campy.service.mentoring;
 
 import com.example.campy.constant.MentoringStatus;
 import com.example.campy.constant.MentoringType;
@@ -10,6 +10,7 @@ import com.example.campy.entity.User;
 import com.example.campy.repository.MentoringMatchRepository;
 import com.example.campy.repository.MentoringOfferRepository;
 import com.example.campy.repository.UserRepository;
+import com.example.campy.service.MentoringMatchService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
