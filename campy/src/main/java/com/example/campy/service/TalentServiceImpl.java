@@ -41,9 +41,18 @@ public class TalentServiceImpl implements TalentService {
     private String uploadPath;
 
     @Override
-    public TalentResponseDto createTalent(TalentCreateRequest request, MultipartFile image) throws IOException {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getUserId()));
+    public TalentResponseDto createTalent(TalentCreateRequest request, MultipartFile image, Authentication authentication) throws IOException {
+        User user;
+        if (request.getUserId() != null) {
+            // 관리자가 userId를 지정한 경우
+            user = userRepository.findById(request.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getUserId()));
+        } else {
+            // 일반 사용자가 자신의 재능을 생성하는 경우 (Authentication 사용)
+            String username = authentication.getName();
+            user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        }
 
         String imagePath = null;
         if (image != null && !image.isEmpty()) {

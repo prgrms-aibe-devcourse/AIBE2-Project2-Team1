@@ -68,9 +68,10 @@ public class TalentController {
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<TalentResponseDto> registerTalent(
             @RequestPart("data") TalentCreateRequest request,
-            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            Authentication authentication) throws IOException {
 
-        TalentResponseDto registeredTalent = talentService.createTalent(request, image);
+        TalentResponseDto registeredTalent = talentService.createTalent(request, image, authentication);
         return ResponseEntity.ok(registeredTalent);
     }
 

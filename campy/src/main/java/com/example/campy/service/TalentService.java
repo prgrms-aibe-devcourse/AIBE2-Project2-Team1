@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface TalentService {
-    TalentResponseDto createTalent(TalentCreateRequest request, MultipartFile image) throws IOException;
+    TalentResponseDto createTalent(TalentCreateRequest request, MultipartFile image, Authentication authentication) throws IOException;
     TalentResponseDto getTalentById(Integer talentId);
     Page<TalentResponseDto> getAllTalents(Pageable pageable, String status, String category, String tag);
     TalentResponseDto updateTalent(Integer id, TalentUpdateRequest request, MultipartFile image, Authentication authentication) throws IOException;
