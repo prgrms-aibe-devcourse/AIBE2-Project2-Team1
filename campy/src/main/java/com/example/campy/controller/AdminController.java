@@ -2,15 +2,19 @@ package com.example.campy.controller;
 
 import com.example.campy.service.AdminService;
 import com.example.campy.service.BoardService;
+import com.example.campy.service.TalentService;
 import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
 import com.example.campy.dto.review.request.ReviewCreateRequest;
 import com.example.campy.dto.user.response.UserResponseDto;
 import com.example.campy.dto.user.request.UserUpdateRequest;
-import com.example.campy.dto.user.request.UserCreateRequest; // UserCreateRequest import 추가
+import com.example.campy.dto.user.request.UserCreateRequest;
 import com.example.campy.dto.board.response.BoardResponseDto;
 import com.example.campy.dto.board.request.BoardUpdateRequest;
-import com.example.campy.dto.board.request.BoardCreateRequest; // BoardCreateRequest import 추가
+import com.example.campy.dto.board.request.BoardCreateRequest;
+import com.example.campy.dto.TalentRequestDto;
+import com.example.campy.entity.Talent;
+import com.example.campy.entity.Tag;
 import com.example.campy.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -20,7 +24,12 @@ import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -31,6 +40,7 @@ public class AdminController {
     private final AdminService adminService;
     private final AdminRepository adminRepository;
     private final BoardService boardService;
+    private final TalentService talentService;
 
     @GetMapping
     public String adminPage(Authentication authentication, Model model) {
@@ -223,8 +233,85 @@ public class AdminController {
     }
 
     @GetMapping("/talents")
-    public String adminTalentsPage() {
+    public String adminTalentsPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String tag,
+            Model model
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        model.addAttribute("talents", talentService.getAllTalents(pageable, status, category, tag));
         return "admin/admin_talents/admin_talents";
+    }
+
+    @GetMapping("/talents/new")
+    public String adminTalentNewPage(Model model) {
+        model.addAttribute("talentRequestDto", new TalentRequestDto());
+        return "admin/admin_talents/admin_talent_new";
+    }
+
+    @GetMapping("/talents/{id}/edit")
+    public String adminTalentEditPage(@PathVariable Integer id, Model model) {
+        Talent talent = talentService.getTalentById(id);
+        model.addAttribute("talent", talent);
+        // TalentRequestDto에 기존 Talent 데이터를 채워서 폼에 바인딩
+        TalentRequestDto talentRequestDto = new TalentRequestDto();
+        talentRequestDto.setTitle(talent.getTitle());
+        talentRequestDto.setDescription(talent.getDescription());
+        talentRequestDto.setPrice(talent.getPrice());
+        talentRequestDto.setAvailableDays(talent.getAvailableDays());
+        talentRequestDto.setOfflineLocation(talent.getOfflineLocation());
+        talentRequestDto.setCategory(talent.getCategory());
+        // 태그는 Set<Tag>에서 String으로 변환하여 설정
+        if (talent.getTags() != null && !talent.getTags().isEmpty()) {
+            String tagNames = talent.getTags().stream()
+                                    .map(Tag::getName)
+                                    .collect(java.util.stream.Collectors.joining(","));
+            talentRequestDto.setTagNames(java.util.Arrays.asList(tagNames.split(",")));
+        }
+        model.addAttribute("talentRequestDto", talentRequestDto);
+        return "admin/admin_talents/admin_talent_edit";
+    }
+
+    @PostMapping("/talents/new")
+    public String createTalent(
+            @ModelAttribute @Valid TalentRequestDto talentRequestDto,
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            BindingResult bindingResult
+    ) throws IOException {
+        if (bindingResult.hasErrors()) {
+            return "admin/admin_talents/admin_talent_new";
+        }
+        talentService.registerTalent(talentRequestDto, image);
+        return "redirect:/admin/talents";
+    }
+
+    @PostMapping("/talents/{id}/edit")
+    public String updateTalent(
+            @PathVariable Integer id,
+            @ModelAttribute @Valid TalentRequestDto talentRequestDto,
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            BindingResult bindingResult
+    ) throws IOException {
+        if (bindingResult.hasErrors()) {
+            return "admin/admin_talents/admin_talent_edit";
+        }
+        talentService.updateTalent(id, talentRequestDto, image);
+        return "redirect:/admin/talents";
+    }
+
+    @PostMapping("/talents/{id}/delete")
+    public String deleteTalent(@PathVariable Integer id) {
+        Integer userId = 1; // JWT 사용 시 교체
+        talentService.deleteTalent(id, userId);
+        return "redirect:/admin/talents";
     }
 
     @GetMapping("/mentoring-offers")
