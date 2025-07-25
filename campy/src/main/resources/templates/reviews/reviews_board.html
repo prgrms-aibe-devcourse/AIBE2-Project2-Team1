@@ -1,48 +1,44 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{fragments/layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>후기 게시판</title>
-    <th:block th:fragment="head-extra">
-        <link rel="stylesheet" th:href="@{/css/board.css}">
-    </th:block>
+    <link rel="stylesheet" th:href="@{/css/board.css}">
 </head>
 <body>
-    <th:block th:fragment="content">
-        <div class="container my-4">
-            <h1>후기 게시판</h1>
+    <div th:replace="~{fragments/header :: header}"></div>
 
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>작성자</th>
-                        <th>대상 사용자</th>
-                        <th>평점</th>
-                        <th>카테고리</th>
-                        <th>내용</th>
-                        <th>작성일</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="review : ${reviews}">
-                        <td th:text="${review.reviewId}"></td>
-                        <td th:text="${review.author.nickname}"></td>
-                        <td th:text="${review.targetUser.nickname}"></td>
-                        <td th:text="${review.rating}"></td>
-                        <td th:text="${review.category}"></td>
-                        <td th:text="${review.content}"></td>
-                        <td th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(reviews)}">
-                        <td colspan="7" class="text-center">등록된 후기가 없습니다.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </th:block>
-    <th:block th:fragment="body-extra">
-        <!-- 이 페이지에만 필요한 추가 JS -->
-    </th:block>
+    <div class="container my-4">
+        <h1>후기 게시판</h1>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>작성자</th>
+                    <th>대상 사용자</th>
+                    <th>평점</th>
+                    <th>카테고리</th>
+                    <th>내용</th>
+                    <th>작성일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="review : ${reviews}">
+                    <td th:text="${review.reviewId}"></td>
+                    <td th:text="${review.author.nickname}"></td>
+                    <td th:text="${review.targetUser.nickname}"></td>
+                    <td th:text="${review.rating}"></td>
+                    <td th:text="${review.category}"></td>
+                    <td th:text="${review.content}"></td>
+                    <td th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(reviews)}">
+                    <td colspan="7" class="text-center">등록된 후기가 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
