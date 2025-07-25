@@ -49,6 +49,7 @@ h2 {
 /* 작성하기 버튼 */
 .write-button {
     float: right;
+    margin-left: 10px;
     margin-right: 20px;
     padding: 6px 12px;
     background-color: #AFD3E2;
