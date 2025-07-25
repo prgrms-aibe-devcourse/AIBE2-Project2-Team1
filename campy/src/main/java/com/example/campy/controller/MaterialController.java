@@ -19,6 +19,7 @@ public class MaterialController {
 
     private final MaterialService materialService;
 
+    //자료 등록
     @PostMapping
     public ResponseEntity<MaterialResponseDto> createMaterial(
             @RequestBody MaterialRequestDto requestDto,
@@ -29,6 +30,7 @@ public class MaterialController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // 전체 자료 목록 조회 (정렬 + 검색 포함)
     @GetMapping
     public ResponseEntity<Page<MaterialListDto>> getAllMaterials(
             @RequestParam(defaultValue = "0") int page,
@@ -40,6 +42,7 @@ public class MaterialController {
         return ResponseEntity.ok(materials);
     }
 
+    //자료 삭제
     @DeleteMapping("/{materialId}")
     public ResponseEntity<String> deleteMaterial(
             @PathVariable Integer materialId,
@@ -50,6 +53,7 @@ public class MaterialController {
         return ResponseEntity.ok("자료가 삭제되었습니다.");
     }
 
+    //자료 수정
     @PutMapping("/{materialId}")
     public ResponseEntity<MaterialResponseDto> updateMaterial(
             @PathVariable Integer materialId,
@@ -57,17 +61,18 @@ public class MaterialController {
             Authentication authentication
     ) {
         String username = authentication.getName();
-        materialService.updateMaterial(materialId, username, updateDto);
         MaterialResponseDto updatedMaterialDto = materialService.updateMaterial(materialId, username, updateDto);
         return ResponseEntity.ok().body(updatedMaterialDto);
     }
 
+    //자료 상세 조회
     @GetMapping("/{materialId}")
     public ResponseEntity<MaterialResponseDto> getMaterialById(@PathVariable Integer materialId) {
         MaterialResponseDto responseDto = materialService.getMaterialById(materialId);
         return ResponseEntity.ok(responseDto);
     }
 
+    //자료 키워드 검색 API (단순 검색)
     @GetMapping("/search")
     public ResponseEntity<Page<MaterialListDto>> searchMaterials(
             @RequestParam String keyword,
@@ -79,6 +84,7 @@ public class MaterialController {
         return ResponseEntity.ok(materials);
     }
 
+    //자료 파일 다운로드 API (결제한 사용자만 가능)
     @GetMapping("/{materialId}/download")
     public ResponseEntity<Resource> downloadMaterial(
             @PathVariable Integer materialId,
@@ -88,6 +94,7 @@ public class MaterialController {
         return materialService.downloadMaterialFile(materialId, username);
     }
 
+    //내가 등록한 자료 목록 조회
     @GetMapping("/my")
     public ResponseEntity<Page<MaterialListDto>> getMyMaterials(
             Authentication authentication,

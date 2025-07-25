@@ -28,6 +28,7 @@ public class MaterialServiceImpl implements MaterialService {
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
 
+    // 자료 등록
     @Override
     public MaterialResponseDto createMaterial(MaterialRequestDto requestDto, String username) {
         User user = userRepository.findByUsername(username)
@@ -50,6 +51,7 @@ public class MaterialServiceImpl implements MaterialService {
         return new MaterialResponseDto(saved);
     }
 
+    //자료 전체 조회 (정렬 + 검색 포함)
     @Override
     public Page<MaterialListDto> getAllMaterials(int page, int size, String sortParam, String keyword) {
         String[] sortParts = sortParam.split(",");
@@ -61,14 +63,17 @@ public class MaterialServiceImpl implements MaterialService {
         Page<Material> materialPage;
 
         if (keyword != null && !keyword.trim().isEmpty()) {
+            // 키워드 검색 포함
             materialPage = materialRepository.findByTitleContainingIgnoreCaseAndIsDeletedFalse(keyword, pageable);
         } else {
+            // 전체 조회
             materialPage = materialRepository.findByIsDeletedFalse(pageable);
         }
 
         return materialPage.map(MaterialListDto::new);
     }
 
+    //자료 삭제
     @Override
     public void deleteMaterial(Integer materialId, String username) {
         User user = userRepository.findByUsername(username)
@@ -86,6 +91,7 @@ public class MaterialServiceImpl implements MaterialService {
         materialRepository.save(material);
     }
 
+    //자료 수정
     @Override
     public MaterialResponseDto updateMaterial(Integer materialId, String username, MaterialRequestDto requestDto) {
         User user = userRepository.findByUsername(username)
@@ -98,6 +104,7 @@ public class MaterialServiceImpl implements MaterialService {
             throw new RuntimeException("수정 권한이 없습니다.");
         }
 
+        // 필드 업데이트
         material.setTitle(requestDto.getTitle());
         material.setContent(requestDto.getContent());
         material.setFileUrl(requestDto.getFileUrl());
@@ -110,6 +117,7 @@ public class MaterialServiceImpl implements MaterialService {
         return new MaterialResponseDto(updated);
     }
 
+    //자료 상세 조회
     @Override
     public MaterialResponseDto getMaterialById(Integer materialId) {
         Material material = materialRepository.findById(materialId)
@@ -117,6 +125,7 @@ public class MaterialServiceImpl implements MaterialService {
         return new MaterialResponseDto(material);
     }
 
+    //자료 검색
     @Override
     public Page<MaterialListDto> searchMaterials(String keyword, Pageable pageable) {
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -128,11 +137,13 @@ public class MaterialServiceImpl implements MaterialService {
                 .map(MaterialListDto::new);
     }
 
+    //자료 파일 다운로드
     @Override
     public ResponseEntity<Resource> downloadMaterialFile(Integer materialId, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("유효하지 않은 사용자입니다."));
 
+        // 결제 내역 확인
         boolean isBuyer = paymentRepository.existsByBuyer_UserIdAndTargetIdAndType(
                 user.getUserId(), materialId, "자료"
         );
@@ -140,9 +151,11 @@ public class MaterialServiceImpl implements MaterialService {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
+        // 자료 확인
         Material material = materialRepository.findByMaterialIdAndIsDeletedFalse(materialId)
                 .orElseThrow(() -> new RuntimeException("자료를 찾을 수 없습니다."));
 
+        // 실제 파일 경로 매핑
         String filePath = material.getFileUrl().replace("https://example.com", "C:/campyTest");
         File file = new File(filePath);
 
@@ -163,6 +176,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
     }
 
+    //내가 등록한 자료 목록 조회
     @Override
     public Page<MaterialListDto> getMyMaterials(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username)
