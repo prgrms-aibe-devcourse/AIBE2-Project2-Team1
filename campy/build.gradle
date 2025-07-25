@@ -75,6 +75,10 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+
+	onlyIf {
+		!project.hasProperty("skipTests")
+	}
 }
 
 // Querydsl 설정
