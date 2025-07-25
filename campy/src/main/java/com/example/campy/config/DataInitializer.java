@@ -25,6 +25,7 @@ public class DataInitializer implements CommandLineRunner {
     private final MentoringMatchRepository mentoringMatchRepository;
     private final TalentRepository talentRepository;
     private final PaymentRepository paymentRepository;
+    private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -114,6 +115,8 @@ public class DataInitializer implements CommandLineRunner {
                 .description("신입 개발자, 학생분들의 포트폴리오를 현직자의 시선으로 꼼꼼하게 리뷰해드립니다.")
                 .price(30000)
                 .status("판매중")
+                .deleted(false)
+                .category("IT/개발") // Added category
                 .createdAt(LocalDateTime.now())
                 .build();
                 
@@ -131,6 +134,19 @@ public class DataInitializer implements CommandLineRunner {
 
         paymentRepository.save(payment1);
 
+        // 7. 리뷰 더미 데이터 생성 (user1이 user2에게 멘토링 리뷰 작성)
+        Review review1 = Review.builder()
+                .author(user1) // 리뷰 작성자
+                .targetUser(user2) // 리뷰 대상 사용자 (멘토)
+                .rating(5) // 평점
+                .category("멘토링") // 리뷰 카테고리
+                .content("멘토님의 친절하고 상세한 설명 덕분에 JPA 개념을 완벽하게 이해할 수 있었습니다. 정말 감사합니다!")
+                .targetId(match1.getMatchId()) // 멘토링 매칭 ID
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        reviewRepository.save(review1);
 
         System.out.println("더미 데이터 생성이 완료되었습니다.");
     }

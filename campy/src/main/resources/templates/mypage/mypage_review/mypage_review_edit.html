@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>마이페이지 - 후기 수정</title>
+    <link rel="stylesheet" th:href="@{/css/mypage.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="container my-4">
+        <h1>후기 수정</h1>
+
+        <form th:action="@{/mypage/reviews/{reviewId}/update(reviewId=${review.reviewId})}" th:object="${reviewUpdateRequest}" method="post">
+            <div class="form-group">
+                <label for="rating">평점</label>
+                <input type="number" id="rating" th:field="*{rating}" class="form-control" min="1" max="5">
+            </div>
+            <div class="form-group">
+                <label for="category">카테고리</label>
+                <input type="text" id="category" th:field="*{category}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="content">내용</label>
+                <textarea id="content" th:field="*{content}" class="form-control" rows="5"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">수정</button>
+            <a th:href="@{/mypage/reviews/myreviews}" class="btn btn-secondary">취소</a>
+        </form>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

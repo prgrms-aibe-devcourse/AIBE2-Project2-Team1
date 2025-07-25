@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>마이페이지 - 내 후기</title>
+    <link rel="stylesheet" th:href="@{/css/mypage.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="container my-4">
+        <h1>내가 등록한 후기</h1>
+
+        <div th:if="${message}" class="alert alert-success" role="alert">
+            <p th:text="${message}"></p>
+        </div>
+
+        <a th:href="@{/mypage/reviews/new}" class="btn btn-primary mb-3">새 후기 작성</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>리뷰 대상</th>
+                    <th>평점</th>
+                    <th>카테고리</th>
+                    <th>내용</th>
+                    <th>작성일</th>
+                    <th>수정일</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="review : ${reviews}">
+                    <td th:text="${review.reviewId}"></td>
+                    <td th:text="${review.targetUser.nickname}"></td>
+                    <td th:text="${review.rating}"></td>
+                    <td th:text="${review.category}"></td>
+                    <td th:text="${review.content}"></td>
+                    <td th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(review.updatedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <a th:href="@{/mypage/reviews/{id}/edit(id=${review.reviewId})}" class="btn btn-sm btn-info">수정</a>
+                        <form th:action="@{/mypage/reviews/{id}/delete(id=${review.reviewId})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

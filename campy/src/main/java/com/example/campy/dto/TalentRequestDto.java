@@ -18,7 +18,6 @@ public class TalentRequestDto {
     private Integer price;
     private String availableDays;
     private String offlineLocation;
-    private MultipartFile image;
     private String category;
     private List<String> tagNames;
 }
