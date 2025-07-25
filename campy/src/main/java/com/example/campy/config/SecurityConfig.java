@@ -42,7 +42,13 @@ public class SecurityConfig {
                         .requestMatchers("/mypage").hasRole("USER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/materials/**").hasAnyRole("USER", "ADMIN")
+                        // 🔓 공개 API
+                        .requestMatchers(HttpMethod.GET, "/api/materials").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/materials/{id}").permitAll()
+
+                        // 🔐 인증이 필요한 GET 요청
+                        .requestMatchers(HttpMethod.GET, "/api/materials/my").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/materials/*/download").authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

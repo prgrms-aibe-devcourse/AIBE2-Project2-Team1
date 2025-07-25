@@ -19,6 +19,6 @@ public interface MentoringMatchRepository extends JpaRepository<MentoringMatch, 
     Page<MentoringMatch> findByStatusAndStatusNot(MentoringStatus status, MentoringStatus excludedStatus, Pageable pageable);
 
     // ID로 조회할 때도 DELETED 상태 제외
-    Optional<MentoringMatch> findByIdAndStatusNot(Integer matchId, MentoringStatus status);
+    Optional<MentoringMatch> findByMatchIdAndStatusNot(Integer matchId, MentoringStatus status);
 
 }

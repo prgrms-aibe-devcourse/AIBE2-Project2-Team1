@@ -28,6 +28,7 @@ public class MentoringMatchService {
     private final MentoringMatchMemberService memberService;
 
     // detail 없이 match만 생성
+
     public MentoringMatchResponse createMatch(MentoringMatchCreateRequest req) {
         MentoringOffer offer = offerRepo.findById(req.getMentoringOfferId())
                 .filter(o -> o.getStatus() != MentoringStatus.DELETED)
@@ -78,7 +79,6 @@ public class MentoringMatchService {
         detailService.createDetail(match, detailReq);
         memberService.createMembers(match, memberReqs);
 
-
         return MentoringMatchResponse.builder()
                 .matchId(match.getMatchId())
                 .mentoringOfferId(offer.getOfferId())
@@ -99,7 +99,7 @@ public class MentoringMatchService {
 
     // 매칭  ID 조회
     public MentoringMatchResponse findById(Integer matchId) {
-        MentoringMatch match = matchRepo.findByIdAndStatusNot(matchId, MentoringStatus.DELETED)
+        MentoringMatch match = matchRepo.findByMatchIdAndStatusNot(matchId, MentoringStatus.DELETED)
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "매칭이 존재하지 않거나 삭제되었습니다."));
         return toResponse(match);
     }
@@ -148,7 +148,7 @@ public class MentoringMatchService {
 
     // 중복되는 throw 부분 빼둔것 추후 사용
     private MentoringMatch getMatchOrThrow(Integer matchId){
-        return matchRepo.findByIdAndStatusNot(matchId, MentoringStatus.DELETED)
+        return matchRepo.findByMatchIdAndStatusNot(matchId, MentoringStatus.DELETED)
                 .orElseThrow(() ->
                         new GeneralException(ErrorCode.NOT_FOUND, "해당 매칭이 존재하지 않거나 삭제되었습니다."));
     }

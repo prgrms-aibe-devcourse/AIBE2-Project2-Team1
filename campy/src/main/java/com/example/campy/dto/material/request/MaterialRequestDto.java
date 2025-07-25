@@ -1,12 +1,12 @@
 package com.example.campy.dto.material.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MaterialRequestDto {
     private String title;
     private String content;

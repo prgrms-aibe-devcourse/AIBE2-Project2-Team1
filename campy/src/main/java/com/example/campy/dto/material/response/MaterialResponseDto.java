@@ -2,9 +2,11 @@ package com.example.campy.dto.material.response;
 
 import com.example.campy.entity.Material;
 import lombok.Getter;
+import lombok.Setter;
 
 
 @Getter
+@Setter
 public class MaterialResponseDto {
 
     private final Integer materialId;
