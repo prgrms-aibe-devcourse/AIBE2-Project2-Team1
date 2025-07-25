@@ -20,12 +20,14 @@ public class PageController {
 
     @GetMapping
     public String mainPage(Authentication authentication, Model model) {
+
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof CustomUserDetails) {
                 CustomUserDetails userDetails = (CustomUserDetails) principal;
                 model.addAttribute("loggedInUsername", userDetails.getUsername());
             }
+
         }
         return "main"; // → templates/main.html 렌더링
     }

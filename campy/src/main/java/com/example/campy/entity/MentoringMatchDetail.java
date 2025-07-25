@@ -16,26 +16,24 @@ public class MentoringMatchDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "detail_id")
-    private Integer detailId;
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(name = "match_id", nullable = false)
-    private Integer matchId;
+    // 연관관계 : 매칭
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "match_id", nullable = false)
+    private MentoringMatch mentoringMatch;
 
-    @Column(name = "request_id", nullable = false)
-    private Integer requestId;
+    private String topic;
 
-    @Column(name = "subject", length = 255)
-    private String subject;
+    @Column(columnDefinition = "TEXT")
+    private String summary;
 
-    @Column(name = "content", columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "session_date")
+    private LocalDateTime sessionDate;
 
-    @Column(name = "start_time")
-    private LocalDateTime startTime;
-
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
 
     @Column(name = "duration_minutes")
     private Integer durationMinutes;
