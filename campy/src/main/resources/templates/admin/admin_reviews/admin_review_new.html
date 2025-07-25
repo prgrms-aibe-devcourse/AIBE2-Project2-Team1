@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<head>
+    <title>관리자 - 리뷰 생성</title>
+    <th:block th:fragment="head-extra">
+        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="content">
+        <div class="container">
+            <h1>리뷰 생성</h1>
+
+            <form th:action="@{/admin/reviews/new}" th:object="${reviewCreateRequest}" method="post">
+                <div th:if="${#fields.hasErrors()}" class="alert alert-danger" role="alert">
+                    <p th:each="err : ${#fields.errors()}" th:text="${err}"></p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="authorId" class="form-label">작성자 (User ID)</label>
+                    <select class="form-control" id="authorId" th:field="*{authorId}">
+                        <option value="">-- 작성자 선택 --</option>
+                        <option th:each="user : ${users}" th:value="${user.userId}" th:text="${user.nickname + ' (' + user.email + ')'}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('authorId')}" th:errors="*{authorId}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="targetUserId" class="form-label">대상 사용자 (User ID)</label>
+                    <select class="form-control" id="targetUserId" th:field="*{targetUserId}">
+                        <option value="">-- 대상 사용자 선택 --</option>
+                        <option th:each="user : ${users}" th:value="${user.userId}" th:text="${user.nickname + ' (' + user.email + ')'}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('targetUserId')}" th:errors="*{targetUserId}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">카테고리</label>
+                    <select class="form-control" id="category" th:field="*{category}">
+                        <option value="">-- 카테고리 선택 --</option>
+                        <option value="멘토링">멘토링</option>
+                        <option value="재능">재능</option>
+                        <option value="자료">자료</option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="targetId" class="form-label">대상 ID (멘토링/재능/자료 ID)</label>
+                    <input type="number" class="form-control" id="targetId" th:field="*{targetId}">
+                    <div th:if="${#fields.hasErrors('targetId')}" th:errors="*{targetId}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="rating" class="form-label">평점 (1-5)</label>
+                    <input type="number" class="form-control" id="rating" th:field="*{rating}" min="1" max="5">
+                    <div th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" id="content" rows="5" th:field="*{content}"></textarea>
+                    <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-danger"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">리뷰 생성</button>
+                <a th:href="@{/admin/reviews}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </th:block>
+    <th:block th:fragment="body-extra">
+        <!-- 이 페이지에만 필요한 추가 JS -->
+    </th:block>
+</body>
+</html>

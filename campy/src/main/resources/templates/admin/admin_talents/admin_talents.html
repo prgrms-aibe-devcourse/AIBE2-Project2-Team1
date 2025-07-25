@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<head>
+    <title>관리자 - 재능 관리</title>
+    <th:block th:fragment="head-extra">
+        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="content">
+        <div class="container">
+            <h1>재능 관리</h1>
+
+            <div style="margin-bottom: 20px;">
+                <a th:href="@{/admin/talents/new}" class="button">새 재능 추가</a>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>제목</th>
+                        <th>설명</th>
+                        <th>가격</th>
+                        <th>상태</th>
+                        <th>카테고리</th>
+                        <th>등록자</th>
+                        <th>등록일</th>
+                        <th>수정일</th>
+                        <th>액션</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="talent : ${talents}">
+                        <td th:text="${talent.talentId}"></td>
+                        <td th:text="${talent.title}"></td>
+                        <td th:text="${talent.description}"></td>
+                        <td th:text="${talent.price}"></td>
+                        <td th:text="${talent.status}"></td>
+                        <td th:text="${talent.category}"></td>
+                        <td th:text="${talent.user.username}"></td>
+                        <td th:text="${#temporals.format(talent.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${#temporals.format(talent.updatedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td>
+                            <a th:href="@{/admin/talents/{talentId}/edit(talentId=${talent.talentId})}" class="button">수정</a>
+                            <form th:action="@{/admin/talents/{talentId}/delete(talentId=${talent.talentId})}" method="post" style="display:inline;" onsubmit="return confirm('정말로 이 재능을 삭제하시겠습니까?');">
+                                <button type="submit" class="button delete-button">삭제</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </th:block>
+    <th:block th:fragment="body-extra">
+        <!-- 이 페이지에만 필요한 추가 JS -->
+    </th:block>
+</body>
+</html>

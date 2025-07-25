@@ -27,7 +27,14 @@ public class AuthService {
                     if (!passwordEncoder.matches(form.getPassword(), user.getPassword())) {
                         throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
                     }
-                    return jwtUtil.createToken(user.getUsername(), user.getEmail(), user.getRole());
+
+                    // ✅ userId 포함된 토큰 생성
+                    return jwtUtil.createToken(
+                            user.getUserId(),
+                            user.getUsername(),
+                            user.getEmail(),
+                            user.getRole()
+                    );
                 })
                 .orElseGet(() -> {
                     // 2. User 테이블에 없으면 Admin 테이블에서 관리자 찾기
@@ -36,8 +43,12 @@ public class AuthService {
                                 if (!passwordEncoder.matches(form.getPassword(), admin.getPassword())) {
                                     throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
                                 }
-                                // Admin 엔티티에는 email 필드가 없으므로, username을 email 자리에 사용
-                                return jwtUtil.createToken(admin.getUsername(), admin.getUsername(), admin.getLevel());
+                                // Admin은 여전히 userId 없음 → 그대로 유지
+                                return jwtUtil.createToken(
+                                        admin.getUsername(),
+                                        admin.getUsername(),
+                                        admin.getLevel()
+                                );
                             })
                             .orElseThrow(() -> new EntityNotFoundException("사용자가 존재하지 않습니다."));
                 });

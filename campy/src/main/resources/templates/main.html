@@ -3,17 +3,625 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>메인 페이지 - Campy</title>
-    
+    <title>campy</title>
+
 </head>
 <body>
-    <h1>Campy 메인 페이지</h1>
-    <p th:if="${loggedInUser}" th:text="|${loggedInUser.nickname}님 환영합니다!|">환영합니다!</p>
-    <p th:unless="${loggedInUser}">환영합니다!</p>
-    <a th:href="@{/login}">로그인 페이지로 이동</a>
-    <br><br>
-    <a th:href="@{/mypage}">마이 페이지로 이동</a>
-    <br><br>
-    <a th:href="@{/admin}">어드민 페이지로 이동</a>
+    <header th:replace="~{fragments/header :: header}"></header>
+    <!-- 광고 슬라이더 영역 -->
+    <div class="ad-slider-wrapper">
+        <div class="ad-slider-container">
+            <div class="ad-slider-track">
+                <div class="ad-slide">
+                    <img src="/images/ad1.png" alt="광고1">
+                    <a href="/ai/start" class="ad-button">바로가기</a>
+                </div>
+                <div class="ad-slide">
+                    <img src="/images/ad2.png" alt="광고2">
+                    <a href="/telents/telentList" class="ad-button">바로가기</a>
+                </div>
+                <div class="ad-slide">
+                    <img src="/images/ad3.png" alt="광고3">
+                    <a href="/meterials/materialList" class="ad-button">바로가기</a>
+                </div>
+                <!-- 첫 번째 슬라이드 클론 (루프 전용) -->
+                <div class="ad-slide">
+                    <img src="/images/ad1.png" alt="광고1">
+                    <a href="/ai/start" class="ad-button">바로가기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+
+        body {
+            background-color: #F6F1F1;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ad-slider-wrapper {
+            padding: 20px 0 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .ad-slider-container {
+            width: 1400px;
+            height: 350px;
+            overflow: hidden;
+
+            position: relative;
+        }
+
+        .ad-slider-track {
+            display: flex;
+            transition: transform 1s ease-in-out;
+        }
+
+        .ad-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .ad-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ad-button {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            background-color: #146C94;
+            color: white;
+            border: 3px solid white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .ad-button:hover {
+            background-color: #094B69;
+        }
+    </style>
+
+    <script>
+        const track = document.querySelector('.ad-slider-track');
+        const slides = document.querySelectorAll('.ad-slide');
+        const totalRealSlides = slides.length - 1; // 클론 제외한 진짜 슬라이드 수
+        let currentIndex = 0;
+
+        function moveToSlide(index, animated = true) {
+            if (!animated) {
+                track.style.transition = 'none';
+            } else {
+                track.style.transition = 'transform 1s ease-in-out';
+            }
+            track.style.transform = `translateX(-${index * 100}%)`;
+        }
+
+        function nextSlide() {
+            currentIndex++;
+            moveToSlide(currentIndex);
+
+            // 마지막 클론 슬라이드(3 -> 클론 1) 도착 시 → 진짜 첫 슬라이드로 점프
+            if (currentIndex === slides.length - 1) {
+                setTimeout(() => {
+                    currentIndex = 0;
+                    moveToSlide(currentIndex, false); // 애니메이션 없이 점프
+                }, 1000); // transition 시간과 일치
+            }
+        }
+
+        setInterval(nextSlide, 5000); // 5초마다 전환
+    </script>
+
+    <!-- 수업 등록 섹션 -->
+    <div class="class-register-section">
+        <a href="/talents/register" class="class-card">
+            <div class="card-text">
+                <p class="card-title">수업을 등록해보세요!</p>
+                <p class="card-desc">여러분의 재능을 공유하고<br>원하는 학생을 만나보세요.</p>
+            </div>
+            <div class="card-image">
+                <img src="/images/class-register.png" alt="수업 등록 이미지">
+            </div>
+        </a>
+    </div>
+
+    <style>
+        .class-register-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 0px;
+        }
+
+        .class-card {
+            background-color: #E5E5E5;
+            width: 400px;
+            height: 120px;
+            border-radius: 0px;
+
+            display: flex;
+            align-items: center;
+            padding: 20px 30px;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .class-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-text {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #146C94;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 15px;
+            color: #666;
+        }
+
+        .card-image {
+            width: 100px;
+            height: 100px;
+            margin-left: 20px;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+
+    <!-- 추천 멘토 섹션 -->
+    <div class="recommend-wrapper">
+        <div class="recommend-container">
+            <h2 class="section-title">🔥매칭률 높은 멘토</h2>
+            <div class="recommend-scroll">
+                <!-- 반복 가능한 멘토 카드 6개 -->
+                <a href="/mentor/1" class="recommend-card">
+                    <img src="/images/mentor1.jpeg" alt="추천 멘토1">
+                    <div class="card-info">
+                        <p class="nickname">🍀 설윤 멘토님</p>
+                    </div>
+                </a>
+
+                <a href="/mentor/2" class="recommend-card">
+                    <img src="/images/mentor2.webp" alt="추천 멘토2">
+                    <div class="card-info">
+                        <p class="nickname">🔥 은우 멘토님</p>
+                    </div>
+                </a>
+
+                <a href="/mentor/3" class="recommend-card">
+                    <img src="/images/mentor3.webp" alt="추천 멘토3">
+                    <div class="card-info">
+                        <p class="nickname">🎨 은비 멘토님</p>
+                    </div>
+                </a>
+
+                <a href="/mentor/4" class="recommend-card">
+                    <img src="/images/mentor4.jpg" alt="추천 멘토4">
+                    <div class="card-info">
+                        <p class="nickname">🧪 영한 멘토님</p>
+                    </div>
+                </a>
+
+                <a href="/mentor/5" class="recommend-card">
+                    <img src="/images/mentor5.jpg" alt="추천 멘토5">
+                    <div class="card-info">
+                        <p class="nickname">✍️ 민석 멘토님</p>
+                    </div>
+                </a>
+
+                <a href="/mentor/6" class="recommend-card">
+                    <img src="/images/mentor6.jpg" alt="추천 멘토6">
+                    <div class="card-info">
+                        <p class="nickname">📚 수지 멘토님</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .recommend-wrapper {
+            background-color: #F6F1F1;
+            padding: 30px 0;
+        }
+
+        .recommend-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #146C94;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .recommend-scroll {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: auto; /* Firefox용 */
+        }
+
+        .recommend-scroll::-webkit-scrollbar {
+            display: block; /* Chrome, Safari 등 */
+            height: 8px;
+        }
+
+        .recommend-scroll::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 4px;
+        }
+
+        .recommend-card {
+            width: 200px; /* ← min-width → width */
+            background-color: #ffffff;
+            border: 2px solid #19A7CE;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .recommend-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .recommend-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-info {
+            padding: 14px;
+            text-align: center;
+        }
+
+        .nickname {
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+
+    <!-- 팝업 광고 -->
+    <div class="popup-ad" id="popupAd">
+        <a href="https://school.programmers.co.kr/learn/courses/25186/25186-3%EA%B8%B0-k-digital-training-%EC%83%9D%EC%84%B1%ED%98%95-ai-%ED%99%9C%EC%9A%A9-%EB%B0%B1%EC%97%94%EB%93%9C-%EA%B0%9C%EB%B0%9C" target="_blank">
+            <img src="/images/pop_ad.png" alt="팝업 광고">
+        </a>
+        <button class="close-btn" onclick="document.getElementById('popupAd').style.display='none'">×</button>
+    </div>
+
+    <style>
+        .popup-ad {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 240px;
+            height: 300px;
+            z-index: 999;
+            border-radius: 12px;
+            overflow: hidden; /* 이미지가 꼭 맞게 들어가도록 */
+            box-shadow: 0 0 0 2px black; /* 검정 테두리 */
+            background-color: transparent;
+        }
+
+        .popup-ad img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;  /* 또는 contain, fill 도 가능 */
+            display: block;
+        }
+
+
+        .close-btn {
+            position: absolute;
+            top: 6px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+            text-shadow: 0 0 3px black;
+            z-index: 1000;
+        }
+    </style>
+
+
+    <!-- 검색창 영역 -->
+    <div class="search-section">
+        <div class="search-container">
+            <div class="search-title">어떤 분야의 재능을 원하시나요?</div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="검색어를 입력해주세요">
+                <button onclick="handleSearch()">➜</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .search-section {
+            background-color: #F6F1F1;
+            padding: 38px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-container {
+            width: 900px;
+        }
+
+        .search-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            border: 2px solid #19A7CE;
+            border-radius: 25px;
+            padding: 6px 14px;
+            background-color: white;
+            width: 100%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+        .search-box input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            padding: 14px;
+            background-color: transparent;
+        }
+
+        .search-box button {
+            background-color: #19A7CE;
+            border: none;
+            color: white;
+            font-size: 18px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-box button:hover {
+            background-color: #19A7CE;
+        }
+    </style>
+
+    <script>
+        function handleSearch() {
+            const keyword = document.getElementById('searchInput').value.trim();
+            if (keyword !== '') {
+                window.location.href = `/talents?query=${encodeURIComponent(keyword)}`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('searchInput');
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+        });
+    </script>
+
+    <!-- 최신 후기 섹션 -->
+    <div class="review-wrapper">
+        <div class="review-container">
+            <h2 class="section-title">📝 갓 올라온 후기</h2>
+            <div class="review-card-box">
+                <!-- 후기 카드 1 -->
+                <a href="/mentors/1" class="review-card-link">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <span class="mentor-name">김영한 spring 입문</span>
+                            <img src="/images/mentor4.jpg" alt="icon" class="mentor-icon">
+                        </div>
+                        <div class="review-body">
+                            <p class="quote">
+                                ❝ 채팅으로 진행하다보니 답변속도 구간이 일정했고 리드도 똑똑하고, 전혀 불편함 느끼지 않게 전체 문제 해결해 나아가요. 분야별로 전문가들이 있다는게… 이런 서비스는 처음 접했는데, 신세계네요. 정말 고맙습니다. 추천해요! ❞
+                            </p>
+                        </div>
+                        <div class="review-footer">
+                            <span class="author">hanbi008님의 후기</span>
+                            <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 후기 카드 2 -->
+                <a href="/mentors/2" class="review-card-link">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <span class="mentor-name">김영한 spring 입문</span>
+                            <img src="/images/mentor4.jpg" alt="icon" class="mentor-icon">
+                        </div>
+                        <div class="review-body">
+                            <p class="quote">
+                                ❝ 채팅으로 진행하다보니 답변속도 구간이 일정했고 리드도 똑똑하고, 전혀 불편함 느끼지 않게 전체 문제 해결해 나아가요. 분야별로 전문가들이 있다는게… 이런 서비스는 처음 접했는데, 신세계네요. 정말 고맙습니다. 추천해요! ❞
+                            </p>
+                        </div>
+                        <div class="review-footer">
+                            <span class="author">hanbi008님의 후기</span>
+                            <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 후기 카드 3 -->
+                <a href="/mentors/3" class="review-card-link">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <span class="mentor-name">김영한 spring 입문</span>
+                            <img src="/images/mentor4.jpg" alt="icon" class="mentor-icon">
+                        </div>
+                        <div class="review-body">
+                            <p class="quote">
+                                ❝ 채팅으로 진행하다보니 답변속도 구간이 일정했고 리드도 똑똑하고, 전혀 불편함 느끼지 않게 전체 문제 해결해 나아가요. 분야별로 전문가들이 있다는게… 이런 서비스는 처음 접했는데, 신세계네요. 정말 고맙습니다. 추천해요! ❞
+                            </p>
+                        </div>
+                        <div class="review-footer">
+                            <span class="author">hanbi008님의 후기</span>
+                            <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 후기 카드용 CSS -->
+    <style>
+        .review-wrapper {
+            background-color: #F6F1F1;
+            padding: 50px 0;
+        }
+
+        .review-container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #146C94;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .review-card-box {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .review-card-link {
+            text-decoration: none;
+            color: inherit;
+            flex: 1 1 calc(33.33% - 20px);
+            max-width: 360px;
+            min-width: 280px;
+        }
+
+        .review-card-link:hover .review-card {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
+
+        .review-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .review-header {
+            background-color: #19A7CE;
+            color: white;
+            padding: 10px 14px;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .mentor-name {
+            font-size: 14px;
+        }
+
+        .mentor-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .review-body {
+            padding: 16px;
+            font-size: 13.5px;
+            color: #333;
+            line-height: 1.6;
+            height: 100px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+        }
+
+        .review-footer {
+            margin-top: auto;
+            padding: 0 16px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .stars {
+            color: #FEC84B;
+            font-size: 14px;
+        }
+    </style>
+
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
 </body>
 </html>

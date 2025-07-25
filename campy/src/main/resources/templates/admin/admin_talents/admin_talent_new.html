@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<head>
+    <title>관리자 - 재능 생성</title>
+    <th:block th:fragment="head-extra">
+        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="content">
+        <div class="container">
+            <h1>재능 생성</h1>
+
+            <form th:action="@{/admin/talents/new}" th:object="${talentRequestDto}" method="post" enctype="multipart/form-data">
+                <div th:if="${#fields.hasErrors()}" class="alert alert-danger" role="alert">
+                    <p th:each="err : ${#fields.errors()}" th:text="${err}"></p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="userId" class="form-label">재능 소유자</label>
+                    <select class="form-control" id="userId" th:field="*{userId}">
+                        <option value="">사용자 선택</option>
+                        <option th:each="user : ${users}" th:value="${user.userId}" th:text="${user.username + ' (' + user.nickname + ')'}"></option>
+                    </select>
+                    <div class="text-danger" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">제목</label>
+                    <input type="text" class="form-control" id="title" th:field="*{title}">
+                    <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">설명</label>
+                    <textarea class="form-control" id="description" th:field="*{description}"></textarea>
+                    <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="price" class="form-label">가격</label>
+                    <input type="number" class="form-control" id="price" th:field="*{price}">
+                    <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="availableDays" class="form-label">가능 요일</label>
+                    <input type="text" class="form-control" id="availableDays" th:field="*{availableDays}">
+                    <div th:if="${#fields.hasErrors('availableDays')}" th:errors="*{availableDays}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="offlineLocation" class="form-label">오프라인 장소</label>
+                    <input type="text" class="form-control" id="offlineLocation" th:field="*{offlineLocation}">
+                    <div th:if="${#fields.hasErrors('offlineLocation')}" th:errors="*{offlineLocation}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">카테고리</label>
+                    <input type="text" class="form-control" id="category" th:field="*{category}">
+                    <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tagNames" class="form-label">태그 (쉼표로 구분)</label>
+                    <input type="text" class="form-control" id="tagNames" th:field="*{tagNames}">
+                    <div th:if="${#fields.hasErrors('tagNames')}" th:errors="*{tagNames}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">이미지</label>
+                    <input type="file" class="form-control" id="image" name="image">
+                </div>
+
+                <button type="submit" class="btn btn-primary">재능 생성</button>
+                <a th:href="@{/admin/talents}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </th:block>
+    <th:block th:fragment="body-extra">
+        <!-- 이 페이지에만 필요한 추가 JS -->
+    </th:block>
+</body>
+</html>

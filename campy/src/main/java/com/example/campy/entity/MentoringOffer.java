@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class MentoringOffer  {
 
     @Id
@@ -21,8 +21,9 @@ public class MentoringOffer  {
     @Column(name = "request_id")
     private Integer offerId;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "title", nullable = false, length = 255)
     private String title;

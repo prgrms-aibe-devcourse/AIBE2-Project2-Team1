@@ -17,9 +17,11 @@ public class TalentTagPost {
     @Column(name = "talent_tag_post_id")
     private Integer talentTagPostId;
 
-    @Column(name = "talent_tag_id", nullable = false)
-    private Integer talentTagId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "talent_tag_id", nullable = false)
+    private TalentTag talentTag;
 
-    @Column(name = "talent_id", nullable = false)
-    private Integer talentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "talent_id", nullable = false)
+    private Talent talent;
 }

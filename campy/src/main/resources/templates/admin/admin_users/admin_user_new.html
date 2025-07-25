@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<head>
+    <title>관리자 - 회원 생성</title>
+    <th:block th:fragment="head-extra">
+        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="content">
+        <div class="container">
+            <h1>회원 생성</h1>
+
+            <form th:action="@{/admin/users/new}" th:object="${userCreateRequest}" method="post">
+                <div th:if="${#fields.hasErrors()}" class="alert alert-danger" role="alert">
+                    <p th:each="err : ${#fields.errors()}" th:text="${err}"></p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">사용자 이름</label>
+                    <input type="text" class="form-control" id="username" th:field="*{username}">
+                    <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">이메일</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}">
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}">
+                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">이름</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}">
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nickname" class="form-label">닉네임</label>
+                    <input type="text" class="form-control" id="nickname" th:field="*{nickname}">
+                    <div th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="school" class="form-label">학교</label>
+                    <input type="text" class="form-control" id="school" th:field="*{school}">
+                    <div th:if="${#fields.hasErrors('school')}" th:errors="*{school}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="major" class="form-label">전공</label>
+                    <input type="text" class="form-control" id="major" th:field="*{major}">
+                    <div th:if="${#fields.hasErrors('major')}" th:errors="*{major}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="entranceYear" class="form-label">입학년도</label>
+                    <input type="number" class="form-control" id="entranceYear" th:field="*{entranceYear}">
+                    <div th:if="${#fields.hasErrors('entranceYear')}" th:errors="*{entranceYear}" class="text-danger"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">회원 생성</button>
+                <a th:href="@{/admin/users}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </th:block>
+    <th:block th:fragment="body-extra">
+        <!-- 이 페이지에만 필요한 추가 JS -->
+    </th:block>
+</body>
+</html>
