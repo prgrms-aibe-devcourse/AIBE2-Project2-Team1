@@ -3,8 +3,10 @@ package com.example.campy.controller;
 import com.example.campy.dto.TalentRequestDto;
 import com.example.campy.entity.Tag;
 import com.example.campy.entity.Talent;
+import com.example.campy.entity.User;
 import com.example.campy.repository.TagRepository;
 import com.example.campy.repository.TalentRepository;
+import com.example.campy.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,7 @@ public class TalentController {
 
     private final TalentRepository talentRepository;
     private final TagRepository tagRepository;
+    private final UserRepository userRepository;
 
     @Value("${upload.path}")
     private String uploadPath;
@@ -93,6 +96,7 @@ public class TalentController {
             HttpServletRequest servletRequest) throws IOException {
 
         Integer userId = 1; // JWT 사용 시 교체
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
         String imagePath = null;
         if (image != null && !image.isEmpty()) {
@@ -110,7 +114,7 @@ public class TalentController {
         }
 
         Talent talent = Talent.builder()
-                .userId(userId)
+                .user(user)
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .price(request.getPrice())
@@ -136,7 +140,7 @@ public class TalentController {
         return talentRepository.findById(id)
                 .filter(talent -> !Boolean.TRUE.equals(talent.getIsDeleted()))
                 .map(talent -> {
-                    if (!talent.getUserId().equals(userId)) {
+                    if (!talent.getUser().getUserId().equals(userId)) {
                         return ResponseEntity.status(403).<Talent>build();
                     }
                     talent.setTitle(request.getTitle());
@@ -158,7 +162,7 @@ public class TalentController {
         return talentRepository.findById(id)
                 .filter(talent -> !Boolean.TRUE.equals(talent.getIsDeleted()))
                 .map(talent -> {
-                    if (!talent.getUserId().equals(userId)) {
+                    if (!talent.getUser().getUserId().equals(userId)) {
                         return ResponseEntity.status(403).<Void>build();
                     }
                     talent.setIsDeleted(true);
