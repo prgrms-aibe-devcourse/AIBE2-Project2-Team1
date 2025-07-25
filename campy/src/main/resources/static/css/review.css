@@ -89,6 +89,10 @@ h2 {
     background-color: #F6F1F1;
 }
 
+.left-align {
+    text-align: left;
+}
+
 /* 페이지네이션 */
 .pagination {
     text-align: center;
