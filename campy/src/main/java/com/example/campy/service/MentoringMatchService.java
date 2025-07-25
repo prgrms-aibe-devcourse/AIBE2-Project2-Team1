@@ -28,6 +28,7 @@ public class MentoringMatchService {
     private final MentoringMatchMemberService memberService;
 
     // detail 없이 match만 생성
+
     public MentoringMatchResponse createMatch(MentoringMatchCreateRequest req) {
         MentoringOffer offer = offerRepo.findById(req.getMentoringOfferId())
                 .filter(o -> o.getStatus() != MentoringStatus.DELETED)
@@ -77,7 +78,6 @@ public class MentoringMatchService {
 
         detailService.createDetail(match, detailReq);
         memberService.createMembers(match, memberReqs);
-
 
         return MentoringMatchResponse.builder()
                 .matchId(match.getMatchId())
