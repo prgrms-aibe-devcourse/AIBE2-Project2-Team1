@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import static com.example.campy.constant.MentoringStatus.WAITING_FOR_MENTOR;
+import static com.example.campy.constant.MentoringType.INDIVIDUAL;
+
 @Component
 @RequiredArgsConstructor
 @Profile("dev") // 'dev' 프로필에서만 실행
@@ -97,8 +100,8 @@ public class DataInitializer implements CommandLineRunner {
         // 4. 멘토링 성사 더미 데이터 생성 (user1이 user2의 제안을 수락)
         MentoringMatch match1 = MentoringMatch.builder()
                 .mentoringOffer(offer1)
-                .status("ACCEPTED")
-                .type("개인")
+                .status(WAITING_FOR_MENTOR)
+                .type(INDIVIDUAL)
                 .createdAt(LocalDateTime.now())
                 .build();
 

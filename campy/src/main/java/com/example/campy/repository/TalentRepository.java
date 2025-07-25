@@ -18,9 +18,4 @@ public interface TalentRepository extends JpaRepository<Talent, Integer> {
     Page<Talent> findByTags_NameAndIsDeletedFalse(String tagName, Pageable pageable);
 
     Page<Talent> findByTags_NameAndCategoryAndIsDeletedFalse(String tagName, String category, Pageable pageable);
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface TalentRepository extends JpaRepository<Talent, Integer> {
-
 }

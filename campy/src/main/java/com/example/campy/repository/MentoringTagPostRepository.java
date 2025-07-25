@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
-public interface MentoringTagPostRepository extends JpaRepository<MentoringTagPost, Integer> {
+public interface MentoringTagPostRepository extends JpaRepository<MentoringTagPost, Integer>, MentoringTagPostRepositoryCustom  {
 
     List<MentoringTagPost> findByMentoringOffer(MentoringOffer offer);
 
@@ -16,4 +17,5 @@ public interface MentoringTagPostRepository extends JpaRepository<MentoringTagPo
     List<String> findTagNamesByOfferId(@Param("offerId") Integer offerId);
 
     void deleteByMentoringOffer(MentoringOffer offer);
+
 }
