@@ -66,7 +66,7 @@ public class AdminController {
 
     @GetMapping("/reviews/new")
     public String createReviewForm(Model model) {
-        model.addAttribute("reviewCreateRequest", new ReviewCreateRequest(null, null, null, null, null, null));
+        model.addAttribute("reviewCreateRequest", new ReviewCreateRequest());
         List<UserResponseDto> users = adminService.getAllUsers();
         model.addAttribute("users", users);
         return "admin/admin_reviews/admin_review_new";
