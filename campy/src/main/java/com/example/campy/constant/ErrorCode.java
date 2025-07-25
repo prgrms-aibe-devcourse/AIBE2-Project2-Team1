@@ -29,6 +29,8 @@ public enum ErrorCode {
     INVALID_TOKEN(20003, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
     ACCESS_DENIED(20004, HttpStatus.FORBIDDEN, "접근이 거부되었습니다."),
 
+    UNAUTHORIZED(20005, HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
+
     REVIEW_NOT_FOUND(10006, HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
     DUPLICATE_EMAIL(10007, HttpStatus.BAD_REQUEST, "중복된 이메일입니다."),
 
