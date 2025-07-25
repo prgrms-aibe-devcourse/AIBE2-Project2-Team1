@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<head>
+    <title>관리자 - 게시글 관리</title>
+    <th:block th:fragment="head-extra">
+        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="content">
+        <div class="container">
+            <h1>게시글 관리</h1>
+
+            <div th:if="${message}" class="alert alert-success" role="alert">
+                <p th:text="${message}"></p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <a th:href="@{/admin/boards/new}" class="button">새 게시물 작성</a>
+            </div>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>작성자</th>
+                        <th>학교</th>
+                        <th>카테고리</th>
+                        <th>제목</th>
+                        <th>내용</th>
+                        <th>삭제 여부</th>
+                        <th>생성일</th>
+                        <th>수정일</th>
+                        <th>액션</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="board : ${boards}">
+                        <td th:text="${board.boardId}"></td>
+                        <td th:text="${board.username}"></td>
+                        <td th:text="${board.school}"></td>
+                        <td th:text="${board.category}"></td>
+                        <td th:text="${board.title}"></td>
+                        <td th:text="${board.content}"></td>
+                        <td th:text="${board.isDeleted ? '삭제됨' : '활성'}"></td>
+                        <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${board.updatedAt != null ? #temporals.format(board.updatedAt, 'yyyy-MM-dd HH:mm') : '-'}"></td>
+                        <td>
+                            <a th:href="@{/admin/boards/{boardId}/edit(boardId=${board.boardId})}" >수정</a>
+                            <form th:action="@{/admin/boards/{boardId}/delete(boardId=${board.boardId})}" method="post"  onsubmit="return confirm('정말로 이 게시글을 삭제하시겠습니까?');">
+                                <button type="submit" >삭제</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </th:block>
+    <th:block th:fragment="body-extra">
+        <!-- 이 페이지에만 필요한 추가 JS -->
+    </th:block>
+</body>
+</html>

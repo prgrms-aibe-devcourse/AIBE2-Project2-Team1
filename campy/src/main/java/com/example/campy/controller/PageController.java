@@ -2,6 +2,7 @@ package com.example.campy.controller;
 
 import com.example.campy.repository.UserRepository;
 import com.example.campy.repository.AdminRepository;
+import com.example.campy.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,23 +20,14 @@ public class PageController {
 
     @GetMapping
     public String mainPage(Authentication authentication, Model model) {
-        System.out.println("mainPage 호출됨");
-        if (authentication != null) {
-            System.out.println("Authentication 객체 존재. Principal: " + authentication.getPrincipal() + ", Authenticated: " + authentication.isAuthenticated());
-            if (authentication.isAuthenticated()) {
-                String username = authentication.getName();
-                System.out.println("인증된 사용자: " + username);
-                userRepository.findByUsername(username).ifPresentOrElse(user -> {
-                    model.addAttribute("loggedInUser", user);
-                    System.out.println("loggedInUser 모델에 추가됨: " + user.getUsername());
-                }, () -> {
-                    System.out.println("DB에서 사용자 " + username + "를 찾을 수 없음.");
-                });
-            } else {
-                System.out.println("Authentication 객체는 존재하지만 인증되지 않음.");
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof CustomUserDetails) {
+                CustomUserDetails userDetails = (CustomUserDetails) principal;
+                model.addAttribute("loggedInUsername", userDetails.getUsername());
             }
-        } else {
-            System.out.println("Authentication 객체 없음 (로그인되지 않은 상태).");
+
         }
         return "main"; // → templates/main.html 렌더링
     }
@@ -59,16 +51,5 @@ public class PageController {
             });
         }
         return "mypage/mypage"; // → templates/mypage/mypage.html 렌더링
-    }
-
-    @GetMapping("/admin")
-    public String adminPage(Authentication authentication, Model model) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            adminRepository.findByUsername(username).ifPresent(admin -> {
-                model.addAttribute("admin", admin);
-            });
-        }
-        return "admin/admin"; // → templates/admin/admin.html 렌더링
     }
 }
