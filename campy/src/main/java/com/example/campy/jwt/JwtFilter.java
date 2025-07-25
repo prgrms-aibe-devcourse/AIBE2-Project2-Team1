@@ -1,5 +1,8 @@
 package com.example.campy.jwt;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -7,11 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -19,53 +19,54 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
-    // 매 요청마다 실행되는 필터 로직
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws IOException {
+                                    FilterChain filterChain) throws IOException {
+        System.out.println("🔥 JwtFilter 진입: " + request.getRequestURI());
 
         try {
             String token = resolveToken(request);
+            System.out.println("🔥 추출한 토큰: " + token);
 
-            if (token != null) {
-                if (jwtUtil.validateToken(token)) {
-                    String username = jwtUtil.getUsername(token);
-                    String role = jwtUtil.getRole(token);
+            if (token != null && jwtUtil.validateToken(token)) {
+                System.out.println("✅ 토큰 유효함");
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    username,
-                                    null,
-                                    Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role))
-                            );
+                String username = jwtUtil.getUsername(token);
+                String role = jwtUtil.getRole(token);
+                System.out.println("Jwt에서 뽑은 role 원본: " + role);
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    // 유효하지 않은 토큰
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired JWT token");
-                    return;
+                // 강제로 ROLE_ 붙이기
+                if (!role.startsWith("ROLE_")) {
+                    role = "ROLE_" + role;
                 }
+
+                // 여기를 확실하게 변경 (AuthorityUtils → SimpleGrantedAuthority)
+                List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                System.out.println("✅ 인증 객체 등록 완료: " + authorities);
+            } else {
+                System.out.println("❌ 토큰이 null이거나 유효하지 않음");
             }
 
-            // 토큰 없거나 인증 성공 -> 다음 필터로 진행
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            // 예외 발생 시 401 응답 반환
+            System.out.println("❌ 필터에서 예외 발생: " + e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: " + e.getMessage());
         }
     }
 
-    // Authorization 헤더 또는 쿠키에서 Bearer 토큰을 추출
     private String resolveToken(HttpServletRequest request) {
         String bearer = request.getHeader("Authorization");
         if (bearer != null && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);
         }
 
-        // Try to get token from cookie
         if (request.getCookies() != null) {
             for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals("jwtToken")) {
@@ -73,6 +74,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
         }
+
         return null;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.equals("/api/auth/login");
     }
 }

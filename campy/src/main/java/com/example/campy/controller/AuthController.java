@@ -29,7 +29,10 @@ public class AuthController {
 
         response.addCookie(cookie); // Add the cookie to the response
 
-        return ResponseEntity.ok().body("Login successful"); // Return a simple message, token is in cookie
+        // 포스트맨 테스트용 토큰보기 추가
+        return ResponseEntity.ok().body("Login successful\n" + "token : " + token); // Return a simple message, token is in cookie
+
+
     }
 
     @PostMapping("/signup")
