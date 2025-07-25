@@ -1,5 +1,6 @@
 package com.example.campy.service;
-/*
+
+import com.example.campy.constant.MentoringStatus;
 import com.example.campy.dto.mentoring.request.MentoringOfferCreateRequest;
 import com.example.campy.dto.mentoring.response.MentoringOfferResponse;
 import com.example.campy.entity.MentoringOffer;
@@ -39,7 +40,7 @@ class MentoringOfferServiceTest  {
 
     @DisplayName("유효한 요청과 유저ID가 주어지면 멘토링 제안을 저장하고 Response를 반환한다.")
     @Test
-    void ginvenOfferRequest_whenCreating_thenCreatesOfferAndReturnResponse(){
+    void givenOfferRequest_whenCreating_thenCreatesOfferAndReturnResponse() {
         // Given
         Integer userId = 1;
         MentoringOfferCreateRequest req = MentoringOfferCreateRequest.builder()
@@ -49,15 +50,20 @@ class MentoringOfferServiceTest  {
                 .build();
 
         User user = User.builder().userId(userId).build();
-        MentoringOffer offerEntity  = req.toEntity(user);
-        MentoringOffer savedOffer = MentoringOffer.builder().offerId(123).title("Java 멘토링").build();
+
+        // 실제 로직에서 사용하는 객체 그대로 재활용
+        MentoringOffer offerEntity = req.toEntity(user);
+
+        MentoringOffer savedOffer = offerEntity.toBuilder()
+                .offerId(123) // 저장된 후의 ID만 수동 설정
+                .build();
 
         // mocking
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(offerRepo.save(any(MentoringOffer.class))).willReturn(savedOffer);
-        given(tagRepo.findByName(anyString())).willReturn(Optional.empty()); // 태그가 없다고 가정, 신규 저장
+        given(tagRepo.findByName(anyString())).willReturn(Optional.empty());
         given(tagRepo.save(any(MentoringTag.class)))
-                .willAnswer(invocation -> invocation.getArgument(0)); // 저장돤 태그 바로 리턴
+                .willAnswer(invocation -> invocation.getArgument(0));
         given(tagPostRepo.saveAll(anyList()))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
@@ -73,7 +79,5 @@ class MentoringOfferServiceTest  {
         then(tagRepo).should(times(2)).findByName(anyString());
         then(tagRepo).should(times(2)).save(any(MentoringTag.class));
         then(tagPostRepo).should().saveAll(anyList());
-
     }
-
-}*/
+}
