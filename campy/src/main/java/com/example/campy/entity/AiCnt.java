@@ -19,8 +19,9 @@ public class AiCnt {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "tag_list", length = 255)
     private String tagList;

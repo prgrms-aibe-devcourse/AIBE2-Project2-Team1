@@ -1,5 +1,6 @@
 package com.example.campy.entity;
 
+import com.example.campy.constant.MatchRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,24 +17,22 @@ public class MentoringMatchMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    private Integer memberId;
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(name = "match_id", nullable = false)
-    private Integer matchId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "match_id", nullable = false)
+    private MentoringMatch mentoringMatch;
 
-    @Column(name = "request_id", nullable = false)
-    private Integer requestId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
-
-    @Column(name = "role", length = 20)
-    private String role; // 예: MENTOR, MENTEE
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", length = 50)
+    private MatchRole role;  // MENTOR, MENTEE
 
     @Column(name = "joined_at")
     private LocalDateTime joinedAt;
 
-    @Column(name = "status", length = 20)
-    private String status; // 예: WAITING, ACCEPTED, REJECTED
 }

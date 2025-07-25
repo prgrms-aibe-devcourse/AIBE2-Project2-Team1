@@ -27,7 +27,10 @@ public enum ErrorCode {
     DATA_ACCESS_ERROR(20002, HttpStatus.INTERNAL_SERVER_ERROR, "데이터 접근 오류입니다."),
 
     INVALID_TOKEN(20003, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
-    ACCESS_DENIED(20004, HttpStatus.FORBIDDEN, "접근이 거부되었습니다.")
+    ACCESS_DENIED(20004, HttpStatus.FORBIDDEN, "접근이 거부되었습니다."),
+
+    REVIEW_NOT_FOUND(10006, HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
+    DUPLICATE_EMAIL(10007, HttpStatus.BAD_REQUEST, "중복된 이메일입니다."),
     ;
 
     private final Integer code;
