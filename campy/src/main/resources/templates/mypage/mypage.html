@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지 - Campy</title>
-    <link rel="stylesheet" th:href="@{/css/mypage.css}">
-    
+    <th:block th:fragment="head-extra">
+        <link rel="stylesheet" th:href="@{/css/mypage.css}">
+    </th:block>
 </head>
 <body>
-<div th:replace="~{fragments/header :: header}"></div>
-
-<div class="my-page-container">
+    <th:block th:fragment="content">
+        <div class="my-page-container">
     <h1>마이페이지</h1>
 
     <!-- 프로필 섹션 -->

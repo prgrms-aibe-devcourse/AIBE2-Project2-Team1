@@ -43,13 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/mypage/**").hasRole("USER") // 마이페이지 전체
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/messages/**").authenticated() // 쪽지 기능
                         .anyRequest().authenticated())
-
-                        // 쪽지 기능
-                        .requestMatchers("/api/messages/**").authenticated()
-          
-          
-                )
 
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
