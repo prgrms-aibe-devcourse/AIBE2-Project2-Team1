@@ -1,6 +1,7 @@
 package com.example.campy.jwt;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,43 +21,36 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     // 매 요청마다 실행되는 필터 로직
+    @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws IOException {
+                                    FilterChain filterChain) throws IOException {
 
         try {
             String token = resolveToken(request);
 
-            if (token != null) {
-                if (jwtUtil.validateToken(token)) {
-                    String username = jwtUtil.getUsername(token);
-                    String role = jwtUtil.getRole(token);
+            if (token != null && jwtUtil.validateToken(token)) {
+                String username = jwtUtil.getUsername(token);
+                String role = jwtUtil.getRole(token);
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    username,
-                                    null,
-                                    Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role))
-                            );
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                username,
+                                null,
+                                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role))
+                        );
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    // 유효하지 않은 토큰
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired JWT token");
-                    return;
-                }
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
-            // 토큰 없거나 인증 성공 -> 다음 필터로 진행
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response); // 항상 다음 필터로 넘김
 
         } catch (Exception e) {
-            // 예외 발생 시 401 응답 반환
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: " + e.getMessage());
+            filterChain.doFilter(request, response); // 예외 무시
         }
     }
+
 
     // Authorization 헤더 또는 쿠키에서 Bearer 토큰을 추출
     private String resolveToken(HttpServletRequest request) {
@@ -75,4 +69,5 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
 }
