@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>수업 등록 완료</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8f6f6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 50px 30px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .sub-message {
+            font-size: 14px;
+            color: #146C94;
+            margin-bottom: 30px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            font-size: 14px;
+            border: 2px solid #000;
+            background-color: #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #146C94;
+            border: 2px solid #146c94;
+            color: #ffffff;              /* 글자색 흰색 */
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Header Fragment (메인과 합칠 때 복구) -->
+<!-- <div th:replace="fragments/header :: header"></div> -->
+
+<div class="container">
+    <div class="icon">⬇️</div>
+
+    <div class="message">수업 업로드 작업이 모두 완료되었습니다.</div>
+    <div class="sub-message">
+        ※ <a th:href="@{/mypage}" style="color: #146C94; text-decoration: none;">내 정보 → 등록 내역</a> 에서 확인하실 수 있습니다.
+    </div>
+
+    <div class="btn-group">
+            <a th:href="@{/}" class="btn">홈으로</a>
+            <a th:href="@{/mypage}" class="btn">등록한 수업</a>
+    </div>
+</div>
+
+<!-- Footer Fragment (메인과 합칠때 복구) -->
+<!-- <div th:replace="fragments/footer :: footer"></div> -->
+
+</body>
+</html>
