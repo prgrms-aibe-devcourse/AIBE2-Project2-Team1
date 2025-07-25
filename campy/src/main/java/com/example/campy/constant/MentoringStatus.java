@@ -12,7 +12,8 @@ public enum MentoringStatus {
     ONGOING("진행중"),                // 3. 멘토와 멘티 모두 수락 -> 진행 시작
     PENDING("보류중"),                // 4. 일정 등 이유로 잠시 중단됨
     COMPLETED("완료"),                // 5. 멘토링 완료
-    CANCELED("취소됨");               // 6. 중간 취소 (멘토/멘티 어느 쪽이든)
+    CANCELED("취소됨"),
+    DELETED("삭제됨");               // 6. 중간 취소 (멘토/멘티 어느 쪽이든)
 
     private final String label;
 

@@ -1,7 +1,6 @@
 package com.example.campy.dto.mentoring.request;
 
-import com.example.campy.constant.MentoringType;
-import jakarta.validation.Valid;
+import com.example.campy.constant.MatchRole;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -10,14 +9,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MentoringMatchCreateRequest {
+public class MentoringMatchMemberCreateRequest {
 
     @NotNull
-    private Integer mentoringOfferId;
+    private Integer userId;
 
     @NotNull
-    private MentoringType type;
-
+    private MatchRole role;
 
 
 }
