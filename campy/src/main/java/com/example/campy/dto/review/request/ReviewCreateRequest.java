@@ -27,6 +27,7 @@ public record ReviewCreateRequest(
         @NotBlank(message = "내용은 필수입니다.")
         String content
 ) {
-    @Builder
-    public ReviewCreateRequest {}
+    public ReviewCreateRequest() {
+        this(null, null, null, null, null, null);
+    }
 }
