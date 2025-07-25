@@ -16,6 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TalentCreateRequest {
+    @NotNull(message = "사용자 ID는 필수입니다.")
+    private Integer userId; // 재능 소유자 ID 추가
+
     @NotBlank(message = "제목은 필수입니다.")
     private String title;
 

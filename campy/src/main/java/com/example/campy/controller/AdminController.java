@@ -254,6 +254,8 @@ public class AdminController {
     @GetMapping("/talents/new")
     public String adminTalentNewPage(Model model) {
         model.addAttribute("talentRequestDto", new TalentCreateRequest());
+        List<UserResponseDto> users = adminService.getAllUsers(); // 모든 사용자 목록 추가
+        model.addAttribute("users", users);
         return "admin/admin_talents/admin_talent_new";
     }
 
@@ -280,14 +282,12 @@ public class AdminController {
     public String createTalent(
             @ModelAttribute @Valid TalentCreateRequest talentCreateRequest,
             @RequestParam(value = "image", required = false) MultipartFile image,
-            BindingResult bindingResult,
-            Authentication authentication
+            BindingResult bindingResult
     ) throws IOException {
         if (bindingResult.hasErrors()) {
             return "admin/admin_talents/admin_talent_new";
         }
-        // 현재 로그인한 사용자 정보를 서비스로 전달
-        talentService.createTalent(talentCreateRequest, image, authentication);
+        talentService.createTalent(talentCreateRequest, image);
         return "redirect:/admin/talents";
     }
 
