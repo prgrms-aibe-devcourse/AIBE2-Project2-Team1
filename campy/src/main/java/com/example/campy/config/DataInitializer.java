@@ -27,6 +27,7 @@ public class DataInitializer implements CommandLineRunner {
     private final PaymentRepository paymentRepository;
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MaterialRepository materialRepository; // MaterialRepository 주입
 
     @Override
     public void run(String... args) throws Exception {
@@ -61,7 +62,7 @@ public class DataInitializer implements CommandLineRunner {
                 .school("캠피대학교")
                 .major("소프트웨어공학과")
                 .entranceYear(2020)
-                .role("MENTOR") // 멘토 역할
+                .role("USER") // 멘토 역할
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -148,6 +149,37 @@ public class DataInitializer implements CommandLineRunner {
 
         reviewRepository.save(review1);
 
+        // 8. 자료 더미 데이터 생성 (by user2)
+        Material material1 = Material.builder()
+                .seller(user2)
+                .title("스프링 부트 핵심 가이드")
+                .content("스프링 부트 개발에 필요한 핵심 개념과 실전 예제를 담은 자료입니다.")
+                .fileUrl("http://example.com/files/spring_guide.pdf")
+                .previewFileUrl("http://example.com/previews/spring_guide_preview.jpg")
+                .thumbnailUrl("http://example.com/thumbnails/spring_guide_thumb.jpg")
+                .price(25000)
+                .isDeleted(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        materialRepository.save(material1);
+
+        // 9. 리뷰 더미 데이터 생성 (user2가 user1에게 작성)
+        Review review2 = Review.builder()
+                .author(user2) // 리뷰 작성자
+                .targetUser(user1) // 리뷰 대상 사용자
+                .rating(4) // 평점
+                .category("재능") // 리뷰 카테고리
+                .content("user1님의 포트폴리오 리뷰가 매우 도움이 되었습니다. 피드백이 구체적이고 실용적이었어요.")
+                .targetId(talent1.getTalentId()) // 재능 ID
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        reviewRepository.save(review2);
+
+
         System.out.println("더미 데이터 생성이 완료되었습니다.");
     }
 }
+

@@ -1,5 +1,7 @@
 package com.example.campy.jwt;
 
+import com.example.campy.service.CustomUserDetails;
+import com.example.campy.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +20,7 @@ import java.util.Collections;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -51,15 +54,15 @@ public class JwtFilter extends OncePerRequestFilter {
                 if (jwtUtil.validateToken(token)) {
                     // 토큰에서 사용자 정보와 권한을 추출
                     String username = jwtUtil.getUsername(token);
-                    String role = jwtUtil.getRole(token);
+                    // CustomUserDetailsService를 통해 CustomUserDetails 객체 로드
+                    CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(username);
 
                     // 인증 객체를 생성 (스프링 시큐리티용)
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
-                                    username,
+                                    userDetails, // principal을 CustomUserDetails 객체로 설정
                                     null,
-                                    // ROLE_ 접두어를 붙여 스프링 시큐리티가 인식할 수 있도록 함
-                                    Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role))
+                                    userDetails.getAuthorities() // CustomUserDetails에서 권한 가져옴
                             );
 
                     // 시큐리티 컨텍스트에 인증 정보 등록 → 이후 컨트롤러에서 로그인 사용자로 인식됨

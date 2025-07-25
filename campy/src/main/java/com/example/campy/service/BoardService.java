@@ -12,6 +12,7 @@ import com.example.campy.constant.ErrorCode; // ErrorCode import 추가
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication; // Authentication import 추가
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -83,5 +84,16 @@ public class BoardService {
 
         Board savedBoard = boardRepository.save(newBoard);
         return new BoardResponseDto(savedBoard);
+    }
+
+    // 현재 로그인한 사용자가 작성한 게시글 조회
+    public List<BoardResponseDto> getAllBoardsByUser(Authentication authentication) {
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다: " + username));
+
+        return boardRepository.findByUserAndIsDeletedFalse(currentUser).stream()
+                .map(BoardResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내가 등록한 내역</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .create-button { padding: 8px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; }
+        .create-button:hover { background-color: #45a049; }
+        .action-buttons button, .action-buttons a { margin-right: 5px; padding: 5px 10px; cursor: pointer; border: none; border-radius: 3px; text-decoration: none; display: inline-block; }
+        .edit-button { background-color: #008CBA; color: white; }
+        .save-button { background-color: #4CAF50; color: white; display: none; }
+        .cancel-button { background-color: #f44336; color: white; display: none; }
+        .delete-button { background-color: #f44336; color: white; }
+
+        /* 탭 버튼 스타일 */
+        .tab-buttons { margin-bottom: 20px; }
+        .tab-buttons button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .tab-buttons button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        /* 섹션 숨기기 */
+        .content-section { display: none; }
+
+        /* 인라인 편집 스타일 */
+
+    </style>
+</head>
+<body>
+    <h1>내가 등록한 내역</h1>
+
+    <div class="tab-buttons">
+        <button class="tab-button active" data-target="talent-section">재능</button>
+        <button class="tab-button" data-target="mentoring-section">멘토링 제안</button>
+        <button class="tab-button" data-target="board-section">게시물</button>
+        <button class="tab-button" data-target="material-section">자료</button>
+        <button class="tab-button" data-target="review-section">후기</button>
+    </div>
+
+    <!-- 재능 등록 내역 -->
+    <div id="talent-section" class="content-section">
+        <div class="section-header">
+            <h2>재능</h2>
+            <a href="#" class="create-button">새 재능 등록</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>제목</th>
+                    <th>가격</th>
+                    <th>상태</th>
+                    <th>카테고리</th>
+                    <th>작성일</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="talent : ${talents}" th:id="'talent-' + ${talent.talentId}">
+                    <td th:text="${talent.talentId}"></td>
+                    <td th:text="${talent.title}"></td>
+                    <td th:text="${talent.price}"></td>
+                    <td th:text="${talent.status}"></td>
+                    <td th:text="${talent.category}"></td>
+                    <td th:text="${#temporals.format(talent.createdAt, 'yyyy-MM-dd')}"></td>
+                    <td class="action-buttons">
+                        <a th:href="@{/mypage/activity/talents/{talentId}/edit(talentId=${talent.talentId})}" class="edit-button">수정</a>
+                        <form th:action="@{/mypage/activity/talents/{talentId}/delete(talentId=${talent.talentId})}" method="post" style="display:inline;">
+                            <button type="submit" class="delete-button" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(talents)}">
+                    <td colspan="7">등록된 재능이 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 멘토링 제안 내역 -->
+    <div id="mentoring-section" class="content-section">
+        <div class="section-header">
+            <h2>멘토링 제안</h2>
+            <a th:href="@{/mypage/activity/mentoringoffers/new}" class="create-button">새 멘토링 제안 등록</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>제목</th>
+                    <th>가격</th>
+                    <th>상태</th>
+                    <th>작성일</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="offer : ${mentoringOffers}" th:id="'mentoringoffer-' + ${offer.offerId}">
+                    <td th:text="${offer.offerId}"></td>
+                    <td th:text="${offer.title}"></td>
+                    <td th:text="${offer.price}"></td>
+                    <td th:text="${offer.status}"></td>
+                    <td th:text="${#temporals.format(offer.createdAt, 'yyyy-MM-dd')}"></td>
+                    <td class="action-buttons">
+                        <a th:href="@{/mypage/activity/mentoringoffers/{offerId}/edit(offerId=${offer.offerId})}" class="edit-button">수정</a>
+                        <form th:action="@{/mypage/activity/mentoringoffers/{offerId}/delete(offerId=${offer.offerId})}" method="post" style="display:inline;">
+                            <button type="submit" class="delete-button" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(mentoringOffers)}">
+                    <td colspan="6">등록된 멘토링 제안이 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 게시물 내역 -->
+    <div id="board-section" class="content-section">
+        <div class="section-header">
+            <h2>게시물</h2>
+            <a href="#" class="create-button">새 게시물 등록</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>제목</th>
+                    <th>카테고리</th>
+                    <th>작성일</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="board : ${boards}">
+                    <td th:text="${board.boardId}"></td>
+                    <td th:text="${board.title}"></td>
+                    <td th:text="${board.category}"></td>
+                    <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}"></td>
+                    <td class="action-buttons">
+                        <a th:href="@{/mypage/activity/boards/{boardId}/edit(boardId=${board.boardId})}" class="edit-button">수정</a>
+                        <button class="delete-button">삭제</button>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(boards)}">
+                    <td colspan="5">작성된 게시물이 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 자료 내역 -->
+    <div id="material-section" class="content-section">
+        <div class="section-header">
+            <h2>자료</h2>
+            <a href="#" class="create-button">새 자료 등록</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>제목</th>
+                    <th>가격</th>
+                    <th>작성일</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            </thead>
+            <tbody>
+                <tr th:each="material : ${materials}">
+                    <td th:text="${material.materialId}"></td>
+                    <td th:text="${material.title}"></td>
+                    <td th:text="${material.price}"></td>
+                    <td th:text="${#temporals.format(material.createdAt, 'yyyy-MM-dd')}"></td>
+                    <td class="action-buttons">
+                        <a th:href="@{/mypage/activity/materials/{materialId}/edit(materialId=${material.materialId})}" class="edit-button">수정</a>
+                        <button class="delete-button">삭제</button>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(materials)}">
+                    <td colspan="5">등록된 자료가 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 후기 내역 -->
+    <div id="review-section" class="content-section">
+        <div class="section-header">
+            <h2>후기</h2>
+            <a th:href="@{/mypage/activity/reviews/new}" class="create-button">새 후기 등록</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>대상</th>
+                    <th>카테고리</th>
+                    <th>평점</th>
+                    <th>내용</th>
+                    <th>작성일</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="review : ${reviews}">
+                    <td th:text="${review.reviewId}"></td>
+                    <td th:text="${review.targetUser.nickname}"></td>
+                    <td th:text="${review.category}"></td>
+                    <td th:text="${review.rating}"></td>
+                    <td th:text="${review.content}"></td>
+                    <td th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}"></td>
+                    <td class="action-buttons">
+                        <a th:href="@{/mypage/activity/reviews/{reviewId}/edit(reviewId=${review.reviewId})}" class="edit-button">수정</a>
+                        <form th:action="@{/mypage/activity/reviews/{reviewId}/delete(reviewId=${review.reviewId})}" method="post" style="display:inline;">
+                            <button type="submit" class="delete-button" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(reviews)}">
+                    <td colspan="7">작성된 후기가 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            function showSection(sectionId) {
+                contentSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(sectionId).style.display = 'block';
+            }
+
+            function setActiveButton(clickedButton) {
+                tabButtons.forEach(button => {
+                    button.classList.remove('active');
+                });
+                clickedButton.classList.add('active');
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.dataset.target;
+                    showSection(targetId);
+                    setActiveButton(this);
+                });
+            });
+
+            // 페이지 로드 시 기본적으로 첫 번째 탭 (재능) 활성화
+            if (tabButtons.length > 0) {
+                tabButtons[0].click();
+            }
+        });
+    </script>
+</body>
+</html>
