@@ -99,7 +99,7 @@ public class MentoringMatchService {
 
     // 매칭  ID 조회
     public MentoringMatchResponse findById(Integer matchId) {
-        MentoringMatch match = matchRepo.findByIdAndStatusNot(matchId, MentoringStatus.DELETED)
+        MentoringMatch match = matchRepo.findByMatchIdAndStatusNot(matchId, MentoringStatus.DELETED)
                 .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "매칭이 존재하지 않거나 삭제되었습니다."));
         return toResponse(match);
     }
