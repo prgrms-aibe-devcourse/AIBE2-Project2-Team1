@@ -35,10 +35,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/api/auth/**").permitAll()
+                        .requestMatchers("/login", "/api/auth/**", "/reviews").permitAll()
                         .requestMatchers("/api/talents/**").permitAll() // 💡 임시 오픈 (수정해야함) 전제조회, 단건조회, 등록, 수정, 삭제 테스트
                         .requestMatchers("/", "/login", "/signup", "/api/auth/**", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
-                        .requestMatchers("/mypage").hasRole("USER")
+                        .requestMatchers("/mypage/**").hasRole("USER") // 마이페이지 전체
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated())

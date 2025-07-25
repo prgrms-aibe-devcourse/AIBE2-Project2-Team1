@@ -13,19 +13,20 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    OK(0, HttpStatus.OK, "Ok"),
+    OK(0, HttpStatus.OK, "성공"),
 
-    BAD_REQUEST(10000, HttpStatus.BAD_REQUEST, "Bad request"),
-    SPRING_BAD_REQUEST(10001, HttpStatus.BAD_REQUEST, "Spring-detected bad request"),
-    VALIDATION_ERROR(10002, HttpStatus.BAD_REQUEST, "Validation error"),
-    NOT_FOUND(10003, HttpStatus.NOT_FOUND, "Requested resource is not found"),
-    REVIEW_NOT_FOUND(10004, HttpStatus.NOT_FOUND, "Review not found"),
-    USER_NOT_FOUND(10005, HttpStatus.NOT_FOUND, "User not found"),
-    DUPLICATE_EMAIL(10006, HttpStatus.CONFLICT, "Duplicate email"), // DUPLICATE_EMAIL 추가
+    BAD_REQUEST(10000, HttpStatus.BAD_REQUEST, "잘못된 요청"),
+    SPRING_BAD_REQUEST(10001, HttpStatus.BAD_REQUEST, "스프링 감지 잘못된 요청"),
+    VALIDATION_ERROR(10002, HttpStatus.BAD_REQUEST, "유효성 검사 오류"),
+    NOT_FOUND(10003, HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없음"),
+    REVIEW_NOT_FOUND(10004, HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없음"),
+    USER_NOT_FOUND(10005, HttpStatus.NOT_FOUND, "사용자를 찾을 수 없음"),
+    DUPLICATE_EMAIL(10006, HttpStatus.CONFLICT, "중복된 이메일"),
+    UNAUTHORIZED(10007, HttpStatus.FORBIDDEN, "권한 없음"),
 
-    INTERNAL_ERROR(20000, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
-    SPRING_INTERNAL_ERROR(20001, HttpStatus.INTERNAL_SERVER_ERROR, "Spring-detected internal error"),
-    DATA_ACCESS_ERROR(20002, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error")
+    INTERNAL_ERROR(20000, HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 오류"),
+    SPRING_INTERNAL_ERROR(20001, HttpStatus.INTERNAL_SERVER_ERROR, "스프링 감지 내부 서버 오류"),
+    DATA_ACCESS_ERROR(20002, HttpStatus.INTERNAL_SERVER_ERROR, "데이터 접근 오류")
     ;
 
     private final Integer code;
