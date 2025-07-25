@@ -3,12 +3,17 @@ package com.example.campy.controller;
 import com.example.campy.repository.UserRepository;
 import com.example.campy.repository.AdminRepository;
 import com.example.campy.service.CustomUserDetails;
+import com.example.campy.service.TalentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -17,6 +22,7 @@ public class PageController {
 
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
+    private final TalentService talentService;
 
     @GetMapping
     public String mainPage(Authentication authentication, Model model) {
@@ -52,4 +58,6 @@ public class PageController {
         }
         return "mypage/mypage"; // → templates/mypage/mypage.html 렌더링
     }
+
+    
 }
