@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+<head>
+    <title>마이페이지 - 새 후기 작성</title>
+    <th:block th:fragment="head-extra">
+        <link rel="stylesheet" th:href="@{/css/mypage.css}">
+    </th:block>
+</head>
+<body>
+    <th:block th:fragment="content">
+        <div class="container my-4">
+            <h1>새 후기 작성</h1>
+
+            <form th:action="@{/my-page/reviews/new}" th:object="${reviewCreateRequest}" method="post">
+                <div th:if="${#fields.hasErrors()}" class="alert alert-danger" role="alert">
+                    <p th:each="err : ${#fields.errors()}" th:text="${err}"></p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="targetUserId" class="form-label">대상 사용자</label>
+                    <select class="form-control" id="targetUserId" th:field="*{targetUserId}">
+                        <option value="">사용자 선택</option>
+                        <option th:each="user : ${users}" th:value="${user.userId}" th:text="${user.username + ' (' + user.nickname + ')'}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('targetUserId')}" th:errors="*{targetUserId}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="targetId" class="form-label">대상 ID (멘토링 매칭 ID 등)</label>
+                    <input type="number" class="form-control" id="targetId" th:field="*{targetId}">
+                    <div th:if="${#fields.hasErrors('targetId')}" th:errors="*{targetId}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="rating" class="form-label">평점 (1-5)</label>
+                    <input type="number" class="form-control" id="rating" th:field="*{rating}" min="1" max="5">
+                    <div th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">카테고리</label>
+                    <input type="text" class="form-control" id="category" th:field="*{category}">
+                    <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-danger"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" id="content" th:field="*{content}"></textarea>
+                    <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-danger"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">후기 작성</button>
+                <a th:href="@{/my-page/reviews/my-reviews}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </th:block>
+    <th:block th:fragment="body-extra">
+        <!-- 이 페이지에만 필요한 추가 JS -->
+    </th:block>
+</body>
+</html>

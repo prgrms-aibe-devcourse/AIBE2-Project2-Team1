@@ -8,6 +8,7 @@
     
 </head>
 <body>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <div class="my-page-container">
     <h1>마이페이지</h1>
@@ -72,7 +73,6 @@
         <div class="menu-category">
             <h2>후기</h2>
             <ul>
-                <li><a th:href="@{/reviews}">후기 게시판</a></li>
                 <li><a th:href="@{/my-page/reviews/my-reviews}">내가 등록한 후기</a></li>
             </ul>
         </div>

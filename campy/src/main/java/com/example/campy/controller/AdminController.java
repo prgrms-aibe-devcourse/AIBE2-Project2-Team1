@@ -8,13 +8,13 @@ import com.example.campy.dto.review.request.ReviewUpdateRequest;
 import com.example.campy.dto.review.request.ReviewCreateRequest;
 import com.example.campy.dto.user.response.UserResponseDto;
 import com.example.campy.dto.user.request.UserUpdateRequest;
-import com.example.campy.dto.user.request.UserCreateRequest;
+import com.example.campy.dto.user.request.UserCreateRequest; // UserCreateRequest import 추가
 import com.example.campy.dto.board.response.BoardResponseDto;
 import com.example.campy.dto.board.request.BoardUpdateRequest;
-import com.example.campy.dto.board.request.BoardCreateRequest;
-import com.example.campy.dto.TalentRequestDto;
-import com.example.campy.entity.Talent;
-import com.example.campy.entity.Tag;
+import com.example.campy.dto.board.request.BoardCreateRequest; // BoardCreateRequest import 추가
+import com.example.campy.dto.talent.request.TalentCreateRequest;
+import com.example.campy.dto.talent.response.TalentResponseDto;
+import com.example.campy.dto.talent.request.TalentUpdateRequest;
 import com.example.campy.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -253,64 +253,63 @@ public class AdminController {
 
     @GetMapping("/talents/new")
     public String adminTalentNewPage(Model model) {
-        model.addAttribute("talentRequestDto", new TalentRequestDto());
+        model.addAttribute("talentRequestDto", new TalentCreateRequest());
+        List<UserResponseDto> users = adminService.getAllUsers(); // 모든 사용자 목록 추가
+        model.addAttribute("users", users);
         return "admin/admin_talents/admin_talent_new";
     }
 
     @GetMapping("/talents/{id}/edit")
     public String adminTalentEditPage(@PathVariable Integer id, Model model) {
-        Talent talent = talentService.getTalentById(id);
+        TalentResponseDto talent = talentService.getTalentById(id);
         model.addAttribute("talent", talent);
-        // TalentRequestDto에 기존 Talent 데이터를 채워서 폼에 바인딩
-        TalentRequestDto talentRequestDto = new TalentRequestDto();
-        talentRequestDto.setTitle(talent.getTitle());
-        talentRequestDto.setDescription(talent.getDescription());
-        talentRequestDto.setPrice(talent.getPrice());
-        talentRequestDto.setAvailableDays(talent.getAvailableDays());
-        talentRequestDto.setOfflineLocation(talent.getOfflineLocation());
-        talentRequestDto.setCategory(talent.getCategory());
-        // 태그는 Set<Tag>에서 String으로 변환하여 설정
-        if (talent.getTags() != null && !talent.getTags().isEmpty()) {
-            String tagNames = talent.getTags().stream()
-                                    .map(Tag::getName)
-                                    .collect(java.util.stream.Collectors.joining(","));
-            talentRequestDto.setTagNames(java.util.Arrays.asList(tagNames.split(",")));
-        }
-        model.addAttribute("talentRequestDto", talentRequestDto);
+        // TalentUpdateRequest에 기존 Talent 데이터를 채워서 폼에 바인딩
+        TalentUpdateRequest talentUpdateRequest = TalentUpdateRequest.builder()
+                .talentId(talent.getTalentId())
+                .title(talent.getTitle())
+                .description(talent.getDescription())
+                .price(talent.getPrice())
+                .availableDays(talent.getAvailableDays())
+                .offlineLocation(talent.getOfflineLocation())
+                .category(talent.getCategory())
+                .tagNames(talent.getTagNames())
+                .build();
+        model.addAttribute("talentRequestDto", talentUpdateRequest);
         return "admin/admin_talents/admin_talent_edit";
     }
 
     @PostMapping("/talents/new")
     public String createTalent(
-            @ModelAttribute @Valid TalentRequestDto talentRequestDto,
+            @ModelAttribute @Valid TalentCreateRequest talentCreateRequest,
             @RequestParam(value = "image", required = false) MultipartFile image,
-            BindingResult bindingResult
+            BindingResult bindingResult,
+            Authentication authentication
     ) throws IOException {
         if (bindingResult.hasErrors()) {
             return "admin/admin_talents/admin_talent_new";
         }
-        talentService.registerTalent(talentRequestDto, image);
+        talentService.createTalent(talentCreateRequest, image, authentication);
         return "redirect:/admin/talents";
     }
 
     @PostMapping("/talents/{id}/edit")
     public String updateTalent(
             @PathVariable Integer id,
-            @ModelAttribute @Valid TalentRequestDto talentRequestDto,
+            @ModelAttribute @Valid TalentUpdateRequest talentUpdateRequest,
             @RequestParam(value = "image", required = false) MultipartFile image,
-            BindingResult bindingResult
+            BindingResult bindingResult,
+            Authentication authentication
     ) throws IOException {
         if (bindingResult.hasErrors()) {
             return "admin/admin_talents/admin_talent_edit";
         }
-        talentService.updateTalent(id, talentRequestDto, image);
+        talentService.adminUpdateTalent(id, talentUpdateRequest, image);
         return "redirect:/admin/talents";
     }
 
     @PostMapping("/talents/{id}/delete")
-    public String deleteTalent(@PathVariable Integer id) {
-        Integer userId = 1; // JWT 사용 시 교체
-        talentService.deleteTalent(id, userId);
+    public String deleteTalent(@PathVariable Integer id, Authentication authentication) {
+        talentService.adminDeleteTalent(id);
         return "redirect:/admin/talents";
     }
 

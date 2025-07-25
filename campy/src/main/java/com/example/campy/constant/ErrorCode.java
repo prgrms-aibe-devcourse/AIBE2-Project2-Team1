@@ -31,6 +31,7 @@ public enum ErrorCode {
 
     REVIEW_NOT_FOUND(10006, HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
     DUPLICATE_EMAIL(10007, HttpStatus.BAD_REQUEST, "중복된 이메일입니다."),
+
     ;
 
     private final Integer code;

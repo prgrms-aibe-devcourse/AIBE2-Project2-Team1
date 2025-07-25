@@ -36,28 +36,21 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll()
 
-                        // ✅ Talent - GET은 허용, POST는 권한 필요
-                        .requestMatchers(HttpMethod.GET, "/api/talents/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/talents/**").hasAnyAuthority("ROLE_USER", "ROLE_MENTOR", "ROLE_ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/talents/**").hasAnyAuthority("ROLE_USER", "ROLE_MENTOR", "ROLE_ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/talents/**").hasAnyAuthority("ROLE_USER", "ROLE_MENTOR", "ROLE_ADMIN")
+                        .requestMatchers("/login", "/api/auth/**", "/reviews").permitAll()
+                        .requestMatchers("/api/talents/**").permitAll() // 💡 임시 오픈 (수정해야함) 전제조회, 단건조회, 등록, 수정, 삭제 테스트
+                        .requestMatchers("/", "/login", "/signup", "/api/auth/**", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/mypage/**").hasRole("USER") // 마이페이지 전체
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .anyRequest().authenticated())
 
                         // 쪽지 기능
                         .requestMatchers("/api/messages/**").authenticated()
-
-                        // 기본 public 경로들
-                        .requestMatchers("/", "/login", "/signup", "/api/auth/**", "/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
-
-                        // 마이페이지 등 페이지별 권한
-                        .requestMatchers("/mypage").hasAnyAuthority("ROLE_USER", "ROLE_MENTOR", "ROLE_ADMIN")
-                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "ROLE_MENTOR")
-
-                        // 그 외 나머지는 인증 필요
-                        .anyRequest().authenticated()
+          
+          
                 )
+
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

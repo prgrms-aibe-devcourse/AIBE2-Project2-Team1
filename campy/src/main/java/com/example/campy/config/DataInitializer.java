@@ -115,6 +115,7 @@ public class DataInitializer implements CommandLineRunner {
                 .description("신입 개발자, 학생분들의 포트폴리오를 현직자의 시선으로 꼼꼼하게 리뷰해드립니다.")
                 .price(30000)
                 .status("판매중")
+                .deleted(false)
                 .category("IT/개발") // Added category
                 .createdAt(LocalDateTime.now())
                 .build();
