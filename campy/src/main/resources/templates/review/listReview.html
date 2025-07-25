@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 게시판</title>
+    <link rel="stylesheet" href="../../static/css/review.css">
+</head>
+<body>
+<h2>리뷰 게시판</h2>
+
+<div class="search-bar">
+    <form th:action="@{/review/search}" method="get">
+        <select name="type">
+            <option value="name">이름</option>
+            <option value="category">카테고리</option>
+            <option value="reviewer">작성자</option>
+            <option value="content">내용</option>
+        </select>
+        <input type="text" name="keyword" placeholder="검색어를 입력하세요." th:value="${param.keyword}">
+        <button type="submit">검색</button>
+        <button type="button" id="openReviewModal" class="write-button">작성하기</button>
+    </form>
+</div>
+
+<table class="board-table">
+    <colgroup>
+        <col style="width: 3%">
+        <col style="width: 10%">
+        <col style="width: 8%">
+        <col style="width: 10%">
+        <col style="width: 51%">
+        <col style="width: 8%">
+        <col style="width: 10%">
+    </colgroup>
+    <thead>
+    <tr>
+        <th>NO</th>
+        <th>CATEGORY</th>
+        <th>NAME</th>
+        <th>STARS</th>
+        <th>CONTENT</th>
+        <th>REVIEWER</th>
+        <th>DATE</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="review, iStat : ${reviewList}">
+        <td th:text="${iStat.count}">0</td>
+        <td th:text="${review.category}">카테고리</td>
+        <td th:text="${review.targetName}">사용자</td>
+        <td th:text="${review.stars}">⭐⭐⭐⭐⭐</td>
+        <td class="left-align" th:text="${review.content}">내용</td>
+        <td th:text="${review.writer}">작성자</td>
+        <td th:text="${#dates.format(review.createdDate, 'yyyy-MM-dd')}">9999-12-31</td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 리뷰 작성 모달 -->
+<div id="reviewModal" class="modal-overlay">
+    <div class="modal-content review-popup">
+        <h3>리뷰 작성하기</h3>
+        <form th:action="@{/review/save}" th:object="${reviewForm}" method="post">
+            <table class="write-table">
+                <tr>
+                    <th>리뷰 분야</th>
+                    <td>
+                        <select th:field="*{category}">
+                            <option value="" disabled selected>리뷰 분야를 선택해주세요.</option>
+                            <option value="멘토링">멘토링</option>
+                            <option value="자료">자료</option>
+                            <option value="재능">재능</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>리뷰 대상</th>
+                    <td><input type="text" th:field="*{targetName}" placeholder="아이디를 적어주세요."></td>
+                </tr>
+                <tr>
+                    <th>별점</th>
+                    <td class="stars">
+                        <span class="star" data-value="1">⭐</span>
+                        <span class="star" data-value="2">⭐</span>
+                        <span class="star" data-value="3">⭐</span>
+                        <span class="star" data-value="4">⭐</span>
+                        <span class="star" data-value="5">⭐</span>
+                        <input type="hidden" th:field="*{stars}" name="stars" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>내용</th>
+                    <td>
+                        <textarea th:field="*{content}" placeholder="한글, 영문 포함 최대 500 이내, 특수문자, 개인정보 등은 제외"></textarea>
+                    </td>
+                </tr>
+            </table>
+            <div class="btn-wrapper">
+                <button type="submit" class="submit-button">작성하기</button>
+            </div>
+        </form>
+        <button id="closeReviewModal" class="modal-close">닫기</button>
+    </div>
+</div>
+
+<!-- ✅ 자바스크립트 통합 -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const openBtn = document.getElementById('openReviewModal');
+        const closeBtn = document.getElementById('closeReviewModal');
+        const modal = document.getElementById('reviewModal');
+        const stars = document.querySelectorAll('.star');
+        const hiddenInput = document.querySelector('input[name="stars"]');
+
+        let selectedRating = 0;
+
+        openBtn?.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+
+        closeBtn?.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        stars.forEach((star) => {
+            star.addEventListener('click', () => {
+                selectedRating = star.getAttribute('data-value');
+                hiddenInput.value = selectedRating;
+                updateStars(selectedRating);
+            });
+        });
+
+        function updateStars(rating) {
+            stars.forEach((star) => {
+                const value = star.getAttribute('data-value');
+                star.textContent = (value <= rating) ? '⭐' : '☆';
+            });
+        }
+
+        // 초기화
+        updateStars(0);
+    });
+</script>
+</body>
+</html>
