@@ -8,9 +8,11 @@ import com.example.campy.dto.mentoring.response.MentoringOfferResponse;
 import com.example.campy.dto.talent.response.TalentResponseDto;
 import com.example.campy.dto.board.response.BoardResponseDto;
 import com.example.campy.dto.material.response.MaterialResponseDto;
+import com.example.campy.dto.board.request.BoardUpdateRequest;
 import com.example.campy.dto.talent.request.TalentUpdateRequest;
 import com.example.campy.dto.talent.request.TalentCreateRequest;
 import com.example.campy.dto.mentoring.request.MentoringOfferCreateRequest;
+import com.example.campy.dto.mentoring.request.MentoringOfferUpdateRequest;
 import com.example.campy.service.AdminService;
 import com.example.campy.service.UserReviewService;
 import com.example.campy.service.MentoringOfferService;
@@ -134,7 +136,18 @@ public class MyPageController {
     @GetMapping("/activity/talents/{talentId}/edit")
     public String editTalentForm(@PathVariable Integer talentId, Authentication authentication, Model model) {
         TalentResponseDto talent = talentService.getTalentById(talentId);
+        TalentUpdateRequest talentUpdateRequest = new TalentUpdateRequest();
+        talentUpdateRequest.setTalentId(talent.getTalentId());
+        talentUpdateRequest.setTitle(talent.getTitle());
+        talentUpdateRequest.setDescription(talent.getDescription());
+        talentUpdateRequest.setPrice(talent.getPrice());
+        talentUpdateRequest.setAvailableDays(talent.getAvailableDays());
+        talentUpdateRequest.setOfflineLocation(talent.getOfflineLocation());
+        talentUpdateRequest.setCategory(talent.getCategory());
+        talentUpdateRequest.setTagNames(talent.getTagNames());
+
         model.addAttribute("talent", talent);
+        model.addAttribute("talentUpdateRequest", talentUpdateRequest);
         return "mypage/mypage_activity/mypage_talent/mypage_talent_edit";
     }
 
@@ -160,6 +173,8 @@ public class MyPageController {
         return "mypage/mypage_activity/mypage_mentoringoffer/mypage_mentoringoffer_edit";
     }
 
+
+
     // 재능 삭제
     @PostMapping("/activity/talents/{talentId}/delete")
     public String deleteTalent(@PathVariable Integer talentId, Authentication authentication, RedirectAttributes redirectAttributes) {
@@ -176,6 +191,23 @@ public class MyPageController {
         BoardResponseDto board = boardService.getBoardById(boardId);
         model.addAttribute("board", board);
         return "mypage/mypage_activity/mypage_board/mypage_board_edit";
+    }
+
+    @PostMapping("/activity/boards/{boardId}/update")
+    public String updateBoard(@PathVariable Integer boardId,
+                              @ModelAttribute BoardUpdateRequest request,
+                              Authentication authentication,
+                              RedirectAttributes redirectAttributes) {
+        boardService.updateBoard(boardId, request, authentication);
+        redirectAttributes.addFlashAttribute("message", "게시물이 성공적으로 수정되었습니다.");
+        return "redirect:/mypage/activity/registrations";
+    }
+
+    @PostMapping("/activity/boards/{boardId}/delete")
+    public String deleteBoard(@PathVariable Integer boardId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        boardService.deleteBoard(boardId, authentication);
+        redirectAttributes.addFlashAttribute("message", "게시물이 성공적으로 삭제되었습니다.");
+        return "redirect:/mypage/activity/registrations";
     }
 
     // 새 재능 등록 폼

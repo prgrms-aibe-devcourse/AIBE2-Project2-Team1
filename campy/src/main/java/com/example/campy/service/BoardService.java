@@ -41,9 +41,17 @@ public class BoardService {
 
     // 게시글 업데이트
     @Transactional
-    public void updateBoard(Integer boardId, BoardUpdateRequest request) {
+    public void updateBoard(Integer boardId, BoardUpdateRequest request, Authentication authentication) {
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다: " + username));
+
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found with id: " + boardId));
+
+        if (!board.getUser().getUserId().equals(currentUser.getUserId())) {
+            throw new GeneralException(ErrorCode.UNAUTHORIZED, "게시글을 수정할 권한이 없습니다.");
+        }
 
         board.setSchool(request.school());
         board.setCategory(request.category());
@@ -57,9 +65,18 @@ public class BoardService {
 
     // 게시글 삭제 (soft delete)
     @Transactional
-    public void deleteBoard(Integer boardId) {
+    public void deleteBoard(Integer boardId, Authentication authentication) {
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다: " + username));
+
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found with id: " + boardId));
+
+        if (!board.getUser().getUserId().equals(currentUser.getUserId())) {
+            throw new GeneralException(ErrorCode.UNAUTHORIZED, "게시글을 삭제할 권한이 없습니다.");
+        }
+
         board.setIsDeleted(true); // isDeleted 필드를 true로 설정
         board.setUpdatedAt(LocalDateTime.now());
         boardRepository.save(board);
