@@ -220,14 +220,14 @@ public class AdminController {
             model.addAttribute("boardUpdateRequest", request);
             return "admin/admin_boards/admin_board_edit";
         }
-        boardService.updateBoard(boardId, request, authentication);
+        boardService.adminUpdateBoard(boardId, request);
         redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 수정되었습니다.");
         return "redirect:/admin/boards";
     }
 
     @PostMapping("/boards/{boardId}/delete")
     public String deleteBoard(@PathVariable Integer boardId, RedirectAttributes redirectAttributes, Authentication authentication) {
-        boardService.deleteBoard(boardId, authentication);
+        boardService.adminDeleteBoard(boardId);
         redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 삭제되었습니다.");
         return "redirect:/admin/boards";
     }

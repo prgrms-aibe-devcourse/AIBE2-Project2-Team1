@@ -113,4 +113,30 @@ public class BoardService {
                 .map(BoardResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    // Admin 전용 게시글 업데이트
+    @Transactional
+    public void adminUpdateBoard(Integer boardId, BoardUpdateRequest request) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("Board not found with id: " + boardId));
+
+        board.setSchool(request.school());
+        board.setCategory(request.category());
+        board.setTitle(request.title());
+        board.setContent(request.content());
+        board.setIsDeleted(request.isDeleted());
+        board.setUpdatedAt(LocalDateTime.now());
+
+        boardRepository.save(board);
+    }
+
+    // Admin 전용 게시글 삭제
+    @Transactional
+    public void adminDeleteBoard(Integer boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("Board not found with id: " + boardId));
+        board.setIsDeleted(true);
+        board.setUpdatedAt(LocalDateTime.now());
+        boardRepository.save(board);
+    }
 }
