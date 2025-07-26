@@ -76,6 +76,7 @@ public class MentoringOfferService {
         List<MentoringOfferResponse> content = offerPage.getContent().stream()
                 .map(offer -> {
                     List<String> tags = tagMap.getOrDefault(offer.getOfferId(), List.of());
+
                     return MentoringOfferResponse.from(offer, tags);
                 })
                 .toList();

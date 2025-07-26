@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AdController {
 
-    @GetMapping("/ai/start")
-    public String aiStartPage() {
-        return "ai/start"; // templates/ai/start.html
+    @GetMapping("/ad/start")
+    public String adStartPage() {
+        return "ad/start";
     }
 
     @GetMapping("/telents/telentList")

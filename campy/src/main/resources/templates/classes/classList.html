@@ -225,8 +225,6 @@
                 <img src="/images/search-icon.png" alt="검색" class="search-icon">
             </button>
         </div>
-
-
         <div class="tag-list" id="tag-list"></div>
     </div>
 
@@ -243,50 +241,13 @@
         </div>
 
         <div class="mentor-list-wrapper" style="flex: 2.5;">
-            <div class="mentor-card" data-id="1" data-tags="컴공 포폴 진로 상담">
-                <div class="card-content">
-                    <p class="mentor-name">권은비 멘토</p>
-                    <div class="card-title">컴퓨터 공학과 취업 상담</div>
-                    <p style="color: goldenrod;">⭐ 5.0</p>
-                    <p>컴퓨터공학과 친구들 진로 상담 및 취업 질문 받아요! 대기업 합격 포트 다수 보유하고 있습니다. 과제나 수업 학습 방법 팁들도 알려드립니다...</p>
-                    <p class="card-tags">#컴공 #포폴 #진로 #상담</p>
-                </div>
-                <div class="card-image">
-                    <img src="/images/mentor1.jpg" alt="권은비 멘토">
-                </div>
-            </div>
-
-            <div class="mentor-card" data-id="2" data-tags="컴공 수업">
-                <div class="card-content">
-                    <p class="mentor-name">차은우 멘토</p>
-                    <div class="card-title">컴공 학교 수업 멘토링</div>
-                    <p style="color: goldenrod;">⭐ 4.8</p>
-                    <p>컴퓨터공학과 신입생 여러분~ 어려운 C언어, Java를 쉽게 설명해드릴 수 있습니다. 어떻게 하면 이해하고 실전에 사용할 수 있을지 알려...</p>
-                    <p class="card-tags">#컴공 #수업</p>
-                </div>
-                <div class="card-image">
-                    <img src="/images/mentor2.jpg" alt="차은우 멘토">
-
-                </div>
-            </div>
-
-            <div class="mentor-card" data-id="3" data-tags="컴공 코테">
-                <div class="card-content">
-                    <p class="mentor-name">설윤 멘토</p>
-                    <div class="card-title">코딩 테스트 준비 멘토링</div>
-                    <p style="color: goldenrod;">⭐ 4.9</p>
-                    <p>취업을 위해서 코테를 준비하는 사람 여기 여기 모여라~ 어떻게 코테를 풀면 다양한 유형에 적용할 수 있을지 요약하여 설명해드립니다. 한번...</p>
-                    <p class="card-tags">#컴공 #코테</p>
-                </div>
-                <div class="card-image">
-                    <img src="/images/mentor3.jpg" alt="설윤 멘토">
-                </div>
-            </div>
+            <div id="mentor-list"></div>
         </div>
     </div>
 </div>
 
 <script>
+    // 검색/필터 관련 코드 (기존과 동일)
     const searchInput = document.getElementById('search-input');
     const tagList = document.getElementById('tag-list');
     let selectedTags = [];
@@ -342,29 +303,44 @@
         });
     }
 
-    // 검색 버튼 클릭 시도 동일하게 처리
-    document.getElementById('search-btn').addEventListener('click', () => {
-        const value = searchInput.value.trim();
-        if (!value) return;
+    // mentors API에서 리스트 받아와서 카드 동적 렌더링 + 카드 클릭 시 이동
+    fetch("/api/mentoring-offers")
+        .then(response => response.json())
+        .then(result => {
+            const data = result.content;
+            const container = document.getElementById("mentor-list");
 
-        if (value.startsWith('#')) {
-            addTag(value);
-        } else {
-            selectedTags = [];
-            tagList.innerHTML = '';
-            filterByKeyword(value);
-        }
-        searchInput.value = '';
-    });
+            data.forEach(mentor => {
+                const card = document.createElement("div");
+                card.className = "mentor-card";
+                card.setAttribute("data-id", mentor.offerId);
+                card.setAttribute("data-tags", mentor.tags.join(" "));
 
-    // 카드 클릭 시 상세 페이지 이동
-    document.querySelectorAll('.mentor-card').forEach(card => {
-        card.style.cursor = 'pointer';
-        card.addEventListener('click', () => {
-            const id = card.getAttribute('data-id');
-            window.location.href = `/class/detail/${id}`;
+                card.innerHTML = `
+                <div class="card-content">
+                    <p class="mentor-name">${mentor.nickname || '이름 없음'}</p>
+                    <div class="card-title">${mentor.title}</div>
+                    <p style="color: goldenrod;">⭐ ${mentor.rating || '0.0'}</p>
+                    <p>${mentor.description || '상세 설명이 없습니다.'}</p>
+                    <p class="card-tags">#${mentor.tags.join(' #')}</p>
+                </div>
+                <div class="card-image">
+                   <img src="${mentor.user?.profileImg || '/images/default-mentor.png'}" alt="멘토 이미지">
+                </div>
+                `;
+
+                // 카드 클릭 시, RESTful하게 id 쿼리스트링으로 상세 페이지 이동!
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    window.location.href = `/classes/classDetail.html?id=${mentor.offerId}`;
+                });
+
+                container.appendChild(card);
+            });
+        })
+        .catch(error => {
+            console.error("멘토 목록 로드 실패:", error);
         });
-    });
 
 </script>
 <!-- Footer Fragment (메인과 합칠때 복구) -->

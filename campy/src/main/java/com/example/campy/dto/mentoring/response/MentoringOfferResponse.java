@@ -1,6 +1,7 @@
 package com.example.campy.dto.mentoring.response;
 
 import com.example.campy.entity.MentoringOffer;
+import com.example.campy.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,10 @@ public class MentoringOfferResponse {
 
     private List<String> tags;
 
+    private String nickname;
+    private String profileImg;
+
+
     public static MentoringOfferResponse from(MentoringOffer entity) {
 
         return MentoringOfferResponse.builder()
@@ -44,6 +49,8 @@ public class MentoringOfferResponse {
     }
 
     public static MentoringOfferResponse from(MentoringOffer entity, List<String> tagNames) {
+        User user = entity.getUser();
+
         return MentoringOfferResponse.builder()
                 .offerId(entity.getOfferId())
                 .title(entity.getTitle())
@@ -55,6 +62,8 @@ public class MentoringOfferResponse {
                 .duration(entity.getDuration())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
+                .nickname(user != null ? user.getNickname() : null)
+                .profileImg(user != null ? user.getProfileImg() : null)
                 .tags(tagNames)
                 .build();
     }

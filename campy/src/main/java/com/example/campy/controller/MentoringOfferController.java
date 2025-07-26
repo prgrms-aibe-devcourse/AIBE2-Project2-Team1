@@ -42,6 +42,8 @@ public class MentoringOfferController {
     // 모든 멘토링 제안 조회
     @GetMapping
     public ResponseEntity<Page<MentoringOfferResponse>> getAllMentoringOffers(Pageable pageable) {
+        System.out.println("📌 page=" + pageable.getPageNumber() + ", size=" + pageable.getPageSize());
+
         return ResponseEntity.ok(mentoringOfferService.findAll(pageable));
     }
 

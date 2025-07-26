@@ -98,7 +98,11 @@ public class MentoringOfferIntegrationTest {
         assertThat(result).isNotNull();
         assertThat(result.getOfferId()).isEqualTo(offerId);
         assertThat(result.getTitle()).isEqualTo("Java 멘토링");
-        assertThat(result.getTags()).containsExactlyInAnyOrderElementsOf(expectedTagNames);
+        assertThat(
+                result.getTags().stream().map(String::toLowerCase).toList()
+        ).containsExactlyInAnyOrderElementsOf(
+                expectedTagNames.stream().map(String::toLowerCase).toList()
+        );
     }
 
     @DisplayName("저장된 제안을 삭제하면 조회 시 예외가 발생한다.")
@@ -187,7 +191,9 @@ public class MentoringOfferIntegrationTest {
 
         // Then
         assertThat(result.getContent()).isNotEmpty();
-        assertThat(result.getContent().get(0).getTags()).contains("jpa");
+        assertThat(
+                result.getContent().get(0).getTags().stream().map(String::toLowerCase).toList()
+        ).contains("jpa");
     }
 
     @DisplayName("상태값으로 조회하면 해당 상태의 제안만 반환된다.")

@@ -47,9 +47,22 @@ class MentoringOfferServiceTest {
 
     private final Pageable defaultPageable = PageRequest.of(0, 10);
 
+    User dummyUser = User.builder()
+            .userId(99)
+            .nickname("테스트유저")
+            .profileImg("/images/default-mentor.png")
+            .build();
+
     private MentoringOffer createOffer(int offerId, String title) {
+        User dummyUser = User.builder()
+                .userId(99)
+                .nickname("테스트유저")
+                .profileImg("/images/default-mentor.png")
+                .build();
+
         return MentoringOffer.builder()
                 .offerId(offerId)
+                .user(dummyUser)
                 .title(title)
                 .description("설명")
                 .status(MentoringStatus.ONGOING)

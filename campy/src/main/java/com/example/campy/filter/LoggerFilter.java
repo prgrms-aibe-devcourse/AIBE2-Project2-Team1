@@ -21,20 +21,24 @@ public class LoggerFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 요청과 응답을 캐싱 래퍼로 감쌈
+        String uri = request.getRequestURI();
+
+        // 정적 리소스는 필터 제외
+        if (isStaticResource(uri)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         var req = new ContentCachingRequestWrapper(request);
         var res = new ContentCachingResponseWrapper(response);
 
-        // 실제 필터 체인 실행
         filterChain.doFilter(req, res);
 
-        // 로그 출력 정보
         String method = req.getMethod();
-        String uri = req.getRequestURI();
         int status = res.getStatus();
 
-        String reqBody = new String(req.getContentAsByteArray(), StandardCharsets.UTF_8).trim();
-        String resBody = new String(res.getContentAsByteArray(), StandardCharsets.UTF_8).trim();
+        String reqBody = getReadableBody(req.getContentAsByteArray(), request.getContentType());
+        String resBody = getReadableBody(res.getContentAsByteArray(), res.getContentType());
 
         log.info(
                 "\n=================  [REQUEST] =================\n" +
@@ -42,7 +46,7 @@ public class LoggerFilter extends OncePerRequestFilter {
                         "▶ URI    : {}\n" +
                         "▶ Body   : {}\n" +
                         "==============================================",
-                method, uri, reqBody.isEmpty() ? "(no body)" : reqBody
+                method, uri, reqBody
         );
 
         log.info(
@@ -50,10 +54,34 @@ public class LoggerFilter extends OncePerRequestFilter {
                         "◀ Status : {}\n" +
                         "◀ Body   : {}\n" +
                         "==============================================",
-                status, resBody.isEmpty() ? "(no body)" : resBody
+                status, resBody
         );
 
-        // response body를 실제로 클라이언트에 복사
         res.copyBodyToResponse();
+    }
+
+    // 텍스트 기반 응답만 문자열로 디코딩
+    private String getReadableBody(byte[] bodyBytes, String contentType) {
+        if (contentType == null) return "(unknown content type)";
+
+        if (contentType.contains("application/json") ||
+                contentType.contains("text/plain") ||
+                contentType.contains("application/xml") ||
+                contentType.contains("application/x-www-form-urlencoded")) {
+            return new String(bodyBytes, StandardCharsets.UTF_8).trim();
+        }
+
+        if (contentType.contains("text/html")) {
+            return "(html content not logged)";
+        }
+
+        return "(binary or non-loggable content)";
+    }
+
+
+
+    // 확장자 기반 정적 리소스 필터링
+    private boolean isStaticResource(String uri) {
+        return uri.matches(".*\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map)$");
     }
 }

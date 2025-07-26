@@ -85,9 +85,16 @@ class MentoringMatchServiceTest {
         combinedReq.setDetailRequest(detailReq);
         combinedReq.setMembers(memberReqs);
 
+        User dummyUser = User.builder()
+                .userId(10)
+                .nickname("테스트유저")
+                .profileImg("/images/test.png")
+                .build();
+
         MentoringOffer dummyOffer = MentoringOffer.builder()
                 .offerId(1)
                 .status(MentoringStatus.REQUESTED)
+                .user(dummyUser)
                 .build();
 
         MentoringMatch dummyMatch = MentoringMatch.builder()
