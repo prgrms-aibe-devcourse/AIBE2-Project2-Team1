@@ -8,6 +8,7 @@ import com.example.campy.dto.mentoring.response.MentoringOfferResponse;
 import com.example.campy.dto.talent.response.TalentResponseDto;
 import com.example.campy.dto.board.response.BoardResponseDto;
 import com.example.campy.dto.material.response.MaterialResponseDto;
+import com.example.campy.dto.material.request.MaterialUpdateRequest;
 import com.example.campy.dto.board.request.BoardUpdateRequest;
 import com.example.campy.dto.talent.request.TalentUpdateRequest;
 import com.example.campy.dto.talent.request.TalentCreateRequest;
@@ -236,8 +237,35 @@ public class MyPageController {
     @GetMapping("/activity/materials/{materialId}/edit")
     public String editMaterialForm(@PathVariable Integer materialId, Authentication authentication, Model model) {
         MaterialResponseDto material = materialService.getMaterialById(materialId);
+        System.out.println("Editing material with ID: " + materialId);
+        MaterialUpdateRequest materialUpdateRequest = new MaterialUpdateRequest(
+                material.materialId(),
+                material.title(),
+                material.content(),
+                material.price(),
+                material.isDeleted()
+        );
+        System.out.println("MaterialUpdateRequest materialId: " + materialUpdateRequest.materialId());
         model.addAttribute("material", material);
+        model.addAttribute("materialUpdateRequest", materialUpdateRequest);
         return "mypage/mypage_activity/mypage_material/mypage_material_edit";
+    }
+
+    @PostMapping("/activity/materials/{materialId}/update")
+    public String updateMaterial(@PathVariable Integer materialId,
+                                 @ModelAttribute MaterialUpdateRequest request,
+                                 Authentication authentication,
+                                 RedirectAttributes redirectAttributes) {
+        materialService.updateMaterial(materialId, request, authentication);
+        redirectAttributes.addFlashAttribute("message", "자료가 성공적으로 수정되었습니다.");
+        return "redirect:/mypage/activity/registrations";
+    }
+
+    @PostMapping("/activity/materials/{materialId}/delete")
+    public String deleteMaterial(@PathVariable Integer materialId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        materialService.deleteMaterial(materialId, authentication);
+        redirectAttributes.addFlashAttribute("message", "자료가 성공적으로 삭제되었습니다.");
+        return "redirect:/mypage/activity/registrations";
     }
 
     // 새 멘토링 제안 등록 폼
