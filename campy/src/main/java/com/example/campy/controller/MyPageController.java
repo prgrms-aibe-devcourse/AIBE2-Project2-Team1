@@ -85,7 +85,7 @@ public class MyPageController {
     public String getMyReviews(Authentication authentication, Model model) {
         List<ReviewResponseDto> reviews = userReviewService.getAllReviewsByUser(authentication);
         model.addAttribute("reviews", reviews);
-        return "mypage/activity/mypage_review/mypage_reviews";
+        return "mypage/mypage_activity/mypage_review/mypage_reviews";
     }
 
     @GetMapping("/activity/reviews/new")
@@ -116,7 +116,7 @@ public class MyPageController {
         System.out.println("reviewUpdateRequest: " + reviewUpdateRequest);
         model.addAttribute("review", review);
         model.addAttribute("reviewUpdateRequest", reviewUpdateRequest);
-        return "mypage/activity/mypage_review/mypage_review_edit";
+        return "mypage/mypage_activity/mypage_review/mypage_review_edit";
     }
 
     @PostMapping("/activity/reviews/{reviewId}/update")
