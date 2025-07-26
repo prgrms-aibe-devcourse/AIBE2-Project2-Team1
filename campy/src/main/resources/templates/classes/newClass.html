@@ -167,7 +167,7 @@
         <div class="chat-bubble">안녕하세요! 멘토님 멘토링 할 수업을 등록해주세요!</div>
     </div>
 
-    <form method="get" action="/newClassComplete" enctype="multipart/form-data">
+    <form method="post" action="/newClassComplete" enctype="multipart/form-data">
 
     <table>
             <tr>
@@ -195,17 +195,19 @@
                 <td>수업 시간</td>
                 <td><input type="text" name="duration" placeholder="수업을 진행할 총 시간을 적어주세요."></td>
             </tr>
-            <tr>
-                <td>수업 방식</td>
-                <td><input type="text" name="method" placeholder="예: Discord(Online), 공유 오피스(Offline)"></td>
-            </tr>
-            <tr>
-                <td>썸네일 사진 선택</td>
-                <td>
-                    <input type="file" name="thumbnail" accept=".jpg,.jpeg,.png,.gif">
-                    <div class="file-info">최대용량: 5MB 이하 · 등록 가능 형식: jpg, jpeg, png, gif</div>
-                </td>
-            </tr>
+        <!--
+           <tr>
+               <td>수업 방식</td>
+               <td><input type="text" name="method" placeholder="예: Discord(Online), 공유 오피스(Offline)"></td>
+           </tr>
+
+           <tr>
+               <td>썸네일 사진 선택</td>
+               <td>
+                   <input type="file" name="thumbnail" accept=".jpg,.jpeg,.png,.gif">
+                   <div class="file-info">최대용량: 5MB 이하 · 등록 가능 형식: jpg, jpeg, png, gif</div>
+               </td>
+           </tr>-->
             <tr>
                 <td>태그</td>
                 <td>

@@ -112,9 +112,9 @@
 <div class="container">
     <div style="flex: 3">
         <div class="content-box">
-            <h2 id="class-title">제목 로딩중...</h2>
-            <p class="label" id="class-category">카테고리 로딩중...</p>
-            <p class="desc" id="class-summary">
+            <h2 th:text="${offer.title}">spring의 기본</h2>
+            <p th:if="${offer.tags != null}" th:text="${#strings.listJoin(offer.tags, ' ')}"></p>
+            <p class="desc">
                 • 실제 상담 시작은 상호 협의하에 진행됩니다.<br>
                 • 음성/영상통화를 기본적으로 제공하며, 전문가와 협의하에 진행 방식을 결정할 수 있습니다.
             </p>
@@ -123,88 +123,37 @@
         <div class="tab">
             <a href="#" class="active">상세설명</a>
             <a href="/review">후기</a>
+
         </div>
 
         <div>
             <p class="section-title">상세설명</p>
-            <ul class="section-desc" id="class-desc-list">
-                <!-- 여기에 상세 설명 동적으로 삽입 -->
+            <ul class="section-desc">
+                <li>spring이 어떤 것인지 알고 싶은 분</li>
+                <li>spring에 대해서 질문할 것이 있는 분</li>
+                <li>알맞은 공부 방식 지도</li>
             </ul>
         </div>
     </div>
 
     <div style="flex: 1">
         <div class="info-box">
-            <p class="price" id="class-price">-</p>
-            <p class="label">1회</p>
-            <p class="label">진행 방법</p>
-            <p class="desc" id="class-method">-</p>
-            <button class="btn-purchase" id="btn-purchase">구매하기</button>
-            <button class="btn-message" id="btn-message">쪽지하기</button>
+            <p class="price" th:text="${offer.price} + '원'">50,000원</p>
+            <p class="duration" th:text="${offer.duration} +'분'"> </p>
+            <!--진행 방법 상세 설명(description)에 작성-->
+            <button class="btn-purchase" th:onclick="|location.href='@{/class/purchase}'|">구매하기</button>
+            <button class="btn-message" th:onclick="|location.href='@{/message.html}'|">쪽지하기</button>
         </div>
 
         <div class="mentor-profile">
-            <h4 id="mentor-name">-</h4>
-            <p id="mentor-expertise">-</p>
-            <img id="mentor-img" src="/images/default-mentor.png" alt="멘토 사진">
-            <button class="btn-profile" id="btn-profile">프로필보기</button>
+            <h4 th:text="${offer.user.nickname()} + ' 멘토'">김영한 멘토</h4>
+            <p th:text="${offer.user.major()}"><!--User엔티티에 전공(major)--></p>
+            <img th:src="@{/images/younghan.jpg}" alt="멘토 사진">
+            <button class="btn-profile" th:onclick="|location.href='@{/mentorDetail/{id}(id=${offer.user.userId})}'|">프로필보기</button>
         </div>
     </div>
 </div>
 <!-- Footer Fragment (메인과 합칠때 복구) -->
 <!-- <div th:replace="fragments/footer :: footer"></div> -->
-
-<script>
-    // 쿼리스트링에서 id 추출 (ex: classDetail.html?id=3)
-    const offerId = new URLSearchParams(window.location.search).get("id");
-    if (!offerId) {
-        alert("잘못된 접근입니다.");
-        window.history.back();
-    }
-
-    // 상세 API 호출
-    fetch(`/api/mentoring-offers/${offerId}`)
-        .then(res => res.json())
-        .then(data => {
-            // 클래스(수업) 정보 세팅
-            document.getElementById('class-title').textContent = data.title;
-            document.getElementById('class-category').textContent = data.category || '-';
-            document.getElementById('class-price').textContent = (data.price ? data.price.toLocaleString() : '-') + "원";
-            document.getElementById('class-method').textContent = data.method || '-';
-
-            // 상세 설명(예: 배열이면 리스트로 표시, 아니면 한줄로 표시)
-            const descList = document.getElementById('class-desc-list');
-            descList.innerHTML = "";
-            if (Array.isArray(data.details) && data.details.length > 0) {
-                data.details.forEach(d => {
-                    const li = document.createElement("li");
-                    li.textContent = d;
-                    descList.appendChild(li);
-                });
-            } else {
-                const li = document.createElement("li");
-                li.textContent = data.description || '-';
-                descList.appendChild(li);
-            }
-
-            // 멘토 정보
-            document.getElementById('mentor-name').textContent = (data.user?.name || '이름없음') + ' 멘토';
-            document.getElementById('mentor-expertise').textContent = data.user?.expertise || '-';
-            document.getElementById('mentor-img').src = data.user?.profileImg || '/images/default-mentor.png';
-
-            // 버튼 클릭 동작
-            document.getElementById('btn-purchase').onclick = () => location.href = '/class/purchase';
-            document.getElementById('btn-message').onclick = () => location.href = '/message.html';
-            document.getElementById('btn-profile').onclick = () => {
-                // 멘토 id가 있으면 프로필로 이동
-                if (data.user?.userId) location.href = `/mentorDetail.html?id=${data.user.userId}`;
-                else alert('멘토 정보가 없습니다');
-            };
-        })
-        .catch(err => {
-            alert("상세정보를 불러오지 못했습니다.");
-            console.error(err);
-        });
-</script>
 </body>
 </html>

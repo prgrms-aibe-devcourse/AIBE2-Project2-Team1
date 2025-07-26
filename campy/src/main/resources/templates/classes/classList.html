@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -225,6 +226,8 @@
                 <img src="/images/search-icon.png" alt="검색" class="search-icon">
             </button>
         </div>
+
+
         <div class="tag-list" id="tag-list"></div>
     </div>
 
@@ -241,13 +244,60 @@
         </div>
 
         <div class="mentor-list-wrapper" style="flex: 2.5;">
-            <div id="mentor-list"></div>
+            <div th:each="mentor : ${offerPage.content}" class="mentor-card"
+                 th:attr="data-id=${mentor.offerId}">
+                <div class="card-content">
+                    <!-- 멘토 닉네임 -->
+                    <p class="mentor-name" th:text="${mentor.user.nickname}"></p>
+                    <!-- 멘토링 제목 -->
+                    <div class="card-title" th:text="${mentor.title}"></div>
+
+                    <!-- ⭐ 별점은 아직 값 없음: 자리만 남겨둠 -->
+                    <p style="color: goldenrod;">
+                        <span th:text="'⭐ '"></span>
+                    </p>
+
+                    <!-- 설명 -->
+                    <p th:text="${mentor.description}"></p>
+                    <!-- 태그: tagList가 List<String>이면 join해서 출력 -->
+                    <p class="card-tags"
+                       th:if="${mentor.tags != null}"
+                       th:text="${#strings.listJoin(mentor.tags, ' ')}"></p>
+                </div>
+                <div class="card-image">
+                    <!-- 프로필 이미지: 값이 있으면 출력, 없으면 기본 이미지 -->
+                    <<img th:if="${mentor.user != null && mentor.user.profileImg != null && mentor.user.profileImg != ''}"
+                          th:src="@{${mentor.user.profileImg}}"
+                          th:alt="${mentor.user.nickname}">
+                    <img th:if="${mentor.user == null || mentor.user.profileImg == null || mentor.user.profileImg == ''}"
+                         th:src="@{/images/default-mentor.png}"
+                         th:alt="기본이미지">
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이지네이션 버튼 -->
+        <div class="pagination" style="text-align: center; margin-top: 30px;">
+            <!-- 이전 페이지 -->
+            <a th:if="${offerPage.hasPrevious()}"
+               th:href="@{|/classList?page=${offerPage.number - 1}&size=${offerPage.size}|}">이전</a>
+
+            <!-- 페이지 번호들 -->
+            <span th:each="i : ${#numbers.sequence(0, offerPage.totalPages - 1)}">
+                <a th:if="${i != offerPage.number}"
+                   th:href="@{|/classList?page=${i}&size=${offerPage.size}|}"
+                   th:text="${i + 1}">1</a>
+                <span th:if="${i == offerPage.number}" th:text="${i + 1}" style="font-weight:bold;"></span>
+             </span>
+
+            <!-- 다음 페이지 -->
+            <a th:if="${offerPage.hasNext()}"
+               th:href="@{|/classList?page=${offerPage.number + 1}&size=${offerPage.size}|}">다음</a>
         </div>
     </div>
 </div>
 
 <script>
-    // 검색/필터 관련 코드 (기존과 동일)
     const searchInput = document.getElementById('search-input');
     const tagList = document.getElementById('tag-list');
     let selectedTags = [];
@@ -303,44 +353,29 @@
         });
     }
 
-    // mentors API에서 리스트 받아와서 카드 동적 렌더링 + 카드 클릭 시 이동
-    fetch("/api/mentoring-offers")
-        .then(response => response.json())
-        .then(result => {
-            const data = result.content;
-            const container = document.getElementById("mentor-list");
+    // 검색 버튼 클릭 시도 동일하게 처리
+    document.getElementById('search-btn').addEventListener('click', () => {
+        const value = searchInput.value.trim();
+        if (!value) return;
 
-            data.forEach(mentor => {
-                const card = document.createElement("div");
-                card.className = "mentor-card";
-                card.setAttribute("data-id", mentor.offerId);
-                card.setAttribute("data-tags", mentor.tags.join(" "));
+        if (value.startsWith('#')) {
+            addTag(value);
+        } else {
+            selectedTags = [];
+            tagList.innerHTML = '';
+            filterByKeyword(value);
+        }
+        searchInput.value = '';
+    });
 
-                card.innerHTML = `
-                <div class="card-content">
-                    <p class="mentor-name">${mentor.nickname || '이름 없음'}</p>
-                    <div class="card-title">${mentor.title}</div>
-                    <p style="color: goldenrod;">⭐ ${mentor.rating || '0.0'}</p>
-                    <p>${mentor.description || '상세 설명이 없습니다.'}</p>
-                    <p class="card-tags">#${mentor.tags.join(' #')}</p>
-                </div>
-                <div class="card-image">
-                   <img src="${mentor.user?.profileImg || '/images/default-mentor.png'}" alt="멘토 이미지">
-                </div>
-                `;
-
-                // 카드 클릭 시, RESTful하게 id 쿼리스트링으로 상세 페이지 이동!
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', () => {
-                    window.location.href = `/classes/classDetail.html?id=${mentor.offerId}`;
-                });
-
-                container.appendChild(card);
-            });
-        })
-        .catch(error => {
-            console.error("멘토 목록 로드 실패:", error);
+    // 카드 클릭 시 상세 페이지 이동
+    document.querySelectorAll('.mentor-card').forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => {
+            const id = card.getAttribute('data-id');
+            window.location.href = `/class/detail/${id}`;
         });
+    });
 
 </script>
 <!-- Footer Fragment (메인과 합칠때 복구) -->

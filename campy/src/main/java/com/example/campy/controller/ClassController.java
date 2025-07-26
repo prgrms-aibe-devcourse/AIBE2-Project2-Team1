@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/*
 @Controller
 public class ClassController {
 
@@ -81,3 +81,4 @@ public class ClassController {
         return "classes/classPurchase";
     }
 }
+*/

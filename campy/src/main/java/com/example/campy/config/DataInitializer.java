@@ -172,12 +172,12 @@ public class DataInitializer implements CommandLineRunner {
 
         reviewRepository.save(review1);
 
-        MentoringTag tagJpa = MentoringTag.builder().name("JPA").build();
-        MentoringTag tagOrm = MentoringTag.builder().name("ORM").build();
-        MentoringTag tagSpring = MentoringTag.builder().name("Spring Boot").build();
-        MentoringTag tag실전 = MentoringTag.builder().name("실전").build();
-        MentoringTag tagCoding = MentoringTag.builder().name("코딩테스트").build();
-        MentoringTag tag백준 = MentoringTag.builder().name("백준").build();
+        MentoringTag tagJpa = MentoringTag.builder().name("#JPA").build();
+        MentoringTag tagOrm = MentoringTag.builder().name("#ORM").build();
+        MentoringTag tagSpring = MentoringTag.builder().name("#Spring Boot").build();
+        MentoringTag tag실전 = MentoringTag.builder().name("#실전").build();
+        MentoringTag tagCoding = MentoringTag.builder().name("#코딩테스트").build();
+        MentoringTag tag백준 = MentoringTag.builder().name("#백준").build();
 
         tagRepo.saveAll(List.of(tagJpa, tagOrm, tagSpring, tag실전, tagCoding, tag백준));
 
