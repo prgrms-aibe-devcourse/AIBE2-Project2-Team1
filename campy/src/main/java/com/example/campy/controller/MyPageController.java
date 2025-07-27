@@ -20,6 +20,8 @@ import com.example.campy.service.MentoringOfferService;
 import com.example.campy.service.TalentService;
 import com.example.campy.service.BoardService;
 import com.example.campy.service.MaterialService;
+import com.example.campy.repository.UserRepository;
+import com.example.campy.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -44,6 +46,21 @@ public class MyPageController {
     private final TalentService talentService;
     private final BoardService boardService;
     private final MaterialService materialService;
+    private final UserRepository userRepository;
+
+    @GetMapping // /mypage 경로에 대한 GET 요청 처리
+    public String mypage(Model model, Authentication authentication) {
+        // 현재 로그인한 사용자 정보 가져오기
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        // DTO로 변환
+        UserResponseDto userResponseDto = UserResponseDto.from(user);
+
+        model.addAttribute("user", userResponseDto);
+        return "mypage/mypage"; // templates/mypage/mypage.html 렌더링
+    }
 
     // 계정 관리
     @GetMapping("/account/profile")
