@@ -1,163 +1,116 @@
 package com.example.campy.controller;
 
-import com.example.campy.dto.MaterialDto;
+import com.example.campy.dto.material.MaterialListDto;
+import com.example.campy.dto.material.request.MaterialRequestDto;
+import com.example.campy.dto.material.response.MaterialResponseDto;
+import com.example.campy.service.MaterialService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.*;
-
-@Controller
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/materials")
 public class MaterialController {
 
-    private final Map<Long, MaterialDto> dummyMaterials = new HashMap<>();
-    private final Map<Long, String> materialFilePaths = new HashMap<>();
+    private final MaterialService materialService;
 
-    private final String UPLOAD_DIR = "src/main/resources/static/uploads/";
-
-    {
-        dummyMaterials.put(1L, new MaterialDto(
-                1L,
-                "00대학교 000교수님 JAVA강의의 25-1 족보",
-                "000",
-                "5000",
-                "2025-07-17 14:33:05",
-                "/images/thumb_1.jpg",
-                "프로그래밍",
-                "JAVA 시험 A+ 받은 족보입니다."
-        ));
-        materialFilePaths.put(1L, "/uploads/sample1.pdf");
-
-        dummyMaterials.put(2L, new MaterialDto(
-                2L,
-                "00대학교 000교수님 컴퓨터 구조 25-1 족보",
-                "ooo",
-                "3000",
-                "2025-07-17 14:33:05",
-                "/images/thumb_2.jpg",
-                "컴퓨터구조",
-                "컴퓨터 구조 핵심 요약 정리된 족보입니다."
-        ));
-        materialFilePaths.put(2L, "/uploads/sample2.pdf");
-
-        dummyMaterials.put(3L, new MaterialDto(
-                3L,
-                "우분투 리눅스 요약본",
-                "ㅇㅇㅇ",
-                "4000",
-                "2025-07-17 14:33:05",
-                "/images/thumb_3.jpg",
-                "운영체제",
-                "우분투 사용법을 깔끔하게 정리한 요약본입니다."
-        ));
-        materialFilePaths.put(3L, "/uploads/sample3.pdf");
+    //자료 등록
+    @PostMapping
+    public ResponseEntity<MaterialResponseDto> createMaterial(
+            @RequestBody MaterialRequestDto requestDto,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        MaterialResponseDto response = materialService.createMaterial(requestDto, username);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // 📄 자료 리스트
-    @GetMapping("/materials")
-    public String showMaterialList(Model model) {
-        model.addAttribute("materials", dummyMaterials.values());
-        return "materials/materialList";
+    // 전체 자료 목록 조회 (정렬 + 검색 포함)
+    @GetMapping
+    public ResponseEntity<Page<MaterialListDto>> getAllMaterials(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort,
+            @RequestParam(required = false) String keyword
+    ) {
+        Page<MaterialListDto> materials = materialService.getAllMaterials(page, size, sort, keyword);
+        return ResponseEntity.ok(materials);
     }
 
-    // 📝 자료 등록 페이지
-    @GetMapping("/materials/new")
-    public String showNewMaterialForm() {
-        return "materials/newMaterial";
+    //자료 삭제
+    @DeleteMapping("/{materialId}")
+    public ResponseEntity<String> deleteMaterial(
+            @PathVariable Integer materialId,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        materialService.deleteMaterial(materialId, username);
+        return ResponseEntity.ok("자료가 삭제되었습니다.");
     }
 
-    @PostMapping("/materials/new")
-    public String submitMaterialForm(@RequestParam("materialFile") MultipartFile materialFile,
-                                     @RequestParam("thumbnail") MultipartFile thumbnail,
-                                     @RequestParam("title") String title,
-                                     @RequestParam("category") String category,
-                                     @RequestParam("description") String description,
-                                     @RequestParam("price") int price,
-                                     Model model) {
-        try {
-            File uploadDir = new File(UPLOAD_DIR);
-            if (!uploadDir.exists()) uploadDir.mkdirs();
-
-            String fileName = UUID.randomUUID() + "_" + materialFile.getOriginalFilename();
-            String thumbnailName = UUID.randomUUID() + "_" + thumbnail.getOriginalFilename();
-
-            materialFile.transferTo(new File(UPLOAD_DIR + fileName));
-            thumbnail.transferTo(new File(UPLOAD_DIR + thumbnailName));
-
-            Long newId = (long) (dummyMaterials.size() + 1);
-            String now = LocalDateTime.now().toString();
-
-            MaterialDto newMaterial = new MaterialDto(
-                    newId,
-                    title,
-                    "사용자",  // 로그인 사용자 정보 대체 가능
-                    String.valueOf(price),
-                    now,
-                    "/uploads/" + thumbnailName,
-                    category,
-                    description
-            );
-
-            dummyMaterials.put(newId, newMaterial);
-            materialFilePaths.put(newId, "/uploads/" + fileName);
-
-            model.addAttribute("material", newMaterial);
-            model.addAttribute("downloadLink", "/uploads/" + fileName);
-            model.addAttribute("message", "자료가 성공적으로 등록되었습니다.");
-
-            return "materials/purchaseSuccessPage";
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            model.addAttribute("message", "파일 업로드 실패");
-            return "error/500";
-        }
+    //자료 수정
+    @PutMapping("/{materialId}")
+    public ResponseEntity<MaterialResponseDto> updateMaterial(
+            @PathVariable Integer materialId,
+            @RequestBody MaterialRequestDto updateDto,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        MaterialResponseDto updatedMaterialDto = materialService.updateMaterial(materialId, username, updateDto);
+        return ResponseEntity.ok().body(updatedMaterialDto);
     }
 
-    // 🧐 상세 보기
-    @GetMapping("/materials/{id}")
-    public String showMaterialDetail(@PathVariable Long id, Model model) {
-        MaterialDto material = dummyMaterials.get(id);
-        if (material == null) return "error/404";
-
-        model.addAttribute("material", material);
-        return "materials/materialDetail";
+    //자료 상세 조회
+    @GetMapping("/{materialId}")
+    public ResponseEntity<MaterialResponseDto> getMaterialById(@PathVariable Integer materialId) {
+        MaterialResponseDto responseDto = materialService.getMaterialById(materialId);
+        return ResponseEntity.ok(responseDto);
     }
 
-    // 💳 구매 페이지
-    @GetMapping("/materials/{id}/purchase")
-    public String showPurchasePage(@PathVariable Long id, Model model) {
-        MaterialDto material = dummyMaterials.get(id);
-        if (material == null) return "error/404";
-
-        model.addAttribute("material", material);
-        return "materials/materialPurchase";
+    //자료 키워드 검색 API (단순 검색)
+    @GetMapping("/search")
+    public ResponseEntity<Page<MaterialListDto>> searchMaterials(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<MaterialListDto> materials = materialService.searchMaterials(keyword, pageable);
+        return ResponseEntity.ok(materials);
     }
 
-    // ✅ 결제 완료 후 다운로드 제공
-    @PostMapping("/materials/payment")
-    public String completePurchase(@ModelAttribute MaterialDto material, Model model) {
-        Long id = material.getId();
-        MaterialDto target = dummyMaterials.get(id);
+    //자료 파일 다운로드 API (결제한 사용자만 가능)
+    @GetMapping("/{materialId}/download")
+    public ResponseEntity<Resource> downloadMaterial(
+            @PathVariable Integer materialId,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        return materialService.downloadMaterialFile(materialId, username);
+    }
 
-        if (material == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "자료가 존재하지 않습니다.");
-        }
+    //내가 등록한 자료 목록 조회
+    @GetMapping("/my")
+    public ResponseEntity<Page<MaterialListDto>> getMyMaterials(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort
+    ) {
+        String username = authentication.getName();
 
-        String downloadLink = materialFilePaths.get(id);
+        String[] sortParts = sort.split(",");
+        String sortBy = sortParts[0];
+        Sort.Direction direction = sortParts.length > 1 && sortParts[1].equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        model.addAttribute("material", target);
-        model.addAttribute("message", "결제가 완료되었습니다. 자료 다운로드가 가능합니다.");
-        model.addAttribute("downloadLink", downloadLink);
-
-        return "materials/purchaseSuccessPage";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<MaterialListDto> materials = materialService.getMyMaterials(username, pageable);
+        return ResponseEntity.ok(materials);
     }
 }
