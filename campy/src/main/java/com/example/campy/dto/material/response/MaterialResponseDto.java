@@ -11,6 +11,7 @@ public record MaterialResponseDto(
     UserResponseDto seller,
     String title,
     String content,
+    String category,
     String fileUrl,
     String previewFileUrl,
     String thumbnailUrl,
@@ -38,6 +39,7 @@ public record MaterialResponseDto(
                         .build())
                 .title(material.getTitle())
                 .content(material.getContent())
+                .category(material.getCategory())
                 .fileUrl(material.getFileUrl())
                 .previewFileUrl(material.getPreviewFileUrl())
                 .thumbnailUrl(material.getThumbnailUrl())
