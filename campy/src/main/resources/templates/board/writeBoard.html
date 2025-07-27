@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>게시판 글쓰기</title>
+    <link rel="stylesheet" href="../../static/css/board.css">
+</head>
+<body>
+
+<h2>게시판</h2>
+
+<div class="form-container">
+    <h3>글쓰기</h3>
+    <form th:action="@{/board/writeBoard}" method="post">
+        <table class="write-table">
+            <tr>
+                <th>학교명</th>
+                <td><input type="text" name="university" th:value="${user.university}" readonly /></td>
+            </tr>
+            <tr>
+                <th>카테고리</th>
+                <td>
+                    <select name="category" required>
+                        <option disabled selected>분야를 선택해주세요.</option>
+                        <option>잡담</option>
+                        <option>후기</option>
+                        <option>정보공유</option>
+                        <option>질문</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>제목</th>
+                <td>
+                    <input type="text" name="title" placeholder="제목을 입력하세요" maxlength="200" required />
+                </td>
+            </tr>
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea name="content" placeholder="내용을 입력하세요" maxlength="500" required></textarea>
+                </td>
+            </tr>
+        </table>
+
+        <div class="btn-wrapper">
+            <button type="submit" class="submit-button">작성하기</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector("form");
+        if (form) {
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                alert("작성 완료!");
+                window.location.href = "listBoard.html";
+            });
+        }
+    });
+</script>
+</body>
+</html>
