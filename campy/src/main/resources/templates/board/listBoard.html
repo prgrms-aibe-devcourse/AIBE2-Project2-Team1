@@ -44,13 +44,13 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="post : ${boardList}" th:onclick="|location.href='@{/board/readBoard/{id}(id=${post.id})}'|">
-        <td th:text="${post.id}">1</td>
-        <td th:text="${post.university}">학교명</td>
+    <tr th:each="post : ${boardList}" th:onclick="|location.href='@{/board/readBoard/{id}(id=${post.boardId})}'|">
+        <td th:text="${post.boardId}">1</td>
+        <td th:text="${post.school}">학교명</td>
         <td th:text="${post.category}">잡담</td>
         <td th:text="${post.title}">게시글 제목</td>
-        <td th:text="${post.writer}">작성자</td>
-        <td th:text="${post.date}">9999-12-31</td>
+        <td th:text="${post.username}">작성자</td>
+        <td th:text="${post.createdAt}">9999-12-31</td>
     </tr>
     </tbody>
 </table>
@@ -60,7 +60,7 @@
     <span th:if="${hasPrevious}">
     <a th:href="@{/board/list(page=${currentPage - 1})}">«</a>
   </span>
-    <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+    <span th:if="${totalPages != null}" th:each="i : ${#numbers.sequence(1, totalPages)}">
     <a th:href="@{/board/list(page=${i})}"
        th:classappend="${i == currentPage} ? 'active'" th:text="${i}">1</a>
   </span>

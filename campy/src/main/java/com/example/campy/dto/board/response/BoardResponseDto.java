@@ -33,6 +33,10 @@ public record BoardResponseDto(
         );
     }
 
+    public static BoardResponseDto from(Board board) {
+        return new BoardResponseDto(board);
+    }
+
     @Builder
     public BoardResponseDto {}
 }
