@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>재능 구매 동의 | campy</title>
+    <style>
+        body { background: #f3f2f2; margin: 0; }
+        .main-box { max-width: 900px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 10px; }
+        .agree-list { margin: 30px 0; }
+        .agree-item { margin: 12px 0; }
+        .notice-box { border: 1px solid #bbb; background: #fafafa; padding: 18px; border-radius: 6px; margin-top: 20px; font-size: 14px; }
+        .btn-area { text-align: center; margin-top: 40px; }
+        #payBtn { background: #19A7CE; color: #fff; border: none; border-radius: 0; padding: 16px 0; width: 100%; font-size: 20px; cursor: pointer; opacity: 0.5; }
+        #payBtn.enabled { opacity: 1; cursor: pointer; }
+        #payBtn:disabled { cursor: not-allowed; }
+    </style>
+</head>
+<body>
+<div class="main-box">
+    <h3>아래 내용에 전체 동의합니다.</h3>
+    <div class="agree-list">
+        <div class="agree-item">
+            <input type="checkbox" id="allAgree" /> <label for="allAgree"><b>아래 내용에 전체 동의합니다.</b></label>
+        </div>
+        <div class="agree-item"><input type="checkbox" class="agreeChk" id="chk1" /> <label for="chk1">campy 이용약관 동의</label></div>
+        <div class="agree-item"><input type="checkbox" class="agreeChk" id="chk2" /> <label for="chk2">상품 구매 조건 확인 및 구매 동의</label></div>
+        <div class="agree-item"><input type="checkbox" class="agreeChk" id="chk3" /> <label for="chk3">청약 철회/계약해지 제한 및 환불 제한에 관한 청약 철회등 불발 안내</label></div>
+        <div class="agree-item"><input type="checkbox" class="agreeChk" id="chk4" /> <label for="chk4">하단 유의사항의 확인 및 동의</label></div>
+        <div class="notice-box">
+            <b>유의사항</b><br>
+            - 해당 상품은 상담 과정에서 expert에게 개인정보 제공이 필요할 수 있습니다.<br>
+            - 사업자가 아닌 개인 expert 상품의 경우 현금영수증 발급이 불가합니다.<br>
+            - 청약철회 등 환불 기준은 상품 상세 페이지의 "환불정책 및 환불 안내"를 참조해 주시기 바랍니다.
+        </div>
+    </div>
+    <form th:action="@{/payments/pay}" method="post">
+        <input type="hidden" name="talentId" th:value="${talent.talentId}" />
+        <div class="btn-area">
+            <button type="submit" id="payBtn" disabled>결제하기</button>
+        </div>
+    </form>
+</div>
+<script>
+    // 전체 동의 및 개별 체크박스 제어
+    const allAgree = document.getElementById('allAgree');
+    const chkList = document.querySelectorAll('.agreeChk');
+    const payBtn = document.getElementById('payBtn');
+
+    allAgree.addEventListener('change', function() {
+        chkList.forEach(c => c.checked = allAgree.checked);
+        updatePayBtn();
+    });
+    chkList.forEach(c => c.addEventListener('change', () => {
+        allAgree.checked = Array.from(chkList).every(c => c.checked);
+        updatePayBtn();
+    }));
+    function updatePayBtn() {
+        const allChecked = Array.from(chkList).every(c => c.checked);
+        payBtn.disabled = !allChecked;
+        payBtn.classList.toggle('enabled', allChecked);
+    }
+</script>
+</body>
+</html>
