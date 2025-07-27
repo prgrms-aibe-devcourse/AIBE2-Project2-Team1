@@ -244,7 +244,7 @@
             if (response.ok) {
                 const result = await response.json(); // JSON 응답을 기대한다면
                 alert('자료가 성공적으로 등록되었습니다!');
-                window.location.href = '/materials/' + result.materialId; // 상세 페이지로 이동
+                window.location.href = '/materials'; // 목록 페이지로 이동
             } else {
                 const errorText = await response.text();
                 alert('자료 등록 실패: ' + errorText);

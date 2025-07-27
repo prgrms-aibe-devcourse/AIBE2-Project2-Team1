@@ -5,6 +5,7 @@ import com.example.campy.dto.material.response.MaterialResponseDto;
 import com.example.campy.service.MaterialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,26 +41,21 @@ public class MaterialController {
         return "materials/newMaterial";
     }
 
-    @PostMapping(value = "/materials/new", consumes = {"multipart/form-data"})
-    public String submitMaterialForm(
+    @PostMapping(value = "/materials/new", consumes = {"multipart/form-data"}, produces = "application/json")
+    public ResponseEntity<MaterialResponseDto> submitMaterialForm(
             @RequestPart("data") MaterialCreateRequest request,
             @RequestPart(value = "materialFile", required = false) MultipartFile materialFile,
             @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
-            Authentication authentication,
-            Model model) {
+            Authentication authentication) {
         try {
             MaterialResponseDto newMaterial = materialService.createMaterial(request, materialFile, thumbnail, authentication);
 
-            model.addAttribute("material", newMaterial);
-            model.addAttribute("downloadLink", "/uploads/" + newMaterial.fileUrl());
-            model.addAttribute("message", "자료가 성공적으로 등록되었습니다.");
-
-            return "materials/purchaseSuccessPage";
+            return ResponseEntity.ok(newMaterial);
 
         } catch (IOException e) {
             e.printStackTrace();
-            model.addAttribute("message", "파일 업로드 실패");
-            return "error/500";
+            // 오류 발생 시 적절한 HTTP 상태 코드와 메시지를 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
