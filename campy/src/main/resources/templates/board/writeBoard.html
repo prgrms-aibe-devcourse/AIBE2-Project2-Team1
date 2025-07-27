@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>게시판 글쓰기</title>
-    <link rel="stylesheet" href="../../static/css/board.css">
+    <link rel="stylesheet" th:href="@{/css/board.css}">
 </head>
 <body>
 
@@ -15,7 +15,7 @@
         <table class="write-table">
             <tr>
                 <th>학교명</th>
-                <td><input type="text" name="university" th:value="${user.university}" readonly /></td>
+                <td><input type="text" name="school" th:value="${user.school}" readonly /></td>
             </tr>
             <tr>
                 <th>카테고리</th>
@@ -49,17 +49,6 @@
     </form>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const form = document.querySelector("form");
-        if (form) {
-            form.addEventListener("submit", (e) => {
-                e.preventDefault();
-                alert("작성 완료!");
-                window.location.href = "listBoard.html";
-            });
-        }
-    });
-</script>
+
 </body>
 </html>

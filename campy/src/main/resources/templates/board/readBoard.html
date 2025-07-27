@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>게시판 상세보기</title>
-    <link rel="stylesheet" href="../../static/css/board.css">
+    <link rel="stylesheet" th:href="@{/css/board.css}">
 </head>
 <body>
 
@@ -12,26 +12,21 @@
 <div class="view-container">
     <div class="top-buttons">
         <button class="back-button" th:onclick="|location.href='@{/board/listBoard}'|">목록으로</button>
-        <div class="side-buttons">
-            <form th:action="@{/board/delete/{id}(id=${post.id})}" method="post">
-                <button class="delete-button">삭제하기</button>
-            </form>
-            <button class="write-button" th:onclick="|location.href='@{/board/writeBoard}'|">글쓰기</button>
-        </div>
+        
     </div>
 
     <table class="view-table">
         <tr>
             <th>UNIVERSITY</th>
-            <td th:text="${post.university}">학교명</td>
+            <td th:text="${post.school}">학교명</td>
             <th>NO</th>
-            <td th:text="${post.id}">0</td>
+            <td th:text="${post.boardId}">0</td>
         </tr>
         <tr>
             <th>CATEGORY</th>
             <td th:text="${post.category}">카테고리</td>
             <th>DATE</th>
-            <td th:text="${post.date}">9999/12/31</td>
+            <td th:text="${post.createdAt}">9999/12/31</td>
         </tr>
         <tr>
             <th>TITLE</th>
@@ -40,80 +35,10 @@
         <tr>
             <td colspan="4" class="view-content" th:text="${post.content}">본문 내용</td>
         </tr>
-        <tr>
-            <td colspan="4" class="comment-block">
-                <div th:each="comment : ${post.comments}">
-                    <strong th:text="${comment.writer}">작성자</strong>
-                    <span th:text="${comment.content}">댓글 내용</span>
-                </div>
-            </td>
-        </tr>
-        <tr class="comment-input-row">
-            <th>댓글</th>
-            <td colspan="3">
-                <form th:action="@{/board/comment/{id}(id=${post.id})}" method="post" class="comment-input">
-                    <textarea name="commentContent" placeholder="댓글 작성..."></textarea>
-                    <button type="submit" class="comment-button">작성하기</button>
-                </form>
-            </td>
-        </tr>
+        
     </table>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const dummyPosts = [
-            {
-                no: 9999,
-                university: "하버드대학교",
-                category: "잡담",
-                title: "배고파",
-                author: "김김김",
-                date: "2025/07/20",
-                content: "저녁 뭐 드실건가요 ???",
-                comments: [
-                    { writer: "이이이", text: "치킨이요~" },
-                    { writer: "박박박", text: "피자요" }
-                ]
-            },
-        ];
 
-        const params = new URLSearchParams(window.location.search);
-        const no = parseInt(params.get("no"));
-        const post = dummyPosts.find(p => p.no === no);
-
-        if (!post) return;
-
-        const contentEl = document.querySelector(".view-content");
-        if (contentEl) contentEl.textContent = post.content;
-
-        const commentBlock = document.querySelector(".comment-block");
-        if (commentBlock) {
-            commentBlock.innerHTML = "";
-            post.comments.forEach(c => {
-                const div = document.createElement("div");
-                div.innerHTML = `<strong>${c.writer}</strong> <span>${c.text}</span>`;
-                commentBlock.appendChild(div);
-            });
-        }
-
-        const commentForm = document.querySelector(".comment-input");
-        if (commentForm) {
-            commentForm.addEventListener("submit", (e) => {
-                e.preventDefault();
-                const textarea = commentForm.querySelector("textarea");
-                const text = textarea.value.trim();
-                if (!text) return;
-
-                post.comments.push({ writer: "익명", text });
-                textarea.value = "";
-
-                const div = document.createElement("div");
-                div.innerHTML = `<strong>익명</strong> <span>${text}</span>`;
-                commentBlock.appendChild(div);
-            });
-        }
-    });
-</script>
 </body>
 </html>
