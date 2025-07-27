@@ -92,10 +92,7 @@ public class MyPageController {
         return "mypage/mypage_activity/registrations";
     }
 
-    @GetMapping("/activity/purchases")
-    public String purchasesPage() {
-        return "mypage/activity/purchases";
-    }
+    
 
     // 기존 리뷰 관련 기능 (경로 조정)
     @GetMapping("/activity/reviews/myreviews")
