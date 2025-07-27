@@ -132,6 +132,13 @@ public class MentoringMatchService {
         return toResponse(match);
     }
 
+    // 여러 개의 매칭 id로 리스트 매칭리스트 반환
+    public List<MentoringMatchResponse> findMatchesByMatchIds(List<Integer> matchIds) {
+        return matchIds.stream()
+                .map(this::findById)
+                .toList();
+    }
+
     // 상태별 조회 (DELETED 제외) + 페이징
     public Page<MentoringMatchResponse> findByStatus(MentoringStatus status, Pageable pageable) {
         Page<MentoringMatch> page = matchRepo.findByStatusAndStatusNot(status, MentoringStatus.DELETED, pageable);

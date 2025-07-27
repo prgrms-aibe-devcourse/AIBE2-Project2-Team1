@@ -217,9 +217,16 @@
 <!-- <div th:replace="fragments/header :: header"></div> -->
 <div class="container">
     <div class="search-box">
-        <p>어떤 멘토를 원하시나요?
-            <span style="color: #0077aa; font-size: 14px;">#태그 작성후  엔터를 누르시면 태그로 검색하실 수 있어요!</span>
-        </p>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <label for="role-select" style="font-weight: bold; font-size: 16px;">역할 선택:</label>
+            <select id="role-select" name="role"
+                    onchange="location.href='?role=' + this.value"
+                    style="padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;">
+                <option value="">전체</option>
+                <option value="MENTOR" th:selected="${selectedRole == 'MENTOR'}">멘토로 참여</option>
+                <option value="MENTEE" th:selected="${selectedRole == 'MENTEE'}">멘티로 참여</option>
+            </select>
+        </div>
         <form action="/class/search" method="get" class="search-input-wrapper">
             <input type="text" id="search-input" name="keyword" placeholder="검색어를 입력해주세요" autocomplete="off">
             <button type="submit" id="search-btn" class="search-button">
@@ -244,7 +251,7 @@
         </div>
 
         <div class="mentor-list-wrapper" style="flex: 2.5;">
-            <div th:each="mentor : ${offerPage.content}" class="mentor-card"
+            <div th:each="mentor : ${offerList}" class="mentor-card"
                  th:attr="data-id=${mentor.offerId}">
                 <div class="card-content">
                     <!-- 멘토 닉네임 -->
@@ -273,25 +280,6 @@
                          th:src="@{/images/default-mentor.png}"
                          th:alt="기본이미지">
                 </div>
-            </div>
-
-            <!-- 페이지네이션 버튼 -->
-            <div class="pagination" style="text-align: center; margin-top: 30px;">
-                <!-- 이전 페이지 -->
-                <a th:if="${offerPage.hasPrevious()}"
-                   th:href="@{|/classList?page=${offerPage.number - 1}&size=${offerPage.size}|}">이전</a>
-
-                <!-- 페이지 번호들 -->
-                <span th:each="i : ${#numbers.sequence(0, offerPage.totalPages - 1)}">
-                <a th:if="${i != offerPage.number}"
-                   th:href="@{|/classList?page=${i}&size=${offerPage.size}|}"
-                   th:text="${i + 1}">1</a>
-                <span th:if="${i == offerPage.number}" th:text="${i + 1}" style="font-weight:bold;"></span>
-             </span>
-
-                <!-- 다음 페이지 -->
-                <a th:if="${offerPage.hasNext()}"
-                   th:href="@{|/classList?page=${offerPage.number + 1}&size=${offerPage.size}|}">다음</a>
             </div>
         </div>
 
