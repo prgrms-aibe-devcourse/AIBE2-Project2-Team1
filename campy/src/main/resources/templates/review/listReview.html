@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>리뷰 게시판</title>
-    <link rel="stylesheet" href="../../static/css/review.css">
+    <link rel="stylesheet" th:href="@{/css/review.css}">
 </head>
 <body>
 <h2>리뷰 게시판</h2>
 
 <div class="search-bar">
-    <form th:action="@{/review/search}" method="get">
+    <form th:action="@{/reviews}" method="get">
         <select name="type">
             <option value="name">이름</option>
             <option value="category">카테고리</option>
@@ -44,14 +44,14 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="review, iStat : ${reviewList}">
+    <tr th:each="review, iStat : ${reviews}">
         <td th:text="${iStat.count}">0</td>
         <td th:text="${review.category}">카테고리</td>
-        <td th:text="${review.targetName}">사용자</td>
-        <td th:text="${review.stars}">⭐⭐⭐⭐⭐</td>
+        <td th:text="${review.targetUser.nickname}">사용자</td>
+        <td th:text="${review.rating}">⭐⭐⭐⭐⭐</td>
         <td class="left-align" th:text="${review.content}">내용</td>
-        <td th:text="${review.writer}">작성자</td>
-        <td th:text="${#dates.format(review.createdDate, 'yyyy-MM-dd')}">9999-12-31</td>
+        <td th:text="${review.author.nickname}">작성자</td>
+        <td th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}">9999-12-31</td>
     </tr>
     </tbody>
 </table>
@@ -60,7 +60,7 @@
 <div id="reviewModal" class="modal-overlay">
     <div class="modal-content review-popup">
         <h3>리뷰 작성하기</h3>
-        <form th:action="@{/review/save}" th:object="${reviewForm}" method="post">
+        <form th:action="@{/reviews}" th:object="${reviewCreateRequest}" method="post">
             <table class="write-table">
                 <tr>
                     <th>리뷰 분야</th>
@@ -75,7 +75,7 @@
                 </tr>
                 <tr>
                     <th>리뷰 대상</th>
-                    <td><input type="text" th:field="*{targetName}" placeholder="아이디를 적어주세요."></td>
+                    <td><input type="text" th:field="*{targetUserId}" placeholder="대상 사용자 ID를 입력하세요."></td>
                 </tr>
                 <tr>
                     <th>별점</th>
@@ -85,7 +85,7 @@
                         <span class="star" data-value="3">⭐</span>
                         <span class="star" data-value="4">⭐</span>
                         <span class="star" data-value="5">⭐</span>
-                        <input type="hidden" th:field="*{stars}" name="stars" />
+                        <input type="hidden" th:field="*{rating}" name="rating" />
                     </td>
                 </tr>
                 <tr>
