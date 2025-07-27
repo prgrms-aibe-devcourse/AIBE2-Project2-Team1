@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>멘토 상세 프로필</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f7f3f3;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .mentor-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .mentor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 12px 12px 0 0;
+            padding: 20px; /* 위쪽 영역 여유 있게 */
+            background-color: #176B87;
+            color: white;
+        }
+
+        .mentor-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mentor-profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px; /* 이미지와 버튼 간격 */
+        }
+
+        .message-button {
+            background-color: #4194bf;
+            color: white;
+            padding: 6px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mentor-header-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mentor-header-left h2 {
+            margin: 0;
+        }
+
+        .mentor-hashtags {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+
+
+
+
+        .message-button:hover {
+            background-color: #2d7ca8;
+        }
+
+        .mentor-body {
+            margin-top: 20px;
+        }
+
+        .rating {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .mentor-info {
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .star {
+            color: gold;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+<!-- Header Fragment (메인과 합칠 때 복구) -->
+<!-- <div th:replace="fragments/header :: header"></div> -->
+<div class="container">
+    <div class="mentor-card">
+        <div class="mentor-header">
+            <div class="mentor-header-left">
+                <h2>김영한</h2>
+                <div class="mentor-hashtags">#컴공 #포폴 #진로 #상담</div>
+            </div>
+            <img class="mentor-profile-img" src="/images/younghan.jpg" alt="프로필">
+            <a href="/message" class="message-button">
+                쪽지 보내기
+            </a>
+        </div>
+
+        <div class="mentor-body">
+            <div class="rating">
+                <span class="star">★</span> 5.0
+            </div>
+
+            <div class="mentor-info">
+                <strong>멘토명:</strong> 김영한<br><br>
+
+                <strong>이력:</strong><br>
+                - 네이버 백엔드 인턴 (2024 여름)<br>
+                &nbsp;&nbsp;· Spring Boot 기반 마이크로서비스 구조 개발 참여<br>
+                &nbsp;&nbsp;· Redis 캐시 및 Kafka 연동 실습<br><br>
+
+                - 캠퍼스 재능 공유 플랫폼 개발 (2025 상반기)<br>
+                &nbsp;&nbsp;· Java, Spring Boot, JPA, MySQL 기반 웹 서비스<br>
+                &nbsp;&nbsp;· 결제 API, Slack Webhook, 로그인 인증 등 구현<br><br>
+
+                <strong>기술 스택:</strong><br>
+                &nbsp;&nbsp;· Java / Spring Boot / JPA / MySQL / Redis / Git / Thymeleaf<br>
+                &nbsp;&nbsp;· CI/CD, RESTful API 설계 경험 있음
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer Fragment (메인과 합칠때 복구) -->
+<!-- <div th:replace="fragments/footer :: footer"></div> -->
+</body>
+</html>

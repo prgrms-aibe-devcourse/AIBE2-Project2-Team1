@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 구매하기</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      margin: 0;
+      background-color: #f7f3f3;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .price {
+      font-size: 18px;
+      color: #2a9fd6;
+      margin-bottom: 10px;
+    }
+
+    .info-block {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .info-block img {
+      margin-right: 8px;
+    }
+
+    .check-box-area {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 30px;
+      background: white;
+    }
+
+    .total-price-box {
+      border: 1px solid #ccc;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .total-price-box table {
+      width: 100%;
+      font-size: 16px;
+    }
+
+    .total-price-box th,
+    .total-price-box td {
+      text-align: right;
+      padding: 10px;
+    }
+
+    .total-price-box th:first-child,
+    .total-price-box td:first-child {
+      text-align: left;
+    }
+
+    .checkbox-area {
+      margin-top: 20px;
+    }
+
+    .checkbox-area label {
+      display: block;
+      margin: 10px 0;
+    }
+
+    .purchase-button {
+      width: 100%;
+      padding: 15px;
+      background-color: #10a8d8;
+      color: white;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .review-link {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: underline;
+      color: #007acc;
+    }
+  </style>
+</head>
+<body>
+<!-- Header Fragment (메인과 합칠 때 복구) -->
+<!-- <div th:replace="fragments/header :: header"></div> -->
+<div class="container">
+  <div class="title" th:text="${offer.title}">김영한 · 멘토</div>
+
+  <div class="price" th:text="${offer.price} + '원'"></div>
+
+  <div class="info-block">
+    <img src="/images/clock-icon.png" width="20">
+    <span>1:1 상담 15분</span>
+  </div>
+
+  <div class="info-block">
+    <img src="/images/chat-icon.png" width="20">
+    <span>1:1 채팅 가능</span>
+  </div>
+
+  <div class="check-box-area">
+    <p><strong>※ 꼭 확인해주세요!</strong></p>
+    <ul style="padding-left: 18px;">
+      <li>실제 상담 시간은 상호 협의하에 진행됩니다.</li>
+      <li>판매자와 협의하여 진행 방식을 결정할 수 있습니다.</li>
+    </ul>
+    <label><input type="checkbox"> 주의 사항을 확인하였습니다.</label>
+  </div>
+
+  <div class="total-price-box">
+    <table>
+      <tr>
+        <th>상품 금액</th>
+        <td class="price" th:text="${offer.price} + '원'"></td>
+      </tr>
+      <tr>
+        <th><strong>결제 금액</strong></th>
+        <td class="price" th:text="${offer.price} + '원'"><strong></strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="checkbox-area">
+    <label><input type="checkbox" id="checkAll"> 아래 내용에 전체 동의합니다.</label>
+    <label><input type="checkbox" class="sub-check"> campy 이용약관 동의</label>
+    <label><input type="checkbox" class="sub-check"> 상품 구매 조건 확인 및 구매 동의</label>
+    <label><input type="checkbox" class="sub-check"> 청약 철회 제한 및 환불 안내 동의</label>
+    <label><input type="checkbox" class="sub-check"> 하단 유의사항 확인 및 동의</label>
+
+    <div style="margin-top: 10px; font-size: 14px; color: #666; background: #f5f5f5; padding: 10px;">
+      유의사항<br>
+      · 해당 상품은 상담 과정에서 판매자에게 개인정보 제공이 필요할 수 있습니다.<br>
+      · 사업자가 아닌 개인 Expert 상품일 경우 현금영수증 발급이 불가합니다.<br>
+      · 청약철회 등 환불 기준은 상품 상세 페이지의 '청약철회 등 환불 안내'를 참고해 주세요.
+    </div>
+  </div>
+
+
+  <div style="margin-top: 10px; font-size: 14px; color: #666; background: #f5f5f5; padding: 10px;">
+    유의사항<br>
+    · 해당 상품은 상담 과정에서 판매자에게 개인정보 제공이 필요할 수 있습니다.<br>
+    · 사업자가 아닌 개인 Expert 상품일 경우 현금영수증 발급이 불가합니다.<br>
+    · 청약철회 등 환불 기준은 상품 상세 페이지의 '청약철회 등 환불 안내'를 참고해 주세요.
+  </div>
+</div>
+
+<form action="/class/purchase" method="post">
+  <!-- matchRequest -->
+  <input type="hidden" name="matchRequest.mentoringOfferId" th:value="${offer.offerId}" />
+  <input type="hidden" name="matchRequest.userId" value="2" /><!-- 임시 사용자 ID -->
+  <input type="hidden" name="matchRequest.type" value="GROUP" />
+
+  <!-- members[0] -->
+  <input type="hidden" name="members[0].userId" value="2" /> <!-- ✅ 임시 사용자 ID -->
+  <input type="hidden" name="matchRequest.type" value="MENTEE" />
+
+  <button type="submit" class="purchase-button">결제하기</button>
+</form>
+
+
+</div>
+
+<script>
+  document.getElementById('checkAll').addEventListener('change', function () {
+    const isChecked = this.checked;
+    document.querySelectorAll('.sub-check').forEach(function (checkbox) {
+      checkbox.checked = isChecked;
+    });
+  });
+</script>
+<!-- Footer Fragment (메인과 합칠때 복구) -->
+<!-- <div th:replace="fragments/footer :: footer"></div> -->
+</body>
+</html>
