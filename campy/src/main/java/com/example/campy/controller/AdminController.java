@@ -214,20 +214,20 @@ public class AdminController {
     }
 
     @PostMapping("/boards/{boardId}/update")
-    public String updateBoard(@PathVariable Integer boardId, @Valid @ModelAttribute BoardUpdateRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String updateBoard(@PathVariable Integer boardId, @Valid @ModelAttribute BoardUpdateRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, Authentication authentication) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("board", boardService.getBoardById(boardId));
             model.addAttribute("boardUpdateRequest", request);
             return "admin/admin_boards/admin_board_edit";
         }
-        boardService.updateBoard(boardId, request);
+        boardService.adminUpdateBoard(boardId, request);
         redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 수정되었습니다.");
         return "redirect:/admin/boards";
     }
 
     @PostMapping("/boards/{boardId}/delete")
-    public String deleteBoard(@PathVariable Integer boardId, RedirectAttributes redirectAttributes) {
-        boardService.deleteBoard(boardId);
+    public String deleteBoard(@PathVariable Integer boardId, RedirectAttributes redirectAttributes, Authentication authentication) {
+        boardService.adminDeleteBoard(boardId);
         redirectAttributes.addFlashAttribute("message", "게시글이 성공적으로 삭제되었습니다.");
         return "redirect:/admin/boards";
     }

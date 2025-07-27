@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>재능 수정</title>
+</head>
+<body>
+<h1>재능 수정</h1>
+
+<form th:action="@{/mypage/activity/talents/{talentId}/update(talentId=${talent.talentId})}" th:object="${talentUpdateRequest}" method="post" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{talentId}" />
+
+    <div>
+        <label for="title">제목</label>
+        <input type="text" id="title" th:field="*{title}" required>
+    </div>
+    <div>
+        <label for="description">설명</label>
+        <textarea id="description" th:field="*{description}" required></textarea>
+    </div>
+    <div>
+        <label for="price">가격</label>
+        <input type="number" id="price" th:field="*{price}" required>
+    </div>
+    <div>
+        <label for="availableDays">가능 요일</label>
+        <input type="text" id="availableDays" th:field="*{availableDays}">
+    </div>
+    <div>
+        <label for="offlineLocation">오프라인 장소</label>
+        <input type="text" id="offlineLocation" th:field="*{offlineLocation}">
+    </div>
+    <div>
+        <label for="category">카테고리</label>
+        <input type="text" id="category" th:field="*{category}" required>
+    </div>
+    <div>
+        <label for="tagNames">태그 (쉼표로 구분)</label>
+        <input type="text" id="tagNames" th:field="*{tagNames}">
+    </div>
+    <div>
+        <label for="image">이미지</label>
+        <input type="file" id="image" name="image">
+        <img th:if="${talent.imagePath}" th:src="${talent.imagePath}" alt="talent image" width="200"/>
+    </div>
+
+    <button type="submit">수정하기</button>
+</form>
+
+</body>
+</html>

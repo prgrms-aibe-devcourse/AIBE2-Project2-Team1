@@ -43,7 +43,7 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         if (user != null) {
-            return user.getEmail();  // email 기반 로그인
+            return user.getUsername();  // 실제 사용자 ID(username) 반환
         } else if (admin != null) {
             return admin.getUsername(); // admin은 username 기반
         }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시물 수정</title>
+</head>
+<body>
+    <h1>게시물 수정</h1>
+
+    <form th:action="@{/mypage/activity/boards/{boardId}/update(boardId=${board.boardId})}" th:object="${board}" method="post">
+        <input type="hidden" name="_method" value="put" />
+        <input type="hidden" th:field="*{boardId}" />
+
+        <div>
+            <label for="school">학교</label>
+            <input type="text" id="school" th:field="*{school}">
+        </div>
+        <div>
+            <label for="category">카테고리</label>
+            <input type="text" id="category" th:field="*{category}" required>
+        </div>
+        <div>
+            <label for="title">제목</label>
+            <input type="text" id="title" th:field="*{title}" required>
+        </div>
+        <div>
+            <label for="content">내용</label>
+            <textarea id="content" th:field="*{content}" required></textarea>
+        </div>
+        <div>
+            <label for="isDeleted">삭제 여부</label>
+            <input type="checkbox" id="isDeleted" th:field="*{isDeleted}">
+        </div>
+
+        <button type="submit">수정하기</button>
+    </form>
+
+</body>
+</html>

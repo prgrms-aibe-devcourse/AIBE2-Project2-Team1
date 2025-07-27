@@ -236,6 +236,17 @@ public class TalentServiceImpl implements TalentService {
         talentRepository.save(talent);
     }
 
+    @Override
+    public List<TalentResponseDto> getAllTalentsByUser(Authentication authentication) {
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        return talentRepository.findByUserAndDeletedFalse(currentUser).stream()
+                .map(this::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
     private TalentResponseDto toResponseDto(Talent talent) {
         UserResponseDto userResponseDto = UserResponseDto.builder()
                 .userId(talent.getUser().getUserId())

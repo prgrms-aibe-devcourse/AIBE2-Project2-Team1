@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface TalentService {
     TalentResponseDto createTalent(TalentCreateRequest request, MultipartFile image, Authentication authentication) throws IOException;
@@ -20,4 +21,6 @@ public interface TalentService {
     // Admin 전용 메소드
     TalentResponseDto adminUpdateTalent(Integer id, TalentUpdateRequest request, MultipartFile image) throws IOException;
     void adminDeleteTalent(Integer talentId);
+
+    List<TalentResponseDto> getAllTalentsByUser(Authentication authentication);
 }
