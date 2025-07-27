@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>자료 상세</title>
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            background-color: #F6F1F1;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+        }
+
+        .search-box p {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .search-input-wrapper {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            border: 2px solid #00aacc;
+            border-radius: 30px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #F6F1F1;
+        }
+
+        .search-input-wrapper input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            background-color: transparent;
+            margin-left: 10px;
+        }
+
+        .search-button {
+            width: 36px;
+            height: 36px;
+            background-color: #1389b2;
+            border: none;
+            border-radius: 50px;
+            padding: 0;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .detail-header {
+            display: flex;
+            background-color: #146C94;
+            color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        .detail-info {
+            flex: 1;
+        }
+
+        .detail-info .category {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .detail-info .title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .detail-info .date {
+            font-size: 14px;
+        }
+
+        .thumbnail {
+            width: 200px;
+            height: 250px;
+            object-fit: cover;
+            margin-left: 30px;
+            border-radius: 10px;
+        }
+
+        .detail-description .description-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .description-text {
+            flex: 1;
+        }
+
+
+        .detail-description h3 {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .buy-button {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: #146C94;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .buy-button:hover {
+            background-color: #0d4c6b;
+        }
+    </style>
+</head>
+<body>
+
+ <div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="search-box">
+        <p>어떤 자료를 원하시나요?</p>
+        <form th:action="@{/materials}" method="get" class="search-input-wrapper">
+            <input type="text" name="keyword" placeholder="검색어를 입력해주세요">
+            <button type="submit" class="search-button">
+                <img src="/images/search-icon.png" alt="검색" class="search-icon">
+            </button>
+        </form>
+    </div>
+
+    <div class="detail-header">
+        <div class="detail-info">
+            <div class="category" th:text="${material.category}">JAVA</div>
+            <div class="title" th:text="${material.title}">00대학교 000교수님 JAVA강의의 25-1 족보</div>
+            <div class="date" th:text="'등록일: ' + ${material.uploadDate}">2025-07-19</div>
+        </div>
+        <img class="thumbnail" th:src="@{${material.thumbnail}}" alt="썸네일">
+    </div>
+
+    <div class="detail-description">
+        <div class="description-wrapper">
+            <div class="description-text">
+                <h3>상세정보</h3>
+                <p th:text="${material.description}">
+                    00대학교 000교수님 JAVA 강의 1학기 족보 팔아요 A+ 받음여
+                </p>
+            </div>
+            <a th:href="@{'/materials/' + ${material.id} + '/purchase'}" class="buy-button">구매하기 →</a>
+
+        </div>
+    </div>
+
+</div>
+
+ <div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>
