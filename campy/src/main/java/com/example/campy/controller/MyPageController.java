@@ -256,11 +256,11 @@ public class MyPageController {
         MaterialResponseDto material = materialService.getMaterialById(materialId);
         System.out.println("Editing material with ID: " + materialId);
         MaterialUpdateRequest materialUpdateRequest = new MaterialUpdateRequest(
-                material.getMaterialId(),
-                material.getTitle(),
-                material.getContent(),
-                material.getPrice(),
-                material.getIsDeleted()
+                material.materialId(),
+                material.title(),
+                material.content(),
+                material.price(),
+                material.isDeleted()
         );
         System.out.println("MaterialUpdateRequest materialId: " + materialUpdateRequest.materialId());
         model.addAttribute("material", material);

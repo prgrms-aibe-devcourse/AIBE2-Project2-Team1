@@ -23,7 +23,6 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
 
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
@@ -45,13 +44,6 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/messages/**").authenticated() // 쪽지 기능
-                        // 🔓 공개 API
-                        .requestMatchers(HttpMethod.GET, "/api/materials").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/materials/{id}").permitAll()
-
-                        // 🔐 인증이 필요한 GET 요청
-                        .requestMatchers(HttpMethod.GET, "/api/materials/my").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/materials/*/download").authenticated()
                         .anyRequest().authenticated())
 
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
