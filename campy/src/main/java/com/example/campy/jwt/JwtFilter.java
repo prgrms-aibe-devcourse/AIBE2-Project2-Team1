@@ -2,18 +2,16 @@ package com.example.campy.jwt;
 
 import com.example.campy.service.CustomUserDetails;
 import com.example.campy.service.CustomUserDetailsService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -25,73 +23,58 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws IOException {
+                                    FilterChain filterChain) throws IOException {
+        System.out.println("🔥 JwtFilter 진입: " + request.getRequestURI());
 
         try {
-            // 현재 요청의 URI(경로)를 가져옴
-            String uri = request.getRequestURI();
-
-            // ✅ JWT 검증이 필요 없는 공개 경로는 필터를 통과시킴
-            if (uri.startsWith("/login") ||                    // 로그인 페이지
-                    uri.startsWith("/signup") ||                   // 회원가입 페이지
-                    uri.startsWith("/css") ||                      // CSS 정적 파일
-                    uri.startsWith("/js") ||                       // JS 정적 파일
-                    uri.startsWith("/images") ||                   // 이미지 정적 파일
-                    uri.equals("/favicon.ico") ||                  // 파비콘
-                    uri.startsWith("/api/auth")) {                 // 로그인/회원가입 관련 API
-                // JWT 검증 없이 그대로 다음 필터로 넘김
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            // JWT 토큰을 요청에서 추출 (Header 또는 쿠키)
             String token = resolveToken(request);
+            System.out.println("🔥 추출한 토큰: " + token);
 
-            // 토큰이 존재할 경우에만 검증 수행
-            if (token != null) {
-                // 토큰이 유효하다면
-                if (jwtUtil.validateToken(token)) {
-                    // 토큰에서 사용자 정보와 권한을 추출
-                    String username = jwtUtil.getUsername(token);
-                    // CustomUserDetailsService를 통해 CustomUserDetails 객체 로드
-                    CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(username);
+            // 토큰이 존재하고 유효한 경우에만 인증 처리
+            if (token != null && jwtUtil.validateToken(token)) {
+                System.out.println("✅ 토큰 유효함");
 
-                    // 인증 객체를 생성 (스프링 시큐리티용)
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails, // principal을 CustomUserDetails 객체로 설정
-                                    null,
-                                    userDetails.getAuthorities() // CustomUserDetails에서 권한 가져옴
-                            );
+                // 토큰에서 사용자 정보(username)를 추출
+                String username = jwtUtil.getUsername(token);
 
-                    // 시큐리티 컨텍스트에 인증 정보 등록 → 이후 컨트롤러에서 로그인 사용자로 인식됨
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    // 토큰이 유효하지 않으면 401 에러 반환
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired JWT token");
-                    return;
-                }
+                // CustomUserDetailsService를 통해 DB에서 사용자 정보 로드
+                CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(username);
+
+                // 인증 객체를 생성 (Principal: userDetails, Authorities: userDetails.getAuthorities())
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, // Principal로 CustomUserDetails 객체 전체를 사용
+                                null,
+                                userDetails.getAuthorities() // UserDetails에서 권한 정보 가져오기
+                        );
+
+                // 시큐리티 컨텍스트에 인증 정보 등록
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                System.out.println("✅ 인증 객체 등록 완료: " + username);
+            } else {
+                System.out.println("❌ 토큰이 null이거나 유효하지 않음");
             }
 
-            // 토큰이 없거나(공개 경로 제외), 인증 성공했으면 다음 필터로 넘김
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            // 예외가 발생하면 401 에러 반환
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: " + e.getMessage());
+            System.out.println("❌ 필터에서 예외 발생: " + e.getMessage());
+            // 클라이언트에게는 표준 401 Unauthorized 에러를 반환
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid Token");
         }
     }
 
-
-    // Authorization 헤더 또는 쿠키에서 Bearer 토큰을 추출
+    /**
+     * Request Header나 쿠키에서 토큰을 추출하는 메서드
+     */
     private String resolveToken(HttpServletRequest request) {
+        // 1. Authorization 헤더에서 토큰 찾기
         String bearer = request.getHeader("Authorization");
         if (bearer != null && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);
         }
 
-        // Try to get token from cookie
+        // 2. 쿠키에서 토큰 찾기
         if (request.getCookies() != null) {
             for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals("jwtToken")) {
@@ -99,6 +82,17 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
         }
+
         return null;
+    }
+
+    /**
+     * 특정 경로에 대해서는 필터를 실행하지 않도록 설정
+     */
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        // 로그인 경로는 필터링에서 제외
+        return path.equals("/api/auth/login");
     }
 }

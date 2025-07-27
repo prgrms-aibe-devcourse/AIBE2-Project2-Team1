@@ -18,16 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.annotation.PostConstruct; // ← 추가
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +35,15 @@ public class TalentServiceImpl implements TalentService {
 
     @Value("${upload.path}")
     private String uploadPath;
+
+    // 서버 시작 시 폴더 자동 생성
+    @PostConstruct
+    public void initUploadDir() {
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+    }
 
     @Override
     public TalentResponseDto createTalent(TalentCreateRequest request, MultipartFile image, Authentication authentication) throws IOException {
@@ -59,7 +64,7 @@ public class TalentServiceImpl implements TalentService {
             String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(image.getOriginalFilename());
             File dest = new File(uploadPath, fileName);
             image.transferTo(dest);
-            imagePath = dest.getAbsolutePath();
+            imagePath = fileName; // DB에는 파일명만 저장!
         }
 
         List<Tag> tagEntities = new ArrayList<>();
@@ -82,7 +87,7 @@ public class TalentServiceImpl implements TalentService {
                 .deleted(false)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .imagePath(imagePath)
+                .imagePath(imagePath)  // 파일명만 저장!
                 .category(request.getCategory())
                 .tags(new HashSet<>(tagEntities))
                 .build();
@@ -144,7 +149,7 @@ public class TalentServiceImpl implements TalentService {
             String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(image.getOriginalFilename());
             File dest = new File(uploadPath, fileName);
             image.transferTo(dest);
-            imagePath = dest.getAbsolutePath();
+            imagePath = fileName; // 파일명만 저장
         }
         existingTalent.setImagePath(imagePath);
 
@@ -182,7 +187,6 @@ public class TalentServiceImpl implements TalentService {
         talentRepository.save(talent);
     }
 
-    // Admin 전용 updateTalent 메소드 (소유자 확인 로직 없음)
     @Override
     public TalentResponseDto adminUpdateTalent(Integer id, TalentUpdateRequest request, MultipartFile image) throws IOException {
         Talent existingTalent = talentRepository.findById(id)
@@ -202,7 +206,7 @@ public class TalentServiceImpl implements TalentService {
             String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(image.getOriginalFilename());
             File dest = new File(uploadPath, fileName);
             image.transferTo(dest);
-            imagePath = dest.getAbsolutePath();
+            imagePath = fileName; // 파일명만 저장
         }
         existingTalent.setImagePath(imagePath);
 
@@ -222,7 +226,6 @@ public class TalentServiceImpl implements TalentService {
         return toResponseDto(updatedTalent);
     }
 
-    // Admin 전용 deleteTalent 메소드 (소유자 확인 로직 없음)
     @Override
     public void adminDeleteTalent(Integer talentId) {
         Talent talent = talentRepository.findById(talentId)
@@ -262,7 +265,7 @@ public class TalentServiceImpl implements TalentService {
 
         List<String> tagNames = talent.getTags().stream()
                 .map(Tag::getName)
-                .collect(Collectors.toList());
+                .toList();
 
         return TalentResponseDto.builder()
                 .talentId(talent.getTalentId())
@@ -272,7 +275,7 @@ public class TalentServiceImpl implements TalentService {
                 .availableDays(talent.getAvailableDays())
                 .offlineLocation(talent.getOfflineLocation())
                 .status(talent.getStatus())
-                .imagePath(talent.getImagePath())
+                .imagePath(talent.getImagePath()) // 반드시 파일명만 넘어가야 함
                 .category(talent.getCategory())
                 .createdAt(talent.getCreatedAt())
                 .updatedAt(talent.getUpdatedAt())

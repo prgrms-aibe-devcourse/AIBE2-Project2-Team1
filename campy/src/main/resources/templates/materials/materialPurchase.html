@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>자료 구매하기</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            background-color: #f7f3f3;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .price {
+            font-size: 18px;
+            color: #2a9fd6;
+            margin-bottom: 20px;
+        }
+
+        .check-box-area {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 30px;
+            background: white;
+        }
+
+        .total-price-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .total-price-box table {
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .total-price-box th,
+        .total-price-box td {
+            text-align: right;
+            padding: 10px;
+        }
+
+        .total-price-box th:first-child,
+        .total-price-box td:first-child {
+            text-align: left;
+        }
+
+        .checkbox-area {
+            margin-top: 20px;
+        }
+
+        .checkbox-area label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        .purchase-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #10a8d8;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .notice-box {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            background: #f5f5f5;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="title" th:text="${material.seller} + ' · 판매자'">김영한 · 판매자</div>
+    <div class="subtitle" th:text="${material.title}">Spring의 모든 것 정리본</div>
+    <div class="price" th:text="${material.price + '원'}">5,000원</div>
+
+    <div class="check-box-area">
+        <p><strong>※ 꼭 확인해주세요!</strong></p>
+        <ul style="padding-left: 18px;">
+            <li>자료는 PDF 파일로 제공됩니다.</li>
+            <li>구매 후 다운로드는 1회만 가능합니다.</li>
+            <li>저작권 보호를 위해 무단 공유 시 법적 책임이 따릅니다.</li>
+        </ul>
+        <label><input type="checkbox"> 주의 사항을 확인하였습니다.</label>
+    </div>
+
+    <div class="total-price-box">
+        <table>
+            <tr>
+                <th>상품 금액</th>
+                <td th:text="${material.price + '원'}">5,000원</td>
+            </tr>
+            <tr>
+                <th><strong>결제 금액</strong></th>
+                <td><strong th:text="${material.price + '원'}">5,000원</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="checkbox-area">
+        <label><input type="checkbox" id="checkAll"> 아래 내용에 전체 동의합니다.</label>
+        <label><input type="checkbox" class="sub-check"> campy 이용약관 동의</label>
+        <label><input type="checkbox" class="sub-check"> 자료 구매 조건 확인 및 동의</label>
+        <label><input type="checkbox" class="sub-check"> 환불 및 다운로드 안내 동의</label>
+        <label><input type="checkbox" class="sub-check"> 유의사항 확인 및 동의</label>
+
+        <div class="notice-box">
+            유의사항<br>
+            · 자료는 구매 후 변경 또는 환불이 어렵습니다.<br>
+            · 파일 손상이나 열람 불가 시 고객센터를 통해 문의해 주세요.<br>
+            · 공유/복제 등 불법 사용 시 법적 처벌을 받을 수 있습니다.
+        </div>
+    </div>
+
+    <form action="/materials/payment" method="post">
+        <button type="submit" class="purchase-button">결제하기</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('checkAll').addEventListener('change', function () {
+        const isChecked = this.checked;
+        document.querySelectorAll('.sub-check').forEach(function (checkbox) {
+            checkbox.checked = isChecked;
+        });
+    });
+</script>
+
+</body>
+</html>

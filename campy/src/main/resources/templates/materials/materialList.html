@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>자료 목록</title>
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            background-color: #F6F1F1;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+            margin-bottom: 100px; /* 푸터와 고정 버튼 사이 여백 */
+        }
+
+        .search-box p {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .search-input-wrapper {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            border: 2px solid #00aacc;
+            border-radius: 30px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #F6F1F1;
+        }
+
+        .search-input-wrapper input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            background-color: transparent;
+            margin-left: 10px;
+        }
+
+        .search-button {
+            width: 36px;
+            height: 36px;
+            background-color: #1389b2;
+            border: none;
+            border-radius: 50px;
+            padding: 0;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-icon {
+            width: 24px;
+            height: 24px;
+
+        }
+
+        .material-section {
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .material-card {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            padding: 15px 0;
+            align-items: center;
+        }
+
+        .material-card img {
+            width: 100px;
+            height: 130px;
+            object-fit: cover;
+            margin-right: 20px;
+        }
+
+        .material-card .info {
+            flex: 1;
+        }
+
+        .material-card .info .title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .material-card .info .seller {
+            font-size: 13px;
+            color: gray;
+        }
+
+        .material-card .info .price {
+            font-size: 15px;
+            color: #00aacc;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .material-card .info .date {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .register-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            padding: 15px;
+            background-color: #ccc;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .register-button:hover {
+            background-color: #146C94;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+ <div th:replace="fragments/header :: header"></div>
+<div class="container">
+    <div class="search-box">
+        <p>어떤 자료를 원하시나요?</p>
+        <div class="search-input-wrapper">
+            <input type="text" id="search-input" placeholder="검색어를 입력해주세요">
+            <button id="search-btn" class="search-button">
+                <img src="/images/search-icon.png" alt="검색" class="search-icon">
+            </button>
+        </div>
+    </div>
+
+    <div class="material-section" id="material-section">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 20px;">최근 올라온 자료</p>
+
+        <div th:each="material : ${materials}" class="material-card"
+             th:onclick="|window.location.href='/materials/' + ${material.id}|"
+             style="cursor: pointer;">
+            <img th:src="@{${material.thumbnail}}" alt="썸네일">
+            <div class="info">
+                <div class="title" th:text="${material.title}"></div>
+                <div class="seller" th:text="'판매자: ' + ${material.seller}"></div>
+                <div class="price" th:text="${material.price + '원'}"></div>
+                <div class="date" th:text="${material.uploadDate}"></div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="register-button" onclick="window.location.href='/materials/new'">
+        자료 등록하기
+    </div>
+</div>
+
+ <div th:replace="fragments/footer :: footer"></div>
+
+<script>
+    const searchBtn = document.getElementById("search-btn");
+    const input = document.getElementById("search-input");
+    const cards = document.querySelectorAll(".material-card");
+
+    function filterCards() {
+        const keyword = input.value.trim();
+        cards.forEach(card => {
+            const title = card.querySelector(".title").textContent;
+            card.style.display = title.includes(keyword) ? "flex" : "none";
+        });
+    }
+
+    searchBtn.addEventListener("click", filterCards);
+    input.addEventListener("keydown", e => {
+        if (e.key === "Enter") filterCards();
+    });
+</script>
+</body>
+</html>

@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지 - Campy</title>
-    <!-- CSS 파일 경로는 실제 프로젝트 구조에 맞게 수정해주세요. -->
-    <link rel="stylesheet" th:href="@{/css/mypage.css}">
+    <th:block th:fragment="head-extra">
+        <link rel="stylesheet" th:href="@{/css/mypage.css}">
+    </th:block>
 </head>
 <body>
-<!-- 헤더 프래그먼트 -->
-<div th:replace="~{fragments/header :: header}"></div>
+    <th:block th:fragment="content">
+        <div class="my-page-container">
 
-<div class="my-page-container">
     <h1>마이페이지</h1>
 
     <!-- 프로필 섹션 (기존과 동일) -->

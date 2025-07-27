@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>자료 등록</title>
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f4f4;
+        }
+
+        h4 {
+            background-color: #f7f4f4;
+            text-align: left;
+            margin: 0;
+            margin-top: 10px;
+            padding: 20px 0 10px;
+        }
+
+        .title-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #19A7CE;
+            display: block;
+            text-align: left;
+            margin-left: 45px;
+        }
+
+        .title-underline {
+            width: 1450px;
+            height: 2px;
+            background-color: #19A7CE;
+            margin: 6px auto 0 auto;
+        }
+
+
+
+
+        form {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            width: 20%;
+            font-weight: bold;
+            background-color: #fafafa;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button[type="submit"],
+        button[type="button"] {
+            padding: 8px 16px;
+            margin: 6px 4px;
+            background-color: #19A7CE;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover,
+        button[type="button"]:hover {
+            background-color: #19A7CE;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .note {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .warning {
+            color: red;
+            font-size: 0.9em;
+        }
+
+        .submit-wrapper {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<h4>
+    <span class="title-text">자료 등록</span>
+    <div class="title-underline"></div>
+</h4>
+
+
+
+<form th:action="@{/materials/new}" method="post" enctype="multipart/form-data">
+    <table>
+        <tr>
+            <th colspan="2">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="agree" required>
+                    본인의 저작물을 등록 신청함에 있어 서약서와 저작권 규정을 모두 확인하였으며 이에 동의합니다.
+                </label>
+                <button type="button" onclick="window.open('/docs/contract.pdf')">서약서</button>
+                <button type="button" onclick="window.open('/docs/copyright.pdf')">저작권 규정</button>
+                <p class="warning">* 자료는 본인에게 <strong>저작권이 있는 자료만</strong> 판매 가능합니다.</p>
+            </th>
+        </tr>
+
+        <tr>
+            <th>파일 선택</th>
+            <td>
+                <input type="file" name="materialFile" accept=".doc,.docx,.ppt,.pptx,.xls,.xlsx,.hwp,.hwpx,.pdf,.zip,.7z,.rar" required>
+                <p class="note">최대용량: 100MB<br>등록 가능한 파일 형식: doc, docx, ppt, pptx, xls, xlsx, hwp, hwpx, pdf, 애플문서, 압축파일</p>
+            </td>
+        </tr>
+
+        <tr>
+            <th>제목</th>
+            <td>
+                <input type="text" name="title" maxlength="200" placeholder="자료의 내용을 대표할 수 있도록 구체적으로 기재하세요." required>
+            </td>
+        </tr>
+
+        <tr>
+            <th>카테고리</th>
+            <td>
+                <input type="text" name="category" placeholder="자료에 해당하는 카테고리를 적어주세요." required>
+            </td>
+        </tr>
+
+        <tr>
+            <th>상세 정보</th>
+            <td>
+                <textarea name="description" rows="5" maxlength="500" placeholder="자료에 대한 상세 설명을 작성해주세요. (최대 500자 이내)" required></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <th>판매 가격</th>
+            <td>
+                <input type="number" name="price" min="0" value="0"> 원
+                <p class="note">(0원은 무료입니다.)</p>
+            </td>
+        </tr>
+
+        <tr>
+            <th>썸네일 사진 선택</th>
+            <td>
+                <input type="file" name="thumbnail" accept=".jpg,.jpeg,.png,.gif">
+                <p class="note">최대용량: 5MB 이하, 등록 가능한 파일 형식: jpg, jpeg, png, gif</p>
+            </td>
+        </tr>
+    </table>
+
+    <div class="submit-wrapper">
+        <button type="submit">등록하기</button>
+    </div>
+</form>
+</body>
+</html>
