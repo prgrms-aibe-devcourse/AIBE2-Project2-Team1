@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>게시판</title>
-    <link rel="stylesheet" href="../../static/css/board.css">
+    <link rel="stylesheet" th:href="@{/css/board.css}">
 </head>
 <body>
 
@@ -69,35 +69,6 @@
   </span>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const dummyPosts = [
-            {
-                no: 9999,
-                university: "하버드대학교",
-                category: "잡담",
-                title: "배고파",
-                author: "김김김",
-                date: "2025/07/20"
-            },
-        ];
 
-        const tbody = document.querySelector(".board-table tbody");
-        if (tbody && tbody.children.length === 0) {
-            dummyPosts.forEach((post) => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-          <td>${post.no}</td>
-          <td>${post.university}</td>
-          <td>${post.category}</td>
-          <td><a href="readBoard.html?no=${post.no}">${post.title}</a></td>
-          <td>${post.author}</td>
-          <td>${post.date}</td>
-        `;
-                tbody.appendChild(tr);
-            });
-        }
-    });
-</script>
 </body>
 </html>
