@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface MaterialRepository extends JpaRepository<Material, Integer> {
     List<Material> findBySellerAndIsDeletedFalse(User seller);
+    List<Material> findByIsDeletedFalse();
 }
