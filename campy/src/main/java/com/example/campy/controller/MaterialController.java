@@ -1,8 +1,7 @@
 package com.example.campy.controller;
 
-
-import com.example.campy.dto.material.request.MaterialCreateRequest;
-
+import com.example.campy.dto.material.MaterialListDto;
+import com.example.campy.dto.material.request.MaterialRequestDto;
 import com.example.campy.dto.material.response.MaterialResponseDto;
 import com.example.campy.service.MaterialService;
 import lombok.RequiredArgsConstructor;
@@ -11,38 +10,36 @@ import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.*;
 
-
-import org.springframework.beans.factory.annotation.Value;
-import java.io.IOException;
-import java.util.*;
-
-@Controller
-
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/materials")
 public class MaterialController {
 
     private final MaterialService materialService;
 
+    //자료 등록
+    @PostMapping
+    public ResponseEntity<MaterialResponseDto> createMaterial(
+            @RequestBody MaterialRequestDto requestDto,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        MaterialResponseDto response = materialService.createMaterial(requestDto, username);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
-    @Value("${upload.path}")
-    private String uploadPath;
-
-    // 더미 데이터 초기화 블록 제거
-
-    // 📄 자료 리스트
-    @GetMapping("/materials")
-    public String showMaterialList(Model model) {
-        model.addAttribute("materials", materialService.getAllMaterials());
-        return "materials/materialList";
-
-
+    // 전체 자료 목록 조회 (정렬 + 검색 포함)
+    @GetMapping
+    public ResponseEntity<Page<MaterialListDto>> getAllMaterials(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort,
+            @RequestParam(required = false) String keyword
+    ) {
+        Page<MaterialListDto> materials = materialService.getAllMaterials(page, size, sort, keyword);
+        return ResponseEntity.ok(materials);
     }
 
     //자료 삭제
@@ -56,61 +53,46 @@ public class MaterialController {
         return ResponseEntity.ok("자료가 삭제되었습니다.");
     }
 
-
-    @PostMapping(value = "/materials/new", consumes = {"multipart/form-data"}, produces = "application/json")
-    public ResponseEntity<MaterialResponseDto> submitMaterialForm(
-            @RequestPart("data") MaterialCreateRequest request,
-            @RequestPart(value = "materialFile", required = false) MultipartFile materialFile,
-            @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
-            Authentication authentication) {
-        try {
-            MaterialResponseDto newMaterial = materialService.createMaterial(request, materialFile, thumbnail, authentication);
-
-            return ResponseEntity.ok(newMaterial);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            // 오류 발생 시 적절한 HTTP 상태 코드와 메시지를 반환
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    //자료 수정
+    @PutMapping("/{materialId}")
+    public ResponseEntity<MaterialResponseDto> updateMaterial(
+            @PathVariable Integer materialId,
+            @RequestBody MaterialRequestDto updateDto,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        MaterialResponseDto updatedMaterialDto = materialService.updateMaterial(materialId, username, updateDto);
+        return ResponseEntity.ok().body(updatedMaterialDto);
     }
 
-    // 🧐 상세 보기
-    @GetMapping("/materials/{id}")
-    public String showMaterialDetail(@PathVariable Integer id, Model model) {
-        MaterialResponseDto material = materialService.getMaterialById(id);
-        if (material == null) return "error/404"; // 서비스에서 예외 처리하므로 null 반환될 일은 없지만, 방어적 코드
-
-        model.addAttribute("material", material);
-        return "materials/materialDetail";
+    //자료 상세 조회
+    @GetMapping("/{materialId}")
+    public ResponseEntity<MaterialResponseDto> getMaterialById(@PathVariable Integer materialId) {
+        MaterialResponseDto responseDto = materialService.getMaterialById(materialId);
+        return ResponseEntity.ok(responseDto);
     }
 
-    // 💳 구매 페이지
-    @GetMapping("/materials/{id}/purchase")
-    public String showPurchasePage(@PathVariable Integer id, Model model) {
-        MaterialResponseDto material = materialService.getMaterialById(id);
-        if (material == null) return "error/404";
-
-        model.addAttribute("material", material);
-        return "materials/materialPurchase";
+    //자료 키워드 검색 API (단순 검색)
+    @GetMapping("/search")
+    public ResponseEntity<Page<MaterialListDto>> searchMaterials(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<MaterialListDto> materials = materialService.searchMaterials(keyword, pageable);
+        return ResponseEntity.ok(materials);
     }
 
-    // ✅ 결제 완료 후 다운로드 제공
-    @PostMapping("/materials/payment")
-    public String completePurchase(@RequestParam("materialId") Integer materialId, Model model) {
-        MaterialResponseDto material = materialService.getMaterialById(materialId);
-
-        if (material == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "자료가 존재하지 않습니다.");
-        }
-
-        // MaterialResponseDto에서 fileUrl을 직접 가져옵니다.
-        String downloadLink = "/uploads/" + material.fileUrl();
-
-        model.addAttribute("material", material);
-        model.addAttribute("message", "결제가 완료되었습니다. 자료 다운로드가 가능합니다.");
-        model.addAttribute("downloadLink", downloadLink);
-
+    //자료 파일 다운로드 API (결제한 사용자만 가능)
+    @GetMapping("/{materialId}/download")
+    public ResponseEntity<Resource> downloadMaterial(
+            @PathVariable Integer materialId,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        return materialService.downloadMaterialFile(materialId, username);
+    }
 
     //내가 등록한 자료 목록 조회
     @GetMapping("/my")

@@ -29,9 +29,6 @@ public class Material {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "category", length = 100)
-    private String category;
-
     @Column(name = "file_url", length = 255)
     private String fileUrl;
 
