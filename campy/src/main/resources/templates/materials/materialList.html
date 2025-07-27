@@ -150,14 +150,14 @@
         <p style="font-weight: bold; font-size: 16px; margin-bottom: 20px;">최근 올라온 자료</p>
 
         <div th:each="material : ${materials}" class="material-card"
-             th:onclick="|window.location.href='/materials/' + ${material.materialId}|"
+             th:onclick="|window.location.href='/materials/' + ${material.id}|"
              style="cursor: pointer;">
-            <img th:src="@{'/uploads/' + ${material.thumbnailUrl}}" alt="썸네일">
+            <img th:src="@{${material.thumbnail}}" alt="썸네일">
             <div class="info">
                 <div class="title" th:text="${material.title}"></div>
-                <div class="seller" th:text="'판매자: ' + ${material.seller.nickname}"></div>
+                <div class="seller" th:text="'판매자: ' + ${material.seller}"></div>
                 <div class="price" th:text="${material.price + '원'}"></div>
-                <div class="date" th:text="${material.createdAt}"></div>
+                <div class="date" th:text="${material.uploadDate}"></div>
             </div>
         </div>
 

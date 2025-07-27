@@ -151,20 +151,20 @@
         <div class="detail-info">
             <div class="category" th:text="${material.category}">JAVA</div>
             <div class="title" th:text="${material.title}">00대학교 000교수님 JAVA강의의 25-1 족보</div>
-            <div class="date" th:text="'등록일: ' + ${material.createdAt}">2025-07-19</div>
+            <div class="date" th:text="'등록일: ' + ${material.uploadDate}">2025-07-19</div>
         </div>
-        <img class="thumbnail" th:src="@{'/uploads/' + ${material.thumbnailUrl}}" alt="썸네일">
+        <img class="thumbnail" th:src="@{${material.thumbnail}}" alt="썸네일">
     </div>
 
     <div class="detail-description">
         <div class="description-wrapper">
             <div class="description-text">
                 <h3>상세정보</h3>
-                <p th:text="${material.content}">
+                <p th:text="${material.description}">
                     00대학교 000교수님 JAVA 강의 1학기 족보 팔아요 A+ 받음여
                 </p>
             </div>
-            <a th:href="@{'/materials/' + ${material.materialId} + '/purchase'}" class="buy-button">구매하기 →</a>
+            <a th:href="@{'/materials/' + ${material.id} + '/purchase'}" class="buy-button">구매하기 →</a>
 
         </div>
     </div>

@@ -1,13 +1,9 @@
 package com.example.campy.controller;
 
-
 import com.example.campy.dto.material.request.MaterialCreateRequest;
-
 import com.example.campy.dto.material.response.MaterialResponseDto;
 import com.example.campy.service.MaterialService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,13 +18,10 @@ import java.io.IOException;
 import java.util.*;
 
 @Controller
-
 @RequiredArgsConstructor
-@RequestMapping("/materials") // /api/materials -> /materials 로 변경
 public class MaterialController {
 
     private final MaterialService materialService;
-
 
     @Value("${upload.path}")
     private String uploadPath;
@@ -36,28 +29,19 @@ public class MaterialController {
     // 더미 데이터 초기화 블록 제거
 
     // 📄 자료 리스트
-    @GetMapping
+    @GetMapping("/materials")
     public String showMaterialList(Model model) {
         model.addAttribute("materials", materialService.getAllMaterials());
         return "materials/materialList";
-
-
     }
 
-    //자료 삭제
-    @DeleteMapping("/{materialId}")
-    @ResponseBody // JSON 응답을 위해 추가
-    public ResponseEntity<String> deleteMaterial(
-            @PathVariable Integer materialId,
-            Authentication authentication
-    ) {
-        materialService.deleteMaterial(materialId, authentication);
-        return ResponseEntity.ok("자료가 삭제되었습니다.");
+    // 📝 자료 등록 페이지
+    @GetMapping("/materials/new")
+    public String showNewMaterialForm() {
+        return "materials/newMaterial";
     }
 
-
-    @PostMapping(value = "/new", consumes = {"multipart/form-data"}, produces = "application/json")
-    @ResponseBody
+    @PostMapping(value = "/materials/new", consumes = {"multipart/form-data"}, produces = "application/json")
     public ResponseEntity<MaterialResponseDto> submitMaterialForm(
             @RequestPart("data") MaterialCreateRequest request,
             @RequestPart(value = "materialFile", required = false) MultipartFile materialFile,
@@ -76,7 +60,7 @@ public class MaterialController {
     }
 
     // 🧐 상세 보기
-    @GetMapping("/{id:\d+}")
+    @GetMapping("/materials/{id}")
     public String showMaterialDetail(@PathVariable Integer id, Model model) {
         MaterialResponseDto material = materialService.getMaterialById(id);
         if (material == null) return "error/404"; // 서비스에서 예외 처리하므로 null 반환될 일은 없지만, 방어적 코드
@@ -86,7 +70,7 @@ public class MaterialController {
     }
 
     // 💳 구매 페이지
-    @GetMapping("/{id:\d+}/purchase")
+    @GetMapping("/materials/{id}/purchase")
     public String showPurchasePage(@PathVariable Integer id, Model model) {
         MaterialResponseDto material = materialService.getMaterialById(id);
         if (material == null) return "error/404";
@@ -96,7 +80,7 @@ public class MaterialController {
     }
 
     // ✅ 결제 완료 후 다운로드 제공
-    @PostMapping("/payment")
+    @PostMapping("/materials/payment")
     public String completePurchase(@RequestParam("materialId") Integer materialId, Model model) {
         MaterialResponseDto material = materialService.getMaterialById(materialId);
 
@@ -105,22 +89,12 @@ public class MaterialController {
         }
 
         // MaterialResponseDto에서 fileUrl을 직접 가져옵니다.
-        String downloadLink = "/uploads/" + material.getFileUrl();
+        String downloadLink = "/uploads/" + material.fileUrl();
 
         model.addAttribute("material", material);
         model.addAttribute("message", "결제가 완료되었습니다. 자료 다운로드가 가능합니다.");
         model.addAttribute("downloadLink", downloadLink);
 
         return "materials/purchaseSuccessPage";
-    }
-
-    //내가 등록한 자료 목록 조회
-    @GetMapping("/my")
-    @ResponseBody
-    public ResponseEntity<List<MaterialResponseDto>> getMyMaterials(
-            Authentication authentication
-    ) {
-        List<MaterialResponseDto> materials = materialService.getAllMaterialsByUser(authentication);
-        return ResponseEntity.ok(materials);
     }
 }

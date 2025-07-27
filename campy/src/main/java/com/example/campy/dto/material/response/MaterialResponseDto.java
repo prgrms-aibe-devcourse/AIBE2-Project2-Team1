@@ -2,28 +2,24 @@ package com.example.campy.dto.material.response;
 
 import com.example.campy.entity.Material;
 import com.example.campy.dto.user.response.UserResponseDto;
-import lombok.*;
+import lombok.Builder;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class MaterialResponseDto {
-    private Integer materialId;
-    private UserResponseDto seller;
-    private String title;
-    private String content;
-    private String category;
-    private String fileUrl;
-    private String previewFileUrl;
-    private String thumbnailUrl;
-    private Integer price;
-    private Boolean isDeleted;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
+public record MaterialResponseDto(
+    Integer materialId,
+    UserResponseDto seller,
+    String title,
+    String content,
+    String category,
+    String fileUrl,
+    String previewFileUrl,
+    String thumbnailUrl,
+    Integer price,
+    Boolean isDeleted,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt
+) {
     public static MaterialResponseDto from(Material material) {
         return MaterialResponseDto.builder()
                 .materialId(material.getMaterialId())
