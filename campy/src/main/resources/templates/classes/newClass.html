@@ -167,47 +167,48 @@
         <div class="chat-bubble">안녕하세요! 멘토님 멘토링 할 수업을 등록해주세요!</div>
     </div>
 
-    <form method="post" action="/newClassComplete" enctype="multipart/form-data">
+    <form th:action="@{/class/create}" method="post">
 
     <table>
             <tr>
                 <td>제목</td>
                 <td><input type="text" name="title" placeholder="한글, 영문 포함 최대 200 이내, 특수문자, 개인정보 등은 제외"></td>
             </tr>
-            <tr>
-                <td>카테고리</td>
-                <td><input type="text" name="category" placeholder="자료에 해당하는 카테고리를 적어주세요."></td>
-            </tr>
-            <tr>
-                <td>상세 정보</td>
-                <td><textarea name="detail" rows="5" placeholder="한글, 영문 포함 최대 500 이내, 특수문자, 개인정보 등은 제외"></textarea></td>
-            </tr>
-            <tr>
-                <td>판매가격</td>
-                <td>
-                    <div class="price-wrapper">
-                        <input type="number" class="price-input" name="price" placeholder="가격 입력 (0은 무료)">
-                        <span>원</span>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>수업 시간</td>
-                <td><input type="text" name="duration" placeholder="수업을 진행할 총 시간을 적어주세요."></td>
-            </tr>
         <!--
            <tr>
-               <td>수업 방식</td>
-               <td><input type="text" name="method" placeholder="예: Discord(Online), 공유 오피스(Offline)"></td>
+               <td>카테고리</td>
+               <td><input type="text" name="category" placeholder="자료에 해당하는 카테고리를 적어주세요."></td>
            </tr>
-
+           -->
            <tr>
-               <td>썸네일 사진 선택</td>
+               <td>상세 정보</td>
+               <td><textarea name="description" rows="5" placeholder="한글, 영문 포함 최대 500 이내, 특수문자, 개인정보 등은 제외"></textarea></td>
+           </tr>
+           <tr>
+               <td>판매가격</td>
                <td>
-                   <input type="file" name="thumbnail" accept=".jpg,.jpeg,.png,.gif">
-                   <div class="file-info">최대용량: 5MB 이하 · 등록 가능 형식: jpg, jpeg, png, gif</div>
+                   <div class="price-wrapper">
+                       <input type="number" class="price-input" name="price" placeholder="가격 입력 (0은 무료)">
+                       <span>원</span>
+                   </div>
                </td>
-           </tr>-->
+           </tr>
+           <tr>
+               <td>수업 시간</td>
+               <td><input type="text" name="duration" placeholder="수업을 진행할 총 시간을 적어주세요."></td>
+           </tr>
+          <tr>
+              <td>수업 방식</td>
+              <td><input type="text" name="method" placeholder="예: Discord(Online), 공유 오피스(Offline)"></td>
+          </tr>
+        <!--
+                  <tr>
+                      <td>썸네일 사진 선택</td>
+                      <td>
+                          <input type="file" name="thumbnail" accept=".jpg,.jpeg,.png,.gif">
+                          <div class="file-info">최대용량: 5MB 이하 · 등록 가능 형식: jpg, jpeg, png, gif</div>
+                      </td>
+                  </tr>-->
             <tr>
                 <td>태그</td>
                 <td>
@@ -234,6 +235,7 @@
 <script>
     const tagInput = document.getElementById('tag-text');
     const tagContainer = document.getElementById('tag-input');
+    const form = document.querySelector('form');
 
     let tagCount = 0;
     const maxTags = 5;
@@ -250,15 +252,26 @@
             const tagText = tagInput.value.trim();
             if (!tagText) return;
 
+            // span UI용
             const tag = document.createElement('span');
             tag.className = 'tag';
             tag.innerText = `#${tagText}`;
+
+            // 삭제 기능 + hidden input 제거
             tag.addEventListener('click', () => {
                 tag.remove();
+                hiddenInput.remove();
                 tagCount--;
             });
 
+            // 숨은 input 추가
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'tags';
+            hiddenInput.value = tagText;
+
             tagContainer.insertBefore(tag, tagInput);
+            form.appendChild(hiddenInput); // 중요
             tagInput.value = '';
             tagCount++;
         }

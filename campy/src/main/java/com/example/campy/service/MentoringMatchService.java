@@ -42,13 +42,41 @@ public class MentoringMatchService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-
-
         matchRepo.save(match);
 
         return MentoringMatchResponse.builder()
                 .matchId(match.getMatchId())
                 .mentoringOfferId(match.getMentoringOffer().getOfferId())
+                .status(match.getStatus().getLabel())
+                .type(match.getType().getLabel())
+                .createdAt(match.getCreatedAt())
+                .build();
+    }
+
+    // member와 match만 생성
+    public MentoringMatchResponse createMemberMatch(MentoringMatchCreateCombinedRequest req) {
+        MentoringMatchCreateRequest matchReq = req.getMatchRequest();
+        List<MentoringMatchMemberCreateRequest> memberReqs = req.getMembers();
+
+        MentoringOffer offer = offerRepo.findById(matchReq.getMentoringOfferId())
+                .filter(o -> o.getStatus() != MentoringStatus.DELETED)
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND, "해당 멘토링이 존재하지 않습니다."));
+
+        // 매칭 생성
+        MentoringMatch match = MentoringMatch.builder()
+                .mentoringOffer(offer)
+                .status(MentoringStatus.WAITING_FOR_MENTOR)
+                .type(matchReq.getType())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        matchRepo.save(match);
+
+        memberService.createMembers(match, memberReqs);
+
+        return MentoringMatchResponse.builder()
+                .matchId(match.getMatchId())
+                .mentoringOfferId(offer.getOfferId())
                 .status(match.getStatus().getLabel())
                 .type(match.getType().getLabel())
                 .createdAt(match.getCreatedAt())

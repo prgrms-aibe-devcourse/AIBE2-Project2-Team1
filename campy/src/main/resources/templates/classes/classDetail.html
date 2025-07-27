@@ -112,7 +112,7 @@
 <div class="container">
     <div style="flex: 3">
         <div class="content-box">
-            <h2 th:text="${offer.title}">spring의 기본</h2>
+            <h2 th:text="${offer.title}"></h2>
             <p th:if="${offer.tags != null}" th:text="${#strings.listJoin(offer.tags, ' ')}"></p>
             <p class="desc">
                 • 실제 상담 시작은 상호 협의하에 진행됩니다.<br>
@@ -128,25 +128,25 @@
 
         <div>
             <p class="section-title">상세설명</p>
-            <ul class="section-desc">
-                <li>spring이 어떤 것인지 알고 싶은 분</li>
-                <li>spring에 대해서 질문할 것이 있는 분</li>
-                <li>알맞은 공부 방식 지도</li>
-            </ul>
+            <div class="section-desc" th:utext="${offer.description}"></div>
         </div>
     </div>
 
     <div style="flex: 1">
         <div class="info-box">
-            <p class="price" th:text="${offer.price} + '원'">50,000원</p>
+            <p class="price" th:text="${offer.price} + '원'"></p>
             <p class="duration" th:text="${offer.duration} +'분'"> </p>
-            <!--진행 방법 상세 설명(description)에 작성-->
-            <button class="btn-purchase" th:onclick="|location.href='@{/class/purchase}'|">구매하기</button>
+            <p class="label">진행 방법</p>
+            <p class="desc" th:text="${offer.location}"></p>
+            <button class="btn-purchase"
+                    th:onclick="|location.href='@{/class/purchase/{id}(id=${offer.offerId})}'|">
+                구매하기
+            </button>
             <button class="btn-message" th:onclick="|location.href='@{/message.html}'|">쪽지하기</button>
         </div>
 
         <div class="mentor-profile">
-            <h4 th:text="${offer.user.nickname()} + ' 멘토'">김영한 멘토</h4>
+            <h4 th:text="${offer.user.nickname()} + ' 멘토'">멘토</h4>
             <p th:text="${offer.user.major()}"><!--User엔티티에 전공(major)--></p>
             <img th:src="@{/images/younghan.jpg}" alt="멘토 사진">
             <button class="btn-profile" th:onclick="|location.href='@{/mentorDetail/{id}(id=${offer.user.userId})}'|">프로필보기</button>

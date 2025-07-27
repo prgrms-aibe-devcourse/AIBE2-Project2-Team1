@@ -108,9 +108,9 @@
 <!-- Header Fragment (메인과 합칠 때 복구) -->
 <!-- <div th:replace="fragments/header :: header"></div> -->
 <div class="container">
-    <div class="title">김영한 · 멘토</div>
-    <div class="subtitle">spring의 기본</div>
-    <div class="price">50,000원</div>
+    <div class="title" th:text="${offer.title}">김영한 · 멘토</div>
+
+    <div class="price" th:text="${offer.price} + '원'"></div>
 
     <div class="info-block">
         <img src="/images/clock-icon.png" width="20">
@@ -135,11 +135,11 @@
         <table>
             <tr>
                 <th>상품 금액</th>
-                <td>50,000원</td>
+                <td class="price" th:text="${offer.price} + '원'"></td>
             </tr>
             <tr>
                 <th><strong>결제 금액</strong></th>
-                <td><strong>50,000원</strong></td>
+                <td class="price" th:text="${offer.price} + '원'"><strong></strong></td>
             </tr>
         </table>
     </div>
@@ -168,7 +168,16 @@
         </div>
     </div>
 
-    <form action="/purchasePage" method="get">
+    <form action="/class/purchase" method="post">
+        <!-- matchRequest -->
+        <input type="hidden" name="matchRequest.mentoringOfferId" th:value="${offer.offerId}" />
+        <input type="hidden" name="matchRequest.userId" value="2" /><!-- 임시 사용자 ID -->
+        <input type="hidden" name="matchRequest.type" value="GROUP" />
+
+        <!-- members[0] -->
+        <input type="hidden" name="members[0].userId" value="2" /> <!-- ✅ 임시 사용자 ID -->
+        <input type="hidden" name="matchRequest.type" value="MENTEE" />
+
         <button type="submit" class="purchase-button">결제하기</button>
     </form>
 

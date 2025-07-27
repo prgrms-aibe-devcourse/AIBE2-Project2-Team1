@@ -17,8 +17,9 @@ public class MentoringMatchCreateCombinedRequest {
     @NotNull
     private MentoringMatchCreateRequest matchRequest;
 
-    @Valid
-    @NotNull
+    // 추후 수정
+    //@Valid
+    //@NotNull
     private MentoringMatchDetailCreateRequest detailRequest;
 
     @Valid
