@@ -1,5 +1,6 @@
 package com.example.campy.service;
 
+
 import com.example.campy.dto.material.request.MaterialCreateRequest;
 import com.example.campy.dto.material.response.MaterialResponseDto;
 import com.example.campy.dto.material.request.MaterialUpdateRequest;
@@ -135,4 +136,5 @@ public class MaterialService {
         material.setUpdatedAt(LocalDateTime.now());
         materialRepository.save(material);
     }
+
 }

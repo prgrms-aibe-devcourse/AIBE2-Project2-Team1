@@ -1,9 +1,9 @@
 package com.example.campy.dto.material.response;
 
 import com.example.campy.entity.Material;
-import com.example.campy.dto.user.response.UserResponseDto;
-import lombok.Builder;
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
+
 
 @Builder
 public record MaterialResponseDto(
@@ -48,5 +48,6 @@ public record MaterialResponseDto(
                 .createdAt(material.getCreatedAt())
                 .updatedAt(material.getUpdatedAt())
                 .build();
+
     }
 }

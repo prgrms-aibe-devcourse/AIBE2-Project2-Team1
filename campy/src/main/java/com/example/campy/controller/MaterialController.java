@@ -1,27 +1,35 @@
 package com.example.campy.controller;
 
+
 import com.example.campy.dto.material.request.MaterialCreateRequest;
+
 import com.example.campy.dto.material.response.MaterialResponseDto;
 import com.example.campy.service.MaterialService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import org.springframework.beans.factory.annotation.Value;
 import java.io.IOException;
 import java.util.*;
 
 @Controller
+
 @RequiredArgsConstructor
+@RequestMapping("/api/materials")
 public class MaterialController {
 
     private final MaterialService materialService;
+
 
     @Value("${upload.path}")
     private String uploadPath;
@@ -33,13 +41,21 @@ public class MaterialController {
     public String showMaterialList(Model model) {
         model.addAttribute("materials", materialService.getAllMaterials());
         return "materials/materialList";
+
+
     }
 
-    // 📝 자료 등록 페이지
-    @GetMapping("/materials/new")
-    public String showNewMaterialForm() {
-        return "materials/newMaterial";
+    //자료 삭제
+    @DeleteMapping("/{materialId}")
+    public ResponseEntity<String> deleteMaterial(
+            @PathVariable Integer materialId,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        materialService.deleteMaterial(materialId, username);
+        return ResponseEntity.ok("자료가 삭제되었습니다.");
     }
+
 
     @PostMapping(value = "/materials/new", consumes = {"multipart/form-data"}, produces = "application/json")
     public ResponseEntity<MaterialResponseDto> submitMaterialForm(
@@ -95,6 +111,24 @@ public class MaterialController {
         model.addAttribute("message", "결제가 완료되었습니다. 자료 다운로드가 가능합니다.");
         model.addAttribute("downloadLink", downloadLink);
 
-        return "materials/purchaseSuccessPage";
+
+    //내가 등록한 자료 목록 조회
+    @GetMapping("/my")
+    public ResponseEntity<Page<MaterialListDto>> getMyMaterials(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort
+    ) {
+        String username = authentication.getName();
+
+        String[] sortParts = sort.split(",");
+        String sortBy = sortParts[0];
+        Sort.Direction direction = sortParts.length > 1 && sortParts[1].equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<MaterialListDto> materials = materialService.getMyMaterials(username, pageable);
+        return ResponseEntity.ok(materials);
     }
 }
