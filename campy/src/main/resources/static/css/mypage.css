@@ -45,7 +45,11 @@ h1, h2 {
 }
 
 .mypage-container {
-    max-width: 600px;
+    max-width: 800px; /* 구매내역 테이블을 위해 너비 확장 */
+    padding: 30px 40px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 .registrations-container {
     max-width: 1000px; /* 테이블이 있으므로 너비를 더 넓게 설정 */
