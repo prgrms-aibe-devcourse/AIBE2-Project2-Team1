@@ -43,9 +43,9 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         if (user != null) {
-            return user.getUsername();  // 실제 사용자 ID(username) 반환
+            return user.getUsername();
         } else if (admin != null) {
-            return admin.getUsername(); // admin은 username 기반
+            return admin.getUsername();
         }
         return null;
     }
@@ -60,5 +60,9 @@ public class CustomUserDetails implements UserDetails {
             return user.getUserId();
         }
         return null;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

@@ -37,7 +37,7 @@ public class UserReviewServiceImpl implements UserReviewService {
         User currentUser = getCurrentUser(authentication);
 
         // 리뷰 대상 사용자 (targetUser)는 request에서 받아옴
-        User targetUser = userRepository.findById(request.targetUserId())
+        User targetUser = userRepository.findByNickname(request.nickname())
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "리뷰 대상 사용자를 찾을 수 없습니다."));
 
         Review newReview = Review.builder()
@@ -108,5 +108,12 @@ public class UserReviewServiceImpl implements UserReviewService {
 
         review.setDeletedAt(LocalDateTime.now()); // 소프트 삭제
         reviewRepository.save(review);
+    }
+
+    @Override
+    public List<ReviewResponseDto> getReviewsByTargetIdAndCategory(Integer targetId, String category) {
+        return reviewRepository.findByTargetIdAndCategoryAndDeletedAtIsNull(targetId, category).stream()
+                .map(ReviewResponseDto::from)
+                .collect(Collectors.toList());
     }
 }

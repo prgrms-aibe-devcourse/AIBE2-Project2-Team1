@@ -15,23 +15,37 @@
         }
         .main-wrap {
             background: #F6F1F1;
-            margin: 48px auto 0 auto;
+            margin: 10px auto 0 auto;
             max-width: 1200px;
             min-height: 90vh;
             box-shadow: none;
             border-radius: 0;
             padding: 0 0 60px 0;
         }
+
         .talent-title-bar {
-            font-weight: bold;
             font-size: 18px;
-            color: #2ca4c8;
-            margin: 0 0 8px 36px;
-            padding-top: 34px;
-            border-bottom: 4px solid #2ca4c8;
-            width: 1130px;
-            letter-spacing: -0.5px;
+            font-weight: bold;
+            color: #19A7CE;
+            display: block;
+            text-align: left;
+            margin-left: 45px;
+            background-color: #f7f4f4;
+            text-align: left;
+            margin: 0;
+            margin-top: 10px;
+            padding: 20px 0 10px;
         }
+
+        .underline-bar {
+            width: 100%;
+            max-width: 1850px;  /* 필요시 제한 */
+            height: 2px;
+            background-color: #19A7CE;
+            margin: 6px auto 0 auto;
+        }
+
+
         .notice-box {
             margin: 32px 36px 0 36px;
             border: 2px solid #B0BEC7;
@@ -211,6 +225,8 @@
 <header th:replace="~{fragments/header :: header}"></header>
 <div class="main-wrap">
     <div class="talent-title-bar">재능 등록</div>
+    <div class="underline-bar"></div>
+
     <form method="post" enctype="multipart/form-data" th:action="@{/talents/register}">
         <div class="notice-box">
             <input type="checkbox" id="pledgeCheck" style="margin-right:8px; transform:scale(1.1); vertical-align:middle;">
@@ -253,9 +269,23 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>제공 횟수</th>
+                    <td>
+                        <span class="desc-gray">· 해당 자료가 몇 회 제공되는지 입력해주세요. 예: 1 (단건 다운로드용)</span>
+                        <input type="number" name="availableDays" min="1" placeholder="제공 횟수를 숫자로 입력해주세요. (예: 1)">
+                    </td>
+                </tr>
+                <tr>
+                    <th>진행 방식</th>
+                    <td>
+                        <span class="desc-gray">· 온라인 또는 오프라인 장소를 명시해주세요. 예: 온라인 / 서울 강남 오프라인</span>
+                        <input type="text" name="offlineLocation" maxlength="100" placeholder="온라인 / 오프라인 장소를 입력해주세요.">
+                    </td>
+                </tr>
+                <tr>
                     <th>썸네일 사진 선택</th>
                     <td>
-                        <input type="file" name="thumbnail" accept="image/png,image/jpeg,image/gif">
+                        <input type="file" name="image" accept="image/png,image/jpeg,image/gif">
                         <span class="file-desc">
                             최대용량: 5MB 이하<br>
                             등록 가능한 파일 형식 : jpg, jpeg, png, gif

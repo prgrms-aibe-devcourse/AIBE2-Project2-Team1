@@ -121,14 +121,20 @@
         </div>
 
         <div class="tab">
-            <a href="#" class="active">상세설명</a>
-            <a href="/review">후기</a>
-
+            <a href="#" class="active" onclick="showTab('desc')">상세설명</a>
+            <a href="#" onclick="showTab('review')">후기</a>
         </div>
 
-        <div>
+        <div id="descTab">
             <p class="section-title">상세설명</p>
             <div class="section-desc" th:utext="${offer.description}"></div>
+        </div>
+
+        <div id="reviewTab" style="display: none;">
+            <p class="section-title">후기</p>
+            <div id="reviewList">
+                <p style="color:#888; font-size:14px; margin:12px 0 0 0;">아직 후기가 없습니다.</p>
+            </div>
         </div>
     </div>
 
@@ -163,5 +169,85 @@
 </div>
 <!-- Footer Fragment (메인과 합칠때 복구) -->
 <!-- <div th:replace="fragments/footer :: footer"></div> -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const offerId = [[${offer.offerId}]];
+    const reviewCategory = "멘토링"; // 또는 "수업" 등 실제 사용되는 카테고리 값으로 변경 필요
+    /*]]>*/
+
+    function showTab(type) {
+        document.querySelectorAll('.tab a').forEach(tab => tab.classList.remove('active'));
+        document.getElementById('descTab').style.display = 'none';
+        document.getElementById('reviewTab').style.display = 'none';
+
+        if (type === 'desc') {
+            document.querySelector('.tab a:nth-child(1)').classList.add('active');
+            document.getElementById('descTab').style.display = 'block';
+        } else if (type === 'review') {
+            document.querySelector('.tab a:nth-child(2)').classList.add('active');
+            document.getElementById('reviewTab').style.display = 'block';
+            loadReviews(offerId, reviewCategory);
+        }
+    }
+
+    function loadReviews(targetId, category) {
+        fetch(`/reviews/api/by-target?targetId=${targetId}&category=${category}`)
+            .then(response => response.json())
+            .then(reviews => {
+                const reviewListDiv = document.getElementById('reviewList');
+                reviewListDiv.innerHTML = ''; // 기존 내용 지우기
+
+                if (reviews.length === 0) {
+                    reviewListDiv.innerHTML = '<p style="color:#888; font-size:14px; margin:12px 0 0 0;">아직 후기가 없습니다.</p>';
+                    return;
+                }
+
+                reviews.forEach(review => {
+                    const reviewItem = document.createElement('div');
+                    reviewItem.style.borderBottom = '1px solid #eee';
+                    reviewItem.style.paddingBottom = '15px';
+                    reviewItem.style.marginBottom = '15px';
+
+                    const authorInfo = document.createElement('p');
+                    authorInfo.style.fontSize = '15px';
+                    authorInfo.style.fontWeight = 'bold';
+                    authorInfo.style.marginBottom = '5px';
+                    authorInfo.textContent = review.author.nickname + ' (' + review.author.email + ')';
+                    reviewItem.appendChild(authorInfo);
+
+                    const ratingInfo = document.createElement('p');
+                    ratingInfo.style.fontSize = '14px';
+                    ratingInfo.style.color = '#f0ad4e'; // 별점 색상
+                    ratingInfo.textContent = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                    reviewItem.appendChild(ratingInfo);
+
+                    const contentInfo = document.createElement('p');
+                    contentInfo.style.fontSize = '15px';
+                    contentInfo.style.color = '#333';
+                    contentInfo.style.lineHeight = '1.6';
+                    contentInfo.textContent = review.content;
+                    reviewItem.appendChild(contentInfo);
+
+                    const dateInfo = document.createElement('p');
+                    dateInfo.style.fontSize = '13px';
+                    dateInfo.style.color = '#999';
+                    dateInfo.style.marginTop = '10px';
+                    dateInfo.textContent = new Date(review.createdAt).toLocaleString();
+                    reviewItem.appendChild(dateInfo);
+
+                    reviewListDiv.appendChild(reviewItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviewList').innerHTML = '<p style="color:#888; font-size:14px; margin:12px 0 0 0;">리뷰를 불러오는 데 실패했습니다.</p>';
+            });
+    }
+
+    // 페이지 로드시 상세설명 탭 보이기
+    window.onload = function() {
+        showTab('desc');
+    }
+</script>
 </body>
 </html>

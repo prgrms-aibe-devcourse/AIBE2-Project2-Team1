@@ -13,4 +13,5 @@ public interface UserReviewService {
     List<ReviewResponseDto> getAllReviewsByUser(Authentication authentication);
     ReviewResponseDto updateReview(Integer reviewId, ReviewUpdateRequest request, Authentication authentication);
     void deleteReview(Integer reviewId, Authentication authentication);
+    List<ReviewResponseDto> getReviewsByTargetIdAndCategory(Integer targetId, String category);
 }

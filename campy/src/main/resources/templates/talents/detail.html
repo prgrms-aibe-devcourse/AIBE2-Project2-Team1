@@ -1,256 +1,153 @@
-<!-- src/main/resources/templates/talents/detail.html -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title th:text="${talent.title} + ' | campy'">재능 상세 | campy</title>
-    <link rel="stylesheet" th:href="@{/css/talent.css}">
+    <link rel="stylesheet" href="/css/style.css">
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background: #ededed;
-        }
         body {
-            font-family: 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', Arial, sans-serif;
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f4f4f4;
         }
-        .main-detail-wrap {
-            max-width: 1180px;
-            margin: 40px auto 30px auto;
+        .container {
             display: flex;
-            gap: 34px;
-            background: #f7fafd;
-            border-radius: 13px;
-            box-shadow: 0 6px 20px rgba(0,30,80,0.06);
-            padding: 36px 38px 40px 38px;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 30px auto;
+            gap: 20px;
         }
-        .talent-detail-content {
-            flex: 1.9;
-            display: flex;
-            flex-direction: column;
-            min-width: 420px;
+        .content-box {
+            background: linear-gradient(to right, #50c1e1, #3A94B9);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            flex: 2;
+            height: 250px
         }
-        .talent-detail-title {
-            font-size: 25px;
-            font-weight: bold;
-            color: #1d7fb7;
-            margin-bottom: 13px;
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 250px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .talent-detail-category {
-            color: #367cbf;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 18px;
-        }
-        .talent-detail-meta {
-            color: #8c8c8c;
-            font-size: 15px;
-            margin-bottom: 22px;
-        }
-        .talent-detail-desc-box {
-            background: #fff;
-            border-radius: 8px;
-            padding: 26px 27px 19px 27px;
-            font-size: 16px;
-            color: #232323;
-            min-height: 120px;
-            line-height: 1.75;
-            box-shadow: 0 2px 6px rgba(20,80,130,0.04);
-        }
-        .talent-detail-section {
-            margin-top: 42px;
-        }
-        .talent-detail-section-title {
-            font-weight: bold;
-            font-size: 17px;
-            margin-bottom: 8px;
-            color: #1b669b;
-        }
-        .talent-detail-thumbnail {
-            width: 340px;
-            height: 260px;
+        .thumbnail {
+            width: 200px;
+            height: 250px;
             object-fit: cover;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(80,130,160,0.08);
-            background: #eee;
-            margin-bottom: 22px;
-        }
-        /* 우측 구매 영역 */
-        .talent-detail-buy-box {
-            width: 320px;
-            min-width: 270px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 13px rgba(10,60,130,0.08);
-            padding: 24px 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            position: relative;
-            height: fit-content;
-        }
-        .talent-detail-buy-price {
-            font-size: 23px;
-            font-weight: bold;
-            color: #232323;
-            margin-bottom: 15px;
-        }
-        .talent-detail-buy-info {
-            color: #666;
-            font-size: 15px;
-            margin-bottom: 14px;
-        }
-        .talent-detail-buy-method {
-            font-size: 14px;
-            color: #444;
             margin-bottom: 20px;
         }
-        .talent-detail-buy-btn {
-            background: #1995d4;
-            color: #fff;
-            font-size: 18px;
-            font-weight: 600;
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .label {
+            font-size: 14px;
+            color: #666;
+        }
+        .desc {
+            font-size: 16px;
+            margin: 5px 0 15px;
+        }
+        .btn-purchase {
+            width: 100%;
+            padding: 10px;
+            background-color: #1B6B93;
+            color: white;
             border: none;
-            border-radius: 7px;
-            padding: 15px 0;
-            margin-top: 18px;
+            border-radius: 10px;
+            font-size: 15px;
             cursor: pointer;
-            transition: background 0.17s;
+            margin-top: 20px;
         }
-        .talent-detail-buy-btn:disabled,
-        .talent-detail-buy-btn[disabled] {
-            background: #b1b8c0;
-            cursor: not-allowed;
-        }
-        .talent-detail-buy-btn:hover:enabled {
-            background: #1270a3;
-        }
-        /* 탭 메뉴 */
-        .talent-detail-tabs {
-            margin: 38px 0 0 0;
-            border-bottom: 1.5px solid #b1c5e2;
+        .tab {
+            margin-top: 30px;
             display: flex;
-            gap: 25px;
+            gap: 20px;
+            border-bottom: 2px solid #ccc;
         }
-        .talent-detail-tab {
-            padding: 0 5px 8px 5px;
-            font-size: 17px;
-            color: #186fa5;
-            font-weight: 500;
-            cursor: pointer;
-            border-bottom: 2.3px solid transparent;
-            transition: border-color 0.14s;
+        .tab a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding-bottom: 10px;
         }
-        .talent-detail-tab.active {
-            border-bottom: 2.3px solid #1d7fb7;
-            color: #1270a3;
+        .tab a.active {
+            color: #1B6B93;
+            border-bottom: 3px solid #1B6B93;
         }
-        .talent-detail-review-section {
-            display: none;
+        .section-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin: 20px 0 10px;
         }
-        .talent-detail-review-section.active {
-            display: block;
-            margin-top: 24px;
-        }
-        @media (max-width: 1080px) {
-            .main-detail-wrap {
-                flex-direction: column;
-                gap: 20px;
-                padding: 22px 7vw 25px 7vw;
-                min-width: 0;
-            }
-            .talent-detail-thumbnail {
-                width: 100%;
-                max-width: 420px;
-                height: 190px;
-            }
-            .talent-detail-buy-box {
-                width: 100%;
-                max-width: 370px;
-                min-width: 0;
-                margin: 0 auto;
-            }
-        }
-        @media (max-width: 650px) {
-            .main-detail-wrap { padding: 4vw 1vw 22px 1vw; }
+        .section-desc li {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 <header th:replace="~{fragments/header :: header}"></header>
-<div class="main-detail-wrap">
-    <div class="talent-detail-content">
-        <img class="talent-detail-thumbnail"
-             th:if="${talent.imagePath != null and !#strings.isEmpty(talent.imagePath)}"
-             th:src="@{|/images/${talent.imagePath}|}" alt="썸네일">
-        <img class="talent-detail-thumbnail"
-             th:if="${talent.imagePath == null or #strings.isEmpty(talent.imagePath)}"
-             src="/images/sample-ppt.png" alt="썸네일">
-
-        <div class="talent-detail-title" th:text="${talent.title}">제목</div>
-        <div class="talent-detail-category" th:text="${talent.category}">카테고리</div>
-        <div class="talent-detail-meta">
-            <span th:text="${talent.user.nickname}">판매자닉네임</span> &middot;
-            <span th:text="${#temporals.format(talent.createdAt, 'yyyy-MM-dd HH:mm')}">등록일</span>
+<div class="container">
+    <div style="flex: 3">
+        <div class="content-box">
+            <h2 th:text="${talent.title}">제목</h2>
+            <p class="label" th:text="${talent.category}">카테고리</p>
+            <p class="desc">
+                <span th:text="${talent.user.nickname}">닉네임</span> ·
+                <span th:text="${#temporals.format(talent.createdAt, 'yyyy-MM-dd HH:mm')}">등록일</span>
+            </p>
         </div>
 
-        <div class="talent-detail-desc-box" th:text="${talent.description}">
-            상세 설명
+        <div class="tab">
+            <a href="#" class="active">상세설명</a>
+            <a href="#">후기</a>
         </div>
 
-        <div class="talent-detail-section">
-            <div class="talent-detail-section-title">상품 이용에 관한 중요한 안내</div>
-            <ul style="margin-top: 7px; color:#444; font-size:15px; line-height:1.8;">
-                <li>실제 상담 시작은 상호 협의하에 진행됩니다.</li>
-                <li>판매자와 협의하여 진행 방식을 결정할 수 있습니다.</li>
-            </ul>
+        <!-- 상세 설명 + 썸네일을 나란히 배치 -->
+        <div>
+            <p class="section-title">상세설명</p>
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 2;" th:utext="${#strings.replace(talent.description, '\n', '<br>')}">
+                    상세 설명
+                </div>
+                <div style="flex-shrink: 0;">
+                    <img class="thumbnail"
+                         th:if="${talent.imagePath != null and !#strings.isEmpty(talent.imagePath)}"
+                         th:src="@{|/images/${talent.imagePath}|}" alt="썸네일"
+                         style="width: 240px; height: 180px; object-fit: cover; border-radius: 8px;">
+                    <img class="thumbnail"
+                         th:if="${talent.imagePath == null or #strings.isEmpty(talent.imagePath)}"
+                         src="/images/sample-ppt.png" alt="썸네일"
+                         style="width: 240px; height: 180px; object-fit: cover; border-radius: 8px;">
+                </div>
+            </div>
         </div>
 
-        <div class="talent-detail-tabs">
-            <div class="talent-detail-tab active" onclick="showTab('desc')">상세설명</div>
-            <div class="talent-detail-tab" onclick="showTab('review')">후기</div>
-        </div>
-        <div class="talent-detail-desc-section" id="descTab">
-            <h3 style="margin:28px 0 9px 0; font-size:16px; font-weight:bold;">상세설명</h3>
-            <div style="font-size:15px; color:#333; line-height:1.7;" th:utext="${#strings.replace(talent.description, '\n', '<br>')}">상세설명</div>
-        </div>
-        <div class="talent-detail-review-section" id="reviewTab">
-            <h3 style="margin:14px 0 8px 0; font-size:15px; font-weight:bold;">후기</h3>
-            <p style="color:#888; font-size:14px; margin:12px 0 0 0;">아직 후기가 없습니다.</p>
-        </div>
     </div>
-    <div class="talent-detail-buy-box">
-        <div class="talent-detail-buy-price" th:text="${#numbers.formatInteger(talent.price, 3, 'COMMA')} + '원'">10,000원</div>
-        <div class="talent-detail-buy-info">
-            <span th:text="'횟수: ' + ${talent.availableDays != null ? talent.availableDays : '1회'}">1회</span>
+
+    <div style="flex: 1">
+        <div class="info-box">
+            <p class="price" th:text="${#numbers.formatInteger(talent.price, 3, 'COMMA')} + '원'">10,000원</p>
+
+            <p class="label">
+                <img src="/images/clock-icon.png" alt="횟수 아이콘" style="width:16px; vertical-align: middle; margin-right: 5px;">
+                횟수: <span th:text="${talent.availableDays}">1회</span>
+            </p>
+
+            <p class="label">
+                <img src="/images/chat-icon.png" alt="진행 방법 아이콘" style="width:16px; vertical-align: middle; margin-right: 5px;">
+                진행 방법: <span th:text="${talent.offlineLocation != null ? talent.offlineLocation : '온라인'}">온라인</span>
+            </p>
+
+            <button class="btn-purchase"
+                    th:onclick="|location.href='/payments/new?talentId=${talent.talentId}'|">구매하기</button>
         </div>
-        <div class="talent-detail-buy-method">
-            <span>진행 방법</span> <br>
-            <span th:text="${talent.offlineLocation != null ? talent.offlineLocation : '온라인(채팅/Discord 등)'}">온라인</span>
-        </div>
-        <button class="talent-detail-buy-btn"
-                th:onclick="|location.href='/payments/new?talentId=${talent.talentId}'|">구매하기</button>
     </div>
 </div>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
-<script>
-    // 상세/후기 탭
-    function showTab(type) {
-        document.querySelectorAll('.talent-detail-tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.talent-detail-desc-section, .talent-detail-review-section').forEach(sec => sec.classList.remove('active'));
-        if(type === 'desc') {
-            document.querySelector('.talent-detail-tab:nth-child(1)').classList.add('active');
-            document.getElementById('descTab').classList.add('active');
-        } else {
-            document.querySelector('.talent-detail-tab:nth-child(2)').classList.add('active');
-            document.getElementById('reviewTab').classList.add('active');
-        }
-    }
-    // 페이지 로드시 상세설명 탭 보이기
-    window.onload = function() {
-        showTab('desc');
-    }
-</script>
 </body>
 </html>

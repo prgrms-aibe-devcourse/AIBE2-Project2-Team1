@@ -44,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/messages/**").authenticated() // 쪽지 기능
+                        .requestMatchers(HttpMethod.GET, "/reviews").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/reviews").hasAnyRole("USER", "MENTOR", "ADMIN")
                         .anyRequest().authenticated())
 
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

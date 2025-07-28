@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -29,7 +31,10 @@ public class AuthController {
 
         response.addCookie(cookie); // Add the cookie to the response
 
-        return ResponseEntity.ok().body("Login successful"); // Return a simple message, token is in cookie
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "message", "Login successful"
+        )); // Return a simple message, token is in cookie
     }
 
     @PostMapping("/signup")

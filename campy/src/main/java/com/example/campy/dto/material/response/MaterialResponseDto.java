@@ -15,6 +15,7 @@ public record MaterialResponseDto(
     String fileUrl,
     String previewFileUrl,
     String thumbnailUrl,
+    String fileName,
     Integer price,
     Boolean isDeleted,
     LocalDateTime createdAt,
@@ -43,6 +44,7 @@ public record MaterialResponseDto(
                 .fileUrl(material.getFileUrl())
                 .previewFileUrl(material.getPreviewFileUrl())
                 .thumbnailUrl(material.getThumbnailUrl())
+                .fileName(material.getFileName())
                 .price(material.getPrice())
                 .isDeleted(material.getIsDeleted())
                 .createdAt(material.getCreatedAt())
