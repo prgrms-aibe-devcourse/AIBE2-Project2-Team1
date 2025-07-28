@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>수업 상세 페이지</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 30px auto;
+            gap: 20px;
+        }
+        .content-box {
+            background: linear-gradient(to right, #3eb0ce, #3A94B9);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            flex: 2;
+        }
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 250px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .mentor-profile {
+            margin-top: 20px;
+            background: #146C94;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+        }
+        .mentor-profile img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .label {
+            font-size: 14px;
+            color: #666;
+        }
+        .desc {
+            font-size: 16px;
+            margin: 5px 0 15px;
+        }
+        .btn-purchase, .btn-message, .btn-profile {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .btn-purchase {
+            background-color: #1B6B93;
+            color: white;
+        }
+        .btn-message {
+            background-color: #F6F1F1;
+            color: #1B6B93;
+            border: 1px solid #1B6B93;
+        }
+        .btn-profile {
+            background-color: white;
+            color: #1B6B93;
+            border: 1px solid #fff;
+        }
+        .tab {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            border-bottom: 2px solid #ccc;
+        }
+        .tab a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+        .tab a.active {
+            color: #1B6B93;
+            border-bottom: 3px solid #1B6B93;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin: 20px 0 10px;
+        }
+        .section-desc li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<!-- Header Fragment (메인과 합칠 때 복구) -->
+<!-- <div th:replace="fragments/header :: header"></div> -->
+<div class="container">
+    <div style="flex: 3">
+        <div class="content-box">
+            <h2 th:text="${offer.title}"></h2>
+            <p th:if="${offer.tags != null}" th:text="${#strings.listJoin(offer.tags, ' ')}"></p>
+            <p class="desc">
+                • 실제 상담 시작은 상호 협의하에 진행됩니다.<br>
+                • 음성/영상통화를 기본적으로 제공하며, 전문가와 협의하에 진행 방식을 결정할 수 있습니다.
+            </p>
+        </div>
+
+        <div class="tab">
+            <a href="#" class="active">상세설명</a>
+            <a href="/review">후기</a>
+
+        </div>
+
+        <div>
+            <p class="section-title">상세설명</p>
+            <div class="section-desc" th:utext="${offer.description}"></div>
+        </div>
+    </div>
+
+    <div style="flex: 1">
+        <div class="info-box">
+            <p class="price" th:text="${offer.price} + '원'"></p>
+            <p class="duration" th:text="${offer.duration} +'분'"> </p>
+            <p class="label">진행 방법</p>
+            <p class="desc" th:text="${offer.location}"></p>
+            <button class="btn-message" th:onclick="|location.href='@{/message.html}'|">쪽지하기</button>
+        </div>
+
+        <div class="mentor-profile">
+            <h4 th:text="${offer.user.nickname()} + ' 멘토'">멘토</h4>
+            <p th:text="${offer.user.major()}"><!--User엔티티에 전공(major)--></p>
+            <!-- 사용자 이미지 있을 때 -->
+            <img th:if="${offer.user != null && offer.user.profileImg != null && !#strings.isEmpty(offer.user.profileImg)}"
+                 th:src="${offer.user.profileImg}"
+                 th:alt="${offer.user.nickname}">
+
+            <!-- 사용자 이미지 없을 때 -->
+            <img th:if="${offer.user == null || offer.user.profileImg == null || #strings.isEmpty(offer.user.profileImg)}"
+                 th:src="@{/images/default-mentor.png}"
+                 th:alt="기본이미지">
+            <button class="btn-profile" th:onclick="|location.href='@{/mentorDetail/{id}(id=${offer.user.userId})}'|">프로필보기</button>
+        </div>
+    </div>
+</div>
+<!-- Footer Fragment (메인과 합칠때 복구) -->
+<!-- <div th:replace="fragments/footer :: footer"></div> -->
+</body>
+</html>

@@ -92,34 +92,40 @@ public class MentoringOfferViewController {
 
     // http://localhost:8080/class/myClassList
     @GetMapping("/myClassList")
-    public String getMyClassList(Model model) {
+    public String getMyClassList(@RequestParam(required = false) MatchRole role, Model model) {
         Integer userId = 1; // 임시 하드코딩
 
-        // userId로 검색하여 matchMember List 반환
-        List<MentoringMatchMemberResponse> matchMemberlist = matchMemberService.findByUserId(userId);
+        // 1. matchMember 정보 가져오기
+        List<MentoringMatchMemberResponse> memberofferList = (role != null)
+                ? matchMemberService.findByUserIdAndRole(userId, role)
+                : matchMemberService.findByUserId(userId);
 
-        // matchId만 추출
-        List<Integer> matchIds = matchMemberlist.stream()
+        // 2. matchId만 추출
+        List<Integer> matchIds = memberofferList.stream()
                 .map(MentoringMatchMemberResponse::getMatchId)
                 .toList();
 
-        // matchIds 매칭 정보 가져오기
+        // 3. matchId로 매칭 정보 가져오기
         List<MentoringMatchResponse> matchList = matchService.findMatchesByMatchIds(matchIds);
 
-        // matchList에서 offerIds 추출해서 리스트 생성
-        List<Integer> offerIds = matchList.stream()
-                .map(MentoringMatchResponse::getMentoringOfferId)
-                .toList();
-
-        // offerIds로 offerList 작성
-        List<MentoringOfferResponse> matchedOfferList = mentoringOfferService.findOffersByIds(offerIds);
+        // 4. 사용자가 직접 등록한 수업 (offer)
+        List<MentoringOfferResponse> offerList = mentoringOfferService.findByUserId(userId);
 
         // 5. 모델에 담기
         model.addAttribute("matchList", matchList);     // 내가 참여한 매칭 정보
-        model.addAttribute("offerList", matchedOfferList);     // 내가 등록한 수업
-        model.addAttribute("matchMemberlist", matchMemberlist);     // 내가 등록한 수업
+        model.addAttribute("offerList", offerList);     // 내가 등록한 수업
+        model.addAttribute("selectedRole", role);
 
         return "classes/myClassList";
+    }
+
+    @GetMapping("/myDetail/{offerId}")
+    public String getMyClassDetail(@PathVariable Integer offerId, Model model){
+
+        MentoringOfferResponse offer = mentoringOfferService.findById(offerId);
+        model.addAttribute("offer", offer);
+
+        return "classes/myClassDetail";
     }
 
 }
