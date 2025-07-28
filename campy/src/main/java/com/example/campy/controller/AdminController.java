@@ -328,7 +328,7 @@ public class AdminController {
     @GetMapping("/transactions")
     public String adminTransactionsPage(Model model) {
         model.addAttribute("payments", paymentService.getAllPayments());
-        return "admin/admin_transactions";
+        return "admin/admin_transactions/admin_transactions";
     }
 
     @GetMapping("/ai-stats")
