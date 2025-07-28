@@ -244,6 +244,13 @@
     </div>
 
     <script th:inline="javascript">
+        /*<![CDATA[*/
+        const message = [[${message}]];
+        if (message) {
+            alert(message);
+        }
+        /*]]>*/
+
         document.addEventListener('DOMContentLoaded', function() {
             const tabButtons = document.querySelectorAll('.tab-button');
             const contentSections = document.querySelectorAll('.content-section');
