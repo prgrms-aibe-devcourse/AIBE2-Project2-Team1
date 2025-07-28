@@ -8,7 +8,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -36,4 +45,11 @@ public class ReviewController {
         userReviewService.createReview(request, authentication);
         return "redirect:/reviews";
     }
+
+    @GetMapping("/api/by-target")
+    @ResponseBody
+    public List<ReviewResponseDto> getReviewsByTarget(@RequestParam Integer targetId, @RequestParam String category) {
+        return userReviewService.getReviewsByTargetIdAndCategory(targetId, category);
+    }
 }
+

@@ -1,39 +1,54 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>게시물 수정</title>
+    <link rel="stylesheet" th:href="@{/css/board.css}">
 </head>
 <body>
-    <h1>게시물 수정</h1>
 
-    <form th:action="@{/mypage/activity/boards/{boardId}/update(boardId=${board.boardId})}" th:object="${board}" method="post">
-        <input type="hidden" name="_method" value="put" />
-        <input type="hidden" th:field="*{boardId}" />
+<h2>게시판</h2>
 
-        <div>
-            <label for="school">학교</label>
-            <input type="text" id="school" th:field="*{school}">
-        </div>
-        <div>
-            <label for="category">카테고리</label>
-            <input type="text" id="category" th:field="*{category}" required>
-        </div>
-        <div>
-            <label for="title">제목</label>
-            <input type="text" id="title" th:field="*{title}" required>
-        </div>
-        <div>
-            <label for="content">내용</label>
-            <textarea id="content" th:field="*{content}" required></textarea>
-        </div>
-        <div>
-            <label for="isDeleted">삭제 여부</label>
-            <input type="checkbox" id="isDeleted" th:field="*{isDeleted}">
-        </div>
+<div class="form-container">
+    <h3>게시물 수정</h3>
+    <form th:action="@{/mypage/activity/boards/{boardId}/update(boardId=${board.boardId})}" method="post">
+        <table class="write-table">
+            <tr>
+                <th>학교명</th>
+                <td><input type="text" name="school" th:value="${user.school}" readonly /></td>
+            </tr>
+            <tr>
+                <th>카테고리</th>
+                <td>
+                    <select name="category" required>
+                        <option disabled>분야를 선택해주세요.</option>
+                        <option value="잡담" th:selected="${board.category == '잡담'}">잡담</option>
+                        <option value="후기" th:selected="${board.category == '후기'}">후기</option>
+                        <option value="정보공유" th:selected="${board.category == '정보공유'}">정보공유</option>
+                        <option value="질문" th:selected="${board.category == '질문'}">질문</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>제목</th>
+                <td>
+                    <input type="text" name="title" th:value="${board.title}" placeholder="제목을 입력하세요" maxlength="200" required />
+                </td>
+            </tr>
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea name="content" th:text="${board.content}" placeholder="내용을 입력하세요" maxlength="500" required></textarea>
+                </td>
+            </tr>
+        </table>
 
-        <button type="submit">수정하기</button>
+        <div class="btn-wrapper">
+            <button type="submit" class="submit-button">수정하기</button>
+        </div>
     </form>
+</div>
+
 
 </body>
 </html>

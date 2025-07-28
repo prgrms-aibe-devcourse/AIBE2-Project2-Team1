@@ -155,7 +155,9 @@
                     <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}"></td>
                     <td class="action-buttons">
                         <a th:href="@{/mypage/activity/boards/{boardId}/edit(boardId=${board.boardId})}" class="edit-button">수정</a>
-                        <button class="delete-button">삭제</button>
+                        <form th:action="@{/mypage/activity/boards/{boardId}/delete(boardId=${board.boardId})}" method="post" style="display:inline;">
+                            <button type="submit" class="delete-button" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
+                        </form>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(boards)}">
@@ -244,6 +246,13 @@
     </div>
 
     <script th:inline="javascript">
+        /*<![CDATA[*/
+        const message = [[${message}]];
+        if (message) {
+            alert(message);
+        }
+        /*]]>*/
+
         document.addEventListener('DOMContentLoaded', function() {
             const tabButtons = document.querySelectorAll('.tab-button');
             const contentSections = document.querySelectorAll('.content-section');

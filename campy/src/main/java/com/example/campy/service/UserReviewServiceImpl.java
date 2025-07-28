@@ -109,4 +109,11 @@ public class UserReviewServiceImpl implements UserReviewService {
         review.setDeletedAt(LocalDateTime.now()); // 소프트 삭제
         reviewRepository.save(review);
     }
+
+    @Override
+    public List<ReviewResponseDto> getReviewsByTargetIdAndCategory(Integer targetId, String category) {
+        return reviewRepository.findByTargetIdAndCategoryAndDeletedAtIsNull(targetId, category).stream()
+                .map(ReviewResponseDto::from)
+                .collect(Collectors.toList());
+    }
 }

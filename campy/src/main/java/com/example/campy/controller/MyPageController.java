@@ -30,6 +30,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
+import java.util.HashMap;
 
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -82,6 +85,8 @@ public class MyPageController {
         List<ReviewResponseDto> reviews = userReviewService.getAllReviewsByUser(authentication);
         List<BoardResponseDto> boards = boardService.getAllBoardsByUser(authentication);
         List<MaterialResponseDto> materials = materialService.getAllMaterialsByUser(authentication);
+        System.out.println("Materials loaded for user: " + materials.size() + " items.");
+        materials.forEach(material -> System.out.println("Material: " + material.title() + " ID: " + material.materialId()));
 
         model.addAttribute("talents", talents);
         model.addAttribute("mentoringOffers", mentoringOffers);
@@ -144,7 +149,7 @@ public class MyPageController {
     public String deleteReview(@PathVariable Integer reviewId, Authentication authentication, RedirectAttributes redirectAttributes) {
         userReviewService.deleteReview(reviewId, authentication);
         redirectAttributes.addFlashAttribute("message", "후기가 성공적으로 삭제되었습니다.");
-        return "redirect:/mypage/activity/reviews/myreviews";
+        return "redirect:/mypage/activity/registrations";
     }
 
     // 재능 수정
@@ -182,10 +187,9 @@ public class MyPageController {
     // 멘토링 제안 수정
     @GetMapping("/activity/mentoringoffers/{offerId}/edit")
     public String editMentoringOfferForm(@PathVariable Integer offerId, Authentication authentication, Model model) {
-        Integer userId = ((com.example.campy.service.CustomUserDetails) authentication.getPrincipal()).getUserId();
-        MentoringOfferResponse offer = mentoringOfferService.findById(offerId);
-        model.addAttribute("mentoringOffer", offer);
-        return "mypage/mypage_activity/mypage_mentoringoffer/mypage_mentoringoffer_edit";
+        MentoringOfferResponse mentoringOffer = mentoringOfferService.findById(offerId);
+        model.addAttribute("mentoringOffer", mentoringOffer);
+        return "mypage/mypage_activity/mypage_mentoringoffer/mypage_mentoringoffer_form";
     }
 
 
@@ -198,6 +202,25 @@ public class MyPageController {
         return "redirect:/mypage/activity/registrations";
     }
 
+    // 멘토링 제안 삭제
+    @PostMapping("/activity/mentoringoffers/{offerId}/delete")
+    public String deleteMentoringOffer(@PathVariable Integer offerId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        mentoringOfferService.delete(offerId);
+        redirectAttributes.addFlashAttribute("message", "멘토링 제안이 성공적으로 삭제되었습니다.");
+        return "redirect:/mypage/activity/registrations";
+    }
+
+    // 멘토링 제안 수정 처리
+    @PostMapping("/activity/mentoringoffers/{offerId}/update")
+    public String updateMentoringOffer(@PathVariable Integer offerId,
+                                       @ModelAttribute MentoringOfferUpdateRequest request,
+                                       Authentication authentication,
+                                       RedirectAttributes redirectAttributes) {
+        mentoringOfferService.update(offerId, request);
+        redirectAttributes.addFlashAttribute("message", "멘토링 제안이 성공적으로 수정되었습니다.");
+        return "redirect:/mypage/activity/registrations";
+    }
+
     
 
     // 게시물 수정
@@ -205,6 +228,13 @@ public class MyPageController {
     public String editBoardForm(@PathVariable Integer boardId, Authentication authentication, Model model) {
         BoardResponseDto board = boardService.getBoardById(boardId);
         model.addAttribute("board", board);
+
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        UserResponseDto userResponseDto = UserResponseDto.from(user);
+        model.addAttribute("user", userResponseDto);
+
         return "mypage/mypage_activity/mypage_board/mypage_board_edit";
     }
 
@@ -266,13 +296,17 @@ public class MyPageController {
     }
 
     @PostMapping("/activity/materials/{materialId}/update")
-    public String updateMaterial(@PathVariable Integer materialId,
-                                 @ModelAttribute MaterialUpdateRequest request,
-                                 Authentication authentication,
-                                 RedirectAttributes redirectAttributes) {
-        materialService.updateMaterial(materialId, request, authentication);
-        redirectAttributes.addFlashAttribute("message", "자료가 성공적으로 수정되었습니다.");
-        return "redirect:/mypage/activity/registrations";
+    @ResponseBody // JSON 응답을 위해 추가
+    public ResponseEntity<Map<String, String>> updateMaterial(@PathVariable Integer materialId,
+                                 @RequestPart("data") MaterialUpdateRequest request,
+                                 @RequestPart(value = "materialFile", required = false) MultipartFile materialFile,
+                                 @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
+                                 Authentication authentication) throws IOException {
+        materialService.updateMaterial(materialId, request, materialFile, thumbnail, authentication);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "자료가 성공적으로 수정되었습니다.");
+        response.put("redirectUrl", "/mypage/activity/registrations");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/activity/materials/{materialId}/delete")
@@ -286,7 +320,7 @@ public class MyPageController {
     @GetMapping("/activity/mentoringoffers/new")
     public String createMentoringOfferForm(Model model) {
         model.addAttribute("mentoringOfferCreateRequest", new MentoringOfferCreateRequest());
-        return "mypage/mypage_activity/mypage_mentoringoffer/mypage_mentoringoffer_new";
+        return "mypage/mypage_activity/mypage_mentoringoffer/mypage_mentoringoffer_form";
     }
 
     // 새 멘토링 제안 등록 처리
