@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -35,5 +37,11 @@ public class ReviewController {
     public String createReview(@ModelAttribute ReviewCreateRequest request, Authentication authentication) {
         userReviewService.createReview(request, authentication);
         return "redirect:/reviews";
+    }
+
+    @GetMapping("/api/by-target")
+    @ResponseBody
+    public List<ReviewResponseDto> getReviewsByTarget(@RequestParam Integer targetId, @RequestParam String category) {
+        return userReviewService.getReviewsByTargetIdAndCategory(targetId, category);
     }
 }

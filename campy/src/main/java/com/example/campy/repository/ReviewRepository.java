@@ -14,4 +14,5 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findByTargetUser_NicknameContainingIgnoreCaseAndDeletedAtIsNull(String nickname);
     List<Review> findByAuthorAndDeletedAtIsNull(User author);
     List<Review> findByTargetUserAndDeletedAtIsNull(User targetUser);
+    List<Review> findByTargetIdAndCategoryAndDeletedAtIsNull(Integer targetId, String category);
 }
