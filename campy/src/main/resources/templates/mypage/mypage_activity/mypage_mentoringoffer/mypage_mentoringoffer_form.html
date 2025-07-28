@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>새 멘토링 제안 등록</title>
+    <title th:text="${mentoringOffer != null ? '멘토링 제안 수정' : '새 멘토링 제안 등록'}"></title>
     <style>
         body {
             margin: 0;
@@ -164,40 +164,41 @@
 <div class="container">
     <div class="header">
         <img src="/images/ai.png" alt="로봇">
-        <div class="chat-bubble">안녕하세요! 멘토님 멘토링 제안을 등록해주세요!</div>
+        <div class="chat-bubble" th:text="${mentoringOffer != null ? '멘토링 제안을 수정해주세요!' : '멘토님 멘토링 제안을 등록해주세요!'}"></div>
     </div>
 
-    <form th:action="@{/mypage/activity/mentoringoffers/new}" th:object="${mentoringOfferCreateRequest}" method="post">
+    <form th:action="${mentoringOffer != null ? '/mypage/activity/mentoringoffers/' + mentoringOffer.offerId + '/update' : '/mypage/activity/mentoringoffers/new'}" method="post">
+        <input type="hidden" th:if="${mentoringOffer != null}" name="_method" value="put" />
 
     <table>
             <tr>
                 <td>제목</td>
-                <td><input type="text" th:field="*{title}" placeholder="한글, 영문 포함 최대 200 이내, 특수문자, 개인정보 등은 제외"></td>
+                <td><input type="text" name="title" th:value="${mentoringOffer != null ? mentoringOffer.title : ''}" placeholder="한글, 영문 포함 최대 200 이내, 특수문자, 개인정보 등은 제외"></td>
             </tr>
            <tr>
                <td>상세 정보</td>
-               <td><textarea th:field="*{description}" rows="5" placeholder="한글, 영문 포함 최대 500 이내, 특수문자, 개인정보 등은 제외"></textarea></td>
+               <td><textarea name="description" rows="5" th:text="${mentoringOffer != null ? mentoringOffer.description : ''}" placeholder="한글, 영문 포함 최대 500 이내, 특수문자, 개인정보 등은 제외"></textarea></td>
            </tr>
            <tr>
                <td>판매가격</td>
                <td>
                    <div class="price-wrapper">
-                       <input type="number" class="price-input" th:field="*{price}" placeholder="가격 입력 (0은 무료)">
+                       <input type="number" class="price-input" name="price" th:value="${mentoringOffer != null ? mentoringOffer.price : ''}" placeholder="가격 입력 (0은 무료)">
                        <span>원</span>
                    </div>
                </td>
            </tr>
            <tr>
                <td>멘토링 시간</td>
-               <td><input type="text" th:field="*{duration}" placeholder="멘토링을 진행할 총 시간을 적어주세요."></td>
+               <td><input type="text" name="duration" th:value="${mentoringOffer != null ? mentoringOffer.duration : ''}" placeholder="멘토링을 진행할 총 시간을 적어주세요."></td>
            </tr>
           <tr>
               <td>멘토링 방식</td>
-              <td><input type="text" th:field="*{location}" placeholder="예: Discord(Online), 공유 오피스(Offline)"></td>
+              <td><input type="text" name="location" th:value="${mentoringOffer != null ? mentoringOffer.location : ''}" placeholder="예: Discord(Online), 공유 오피스(Offline)"></td>
           </tr>
           <tr>
               <td>최대 참여 인원</td>
-              <td><input type="number" th:field="*{maxParticipants}" placeholder="최대 참여 인원을 적어주세요."></td>
+              <td><input type="number" name="maxParticipants" th:value="${mentoringOffer != null ? mentoringOffer.maxParticipants : ''}" placeholder="최대 참여 인원을 적어주세요.">
           </tr>
             <tr>
                 <td>태그</td>
@@ -215,20 +216,33 @@
                 </td>
             </tr>
         </table>
-        <button type="submit" class="btn-register">등록하기</button>
+        <button type="submit" class="btn-register" th:text="${mentoringOffer != null ? '수정하기' : '등록하기'}"></button>
     </form>
 </div>
 
 <!-- Footer Fragment 삽입
 <div th:replace="fragments/footer :: footer"></div>-->
 
-<script>
+<script th:inline="javascript">
     const tagInput = document.getElementById('tag-text');
     const tagContainer = document.getElementById('tag-input');
     const form = document.querySelector('form');
 
     let tagCount = 0;
     const maxTags = 5;
+
+    /*<![CDATA[*/
+    const existingTags = [[${mentoringOffer != null ? mentoringOffer.tags : '[]'}]];
+    /*]]>*/
+
+    // 기존 태그 로드
+    if (existingTags && existingTags.length > 0) {
+        existingTags.forEach(tagText => {
+            if (tagCount < maxTags) {
+                addTagToForm(tagText);
+            }
+        });
+    }
 
     tagInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && tagInput.value.trim() !== '') {
@@ -242,30 +256,33 @@
             const tagText = tagInput.value.trim();
             if (!tagText) return;
 
-            // span UI용
-            const tag = document.createElement('span');
-            tag.className = 'tag';
-            tag.innerText = `#${tagText}`;
-
-            // 삭제 기능 + hidden input 제거
-            tag.addEventListener('click', () => {
-                tag.remove();
-                hiddenInput.remove();
-                tagCount--;
-            });
-
-            // 숨은 input 추가
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'tags'; // MentoringOfferCreateRequest의 tags 필드와 일치
-            hiddenInput.value = tagText;
-
-            tagContainer.insertBefore(tag, tagInput);
-            form.appendChild(hiddenInput); // 중요
+            addTagToForm(tagText);
             tagInput.value = '';
-            tagCount++;
         }
     });
+
+    function addTagToForm(tagText) {
+        // span UI용
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.innerText = `#${tagText}`;
+
+        // 숨은 input 추가
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'tags'; // MentoringOfferCreateRequest의 tags 필드와 일치
+        hiddenInput.value = tagText;
+
+        tag.addEventListener('click', () => {
+            tag.remove();
+            hiddenInput.remove();
+            tagCount--;
+        });
+
+        tagContainer.insertBefore(tag, tagInput);
+        form.appendChild(hiddenInput); // 중요
+        tagCount++;
+    }
 </script>
 
 </body>

@@ -182,10 +182,9 @@ public class MyPageController {
     // 멘토링 제안 수정
     @GetMapping("/activity/mentoringoffers/{offerId}/edit")
     public String editMentoringOfferForm(@PathVariable Integer offerId, Authentication authentication, Model model) {
-        Integer userId = ((com.example.campy.service.CustomUserDetails) authentication.getPrincipal()).getUserId();
-        MentoringOfferResponse offer = mentoringOfferService.findById(offerId);
-        model.addAttribute("mentoringOffer", offer);
-        return "mypage/mypage_activity/mypage_mentoringoffer/mypage_mentoringoffer_edit";
+        MentoringOfferResponse mentoringOffer = mentoringOfferService.findById(offerId);
+        model.addAttribute("mentoringOffer", mentoringOffer);
+        return "mypage/mypage_activity/mypage_mentoringoffer/mypage_mentoringoffer_form";
     }
 
 
@@ -195,6 +194,25 @@ public class MyPageController {
     public String deleteTalent(@PathVariable Integer talentId, Authentication authentication, RedirectAttributes redirectAttributes) {
         talentService.deleteTalent(talentId, authentication);
         redirectAttributes.addFlashAttribute("message", "재능이 성공적으로 삭제되었습니다.");
+        return "redirect:/mypage/activity/registrations";
+    }
+
+    // 멘토링 제안 삭제
+    @PostMapping("/activity/mentoringoffers/{offerId}/delete")
+    public String deleteMentoringOffer(@PathVariable Integer offerId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        mentoringOfferService.delete(offerId);
+        redirectAttributes.addFlashAttribute("message", "멘토링 제안이 성공적으로 삭제되었습니다.");
+        return "redirect:/mypage/activity/registrations";
+    }
+
+    // 멘토링 제안 수정 처리
+    @PostMapping("/activity/mentoringoffers/{offerId}/update")
+    public String updateMentoringOffer(@PathVariable Integer offerId,
+                                       @ModelAttribute MentoringOfferUpdateRequest request,
+                                       Authentication authentication,
+                                       RedirectAttributes redirectAttributes) {
+        mentoringOfferService.update(offerId, request);
+        redirectAttributes.addFlashAttribute("message", "멘토링 제안이 성공적으로 수정되었습니다.");
         return "redirect:/mypage/activity/registrations";
     }
 
@@ -286,7 +304,7 @@ public class MyPageController {
     @GetMapping("/activity/mentoringoffers/new")
     public String createMentoringOfferForm(Model model) {
         model.addAttribute("mentoringOfferCreateRequest", new MentoringOfferCreateRequest());
-        return "mypage/mypage_activity/mypage_mentoringoffer/mypage_mentoringoffer_new";
+        return "mypage/mypage_activity/mypage_mentoringoffer/mypage_mentoringoffer_form";
     }
 
     // 새 멘토링 제안 등록 처리
