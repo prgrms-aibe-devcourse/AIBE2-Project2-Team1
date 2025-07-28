@@ -223,6 +223,13 @@ public class MyPageController {
     public String editBoardForm(@PathVariable Integer boardId, Authentication authentication, Model model) {
         BoardResponseDto board = boardService.getBoardById(boardId);
         model.addAttribute("board", board);
+
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        UserResponseDto userResponseDto = UserResponseDto.from(user);
+        model.addAttribute("user", userResponseDto);
+
         return "mypage/mypage_activity/mypage_board/mypage_board_edit";
     }
 
