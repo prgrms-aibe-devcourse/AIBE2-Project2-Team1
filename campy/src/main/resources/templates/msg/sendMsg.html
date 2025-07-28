@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>쪽지 보내기</title>
+    <link rel="stylesheet" href="../../static/css/msg.css" />
+</head>
+<body>
+<div class="msg-form-container">
+    <form th:action="@{/message/send}" method="post" th:object="${messageForm}">
+        <table>
+            <tr>
+                <th>받는 사람</th>
+                <td>
+                    <input type="text" th:field="*{to}" id="toInput" placeholder="아이디를 적어주세요." />
+                </td>
+            </tr>
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea th:field="*{content}" placeholder="한글, 영문 포함 최대 500 이내, 특수문자, 개인정보 등은 제외"></textarea>
+                </td>
+            </tr>
+        </table>
+        <div class="btn-wrap">
+            <button type="submit">보내기</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const params = new URLSearchParams(location.search);
+    const toValue = params.get('to');
+    if (toValue) {
+        document.getElementById('toInput').value = toValue;
+    }
+</script>
+</body>
+</html>

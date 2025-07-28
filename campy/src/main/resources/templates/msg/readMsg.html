@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>쪽지 보기</title>
+  <link rel="stylesheet" href="../../static/css/msg.css" />
+</head>
+<body>
+<div class="message-view-container">
+  <table class="message-view-table">
+    <tr>
+      <th>받는 사람</th>
+      <td th:text="${message.to}">나나나</td>
+    </tr>
+    <tr>
+      <th>보낸 사람</th>
+      <td th:text="${message.from}">김김김</td>
+    </tr>
+    <tr>
+      <th>보낸 시간</th>
+      <td th:text="${#dates.format(message.date, 'yyyy/MM/dd [HH:mm]')}">2025/07/20 [21:52]</td>
+    </tr>
+    <tr>
+      <th>내용</th>
+      <td class="message-content" th:text="${message.content}">내용 없음</td>
+    </tr>
+  </table>
+
+  <div class="view-btn-wrapper">
+    <button class="reply-button" th:onclick="|window.location.href='@{/message/send(to=${message.from})}'|">답장하기</button>
+  </div>
+</div>
+</body>
+</html>
