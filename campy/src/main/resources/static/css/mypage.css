@@ -9,40 +9,60 @@
     --category-title-color: #000;
     --separator-color: #e0e0e0;
     --icon-bg-color: #AFD3E2;
+    --primary-color: #007bff; /* 통일된 버튼 색상을 위한 변수 추가 */
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --light-gray-color: #f8f9fa;
+    --border-color: #dee2e6;
 }
 
+/* --- 기본 레이아웃 --- */
 body {
     font-family: 'Noto Sans KR', sans-serif;
     background-color: var(--bg-color);
     margin: 0;
-    padding: 20px;
+    color: var(--text-color);
+}
+
+.main-content {
+    padding: 80px 20px 40px; /* 헤더 높이만큼 상단 여백 확보 */
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
 }
 
-/* 마이페이지 전체 컨테이너 */
-.my-page-container {
-    width: 100%;
-    max-width: 600px;
-    background-color: transparent; /* 와이어프레임처럼 배경색 없음 */
-}
-
-h1 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 30px;
+h1, h2 {
     color: var(--category-title-color);
+    font-weight: 700;
 }
 
-/* 프로필 섹션 */
+/* --- 마이페이지 메인 & 등록/구매 내역 공통 컨테이너 --- */
+.mypage-container, .registrations-container {
+    width: 100%;
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.mypage-container {
+    max-width: 600px;
+}
+.registrations-container {
+    max-width: 1000px; /* 테이블이 있으므로 너비를 더 넓게 설정 */
+}
+
+.mypage-container h1, .registrations-container h1 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+/* --- 마이페이지 프로필 섹션 --- */
 .profile-section {
     display: flex;
     align-items: center;
     margin-bottom: 25px;
 }
-
 .profile-image {
     width: 60px;
     height: 60px;
@@ -50,24 +70,20 @@ h1 {
     object-fit: cover;
     margin-right: 20px;
 }
-
 .profile-info {
     flex-grow: 1;
 }
-
 .profile-info .username {
     font-size: 18px;
     font-weight: 700;
     color: var(--text-color);
     margin: 0;
 }
-
 .profile-info .details {
     font-size: 14px;
     color: var(--link-color);
     margin: 5px 0 0 0;
 }
-
 .message-icon {
     display: flex;
     justify-content: center;
@@ -79,39 +95,33 @@ h1 {
     text-decoration: none;
     color: white;
 }
-
 .message-icon svg {
     width: 20px;
     height: 20px;
 }
 
-/* 구분선 */
+/* --- 마이페이지 메뉴 네비게이션 --- */
 .separator {
     border: 0;
     height: 1px;
     background-color: var(--separator-color);
     margin-bottom: 30px;
 }
-
-/* 메뉴 네비게이션 */
 .menu-nav {
     display: grid;
     gap: 30px;
 }
-
 .menu-category h2 {
     font-size: 16px;
     font-weight: 700;
     margin: 0 0 15px 0;
     color: var(--category-title-color);
 }
-
 .menu-category ul {
     list-style: none;
     margin: 0;
     padding: 0;
 }
-
 .menu-category li a {
     display: block;
     padding: 8px 0;
@@ -120,8 +130,123 @@ h1 {
     color: var(--link-color);
     transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
-
 .menu-category li a:hover {
     color: var(--link-hover-color);
     transform: translateX(5px);
+}
+
+/* --- 등록/구매 내역 페이지 스타일 --- */
+
+/* 탭 버튼 */
+.tab-buttons {
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+}
+.tab-button {
+    padding: 10px 20px;
+    margin-right: 5px;
+    margin-bottom: -1px; /* 하단 경계선과 겹치도록 설정 */
+    border: 1px solid transparent;
+    border-bottom: none;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--link-color);
+    transition: all 0.2s ease-in-out;
+}
+.tab-button:hover {
+    background-color: var(--light-gray-color);
+    color: var(--text-color);
+}
+.tab-button.active {
+    background-color: #fff;
+    border-color: var(--border-color);
+    border-bottom: 1px solid #fff;
+    color: var(--link-hover-color);
+    font-weight: 700;
+}
+
+/* 콘텐츠 섹션 (탭 클릭 시 보이는 영역) */
+.content-section {
+    display: none; /* JS로 제어 */
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.section-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+/* 통일된 테이블 스타일 */
+.content-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+.content-table th, .content-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+.content-table thead th {
+    background-color: var(--light-gray-color);
+    font-weight: 600;
+    color: var(--text-color);
+    border-top: 1px solid var(--border-color);
+    border-bottom-width: 2px;
+}
+.content-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+.content-table td:first-child, .content-table th:first-child {
+    text-align: center;
+}
+.content-table td:last-child, .content-table th:last-child {
+    text-align: center;
+}
+.content-table tbody tr > td[colspan] {
+    text-align: center;
+    padding: 40px;
+    color: var(--link-color);
+}
+
+/* 통일된 버튼 스타일 */
+.create-button, .edit-button, .delete-button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+    display: inline-block;
+}
+.create-button:hover, .edit-button:hover, .delete-button:hover {
+    opacity: 0.85;
+}
+.create-button {
+    background-color: var(--success-color);
+    color: white;
+}
+.edit-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+.delete-button {
+    background-color: var(--danger-color);
+    color: white;
+}
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 }

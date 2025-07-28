@@ -1,57 +1,53 @@
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>마이페이지 - Campy</title>
-<!-- CSS 파일 경로는 실제 프로젝트 구조에 맞게 수정해주세요. -->
-<link rel="stylesheet" th:href="@{/css/mypage.css}">
-
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - Campy</title>
+    <link rel="stylesheet" th:href="@{/css/mypage.css}">
 </head>
 <body>
-    <th:block th:fragment="content">
-        <div class="my-page-container">
+<div th:replace="fragments/header :: header"></div>
 
-    <h1>마이페이지</h1>
+<main class="main-content">
+    <div class="mypage-container">
 
-    <!-- 프로필 섹션 (기존과 동일) -->
-    <section class="profile-section">
-        <img th:src="${user.profileImg}" src="https://placehold.co/60x60/19A7CE/F6F1F1?text=P" alt="프로필 이미지" class="profile-image" onerror="this.onerror=null; this.src='https://placehold.co/60x60/cccccc/ffffff?text=User';">
-        <div class="profile-info">
-            <p class="username" th:text="${user.nickname}">사용자 닉네임</p>
-            <p class="details" th:text="|${user.school} ${user.entranceYear}학번/${user.role}|">학교정보/역할</p>
-            <p class="details" th:text="${user.major}">컴퓨터공학과</p>
-        </div>
-        <a href="/messages" class="message-icon" title="메시지함">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-        </a>
-    </section>
+        <h1>마이페이지</h1>
 
-    <hr class="separator">
+        <section class="profile-section">
+            <img th:src="${user.profileImg}" src="https://placehold.co/60x60/19A7CE/F6F1F1?text=P" alt="프로필 이미지" class="profile-image" onerror="this.onerror=null; this.src='https://placehold.co/60x60/cccccc/ffffff?text=User';">
+            <div class="profile-info">
+                <p class="username" th:text="${user.nickname}">사용자 닉네임</p>
+                <p class="details" th:text="|${user.school} ${user.entranceYear}학번/${user.role}|">학교정보/역할</p>
+                <p class="details" th:text="${user.major}">컴퓨터공학과</p>
+            </div>
+            <a href="/messages" class="message-icon" title="메시지함">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </a>
+        </section>
 
-    <!-- 메뉴 네비게이션 (구조 변경) -->
-    <nav class="menu-nav">
-        <!-- 계정 관리 카테고리 -->
-        <div class="menu-category">
-            <h2>계정 관리</h2>
-            <ul>
-                <!-- th:href의 URL은 실제 Controller와 매핑된 주소로 설정해야 합니다. -->
-                <li><a th:href="@{/mypage/profile}">프로필 관리</a></li>
-                <li><a th:href="@{/mypage/academic-status}">학적 처리</a></li>
-            </ul>
-        </div>
+        <hr class="separator">
 
-        <!-- 내 활동 관리 카테고리 -->
-        <div class="menu-category">
-            <h2>내 활동 관리</h2>
-            <ul>
-                <!-- '등록 관리' 페이지는 등록한 모든 내역(수업, 재능, 글 등)을 종합해서 보여줍니다. -->
-                <li><a th:href="@{/mypage/activity/registrations}">등록 관리</a></li>
-                <!-- '구매 관리' 페이지는 결제한 모든 내역(수업, 재능, 자료 등)을 종합해서 보여줍니다. -->
-                <li><a th:href="@{/mypage/activity/purchases}">구매 관리</a></li>
-                <!-- 멘토 프로필 관리는 멘토 역할을 하는 사용자에게 중요한 기능이므로 여기에 유지합니다. -->
-                <li><a th:href="@{/mypage/mentor/profile}">멘토 프로필 관리</a></li>
-            </ul>
-        </div>
-    </nav>
-</div>
+        <nav class="menu-nav">
+            <div class="menu-category">
+                <h2>계정 관리</h2>
+                <ul>
+                    <li><a th:href="@{/mypage/profile}">프로필 관리</a></li>
+                    <li><a th:href="@{/mypage/academic-status}">학적 처리</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-category">
+                <h2>내 활동 관리</h2>
+                <ul>
+                    <li><a th:href="@{/mypage/activity/registrations}">등록 관리</a></li>
+                    <li><a th:href="@{/mypage/activity/purchases}">구매 관리</a></li>
+                    <li><a th:href="@{/mypage/mentor/profile}">멘토 프로필 관리</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</main>
 
 </body>
 </html>
