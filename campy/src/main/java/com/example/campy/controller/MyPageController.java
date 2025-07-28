@@ -30,6 +30,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
+import java.util.HashMap;
 
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -82,6 +85,8 @@ public class MyPageController {
         List<ReviewResponseDto> reviews = userReviewService.getAllReviewsByUser(authentication);
         List<BoardResponseDto> boards = boardService.getAllBoardsByUser(authentication);
         List<MaterialResponseDto> materials = materialService.getAllMaterialsByUser(authentication);
+        System.out.println("Materials loaded for user: " + materials.size() + " items.");
+        materials.forEach(material -> System.out.println("Material: " + material.title() + " ID: " + material.materialId()));
 
         model.addAttribute("talents", talents);
         model.addAttribute("mentoringOffers", mentoringOffers);
@@ -291,13 +296,17 @@ public class MyPageController {
     }
 
     @PostMapping("/activity/materials/{materialId}/update")
-    public String updateMaterial(@PathVariable Integer materialId,
-                                 @ModelAttribute MaterialUpdateRequest request,
-                                 Authentication authentication,
-                                 RedirectAttributes redirectAttributes) {
-        materialService.updateMaterial(materialId, request, authentication);
-        redirectAttributes.addFlashAttribute("message", "자료가 성공적으로 수정되었습니다.");
-        return "redirect:/mypage/activity/registrations";
+    @ResponseBody // JSON 응답을 위해 추가
+    public ResponseEntity<Map<String, String>> updateMaterial(@PathVariable Integer materialId,
+                                 @RequestPart("data") MaterialUpdateRequest request,
+                                 @RequestPart(value = "materialFile", required = false) MultipartFile materialFile,
+                                 @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
+                                 Authentication authentication) throws IOException {
+        materialService.updateMaterial(materialId, request, materialFile, thumbnail, authentication);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "자료가 성공적으로 수정되었습니다.");
+        response.put("redirectUrl", "/mypage/activity/registrations");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/activity/materials/{materialId}/delete")

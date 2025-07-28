@@ -97,7 +97,7 @@ public class MaterialService {
     }
 
     @Transactional
-    public void updateMaterial(Integer materialId, MaterialUpdateRequest request, Authentication authentication) {
+    public void updateMaterial(Integer materialId, MaterialUpdateRequest request, MultipartFile materialFile, MultipartFile thumbnail, Authentication authentication) throws IOException {
         String username = authentication.getName();
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다: " + username));
@@ -109,13 +109,43 @@ public class MaterialService {
             throw new GeneralException(ErrorCode.UNAUTHORIZED, "자료를 수정할 권한이 없습니다.");
         }
 
-        material.setTitle(request.title());
-        material.setContent(request.content());
-        material.setPrice(request.price());
-        material.setIsDeleted(request.isDeleted());
-        material.setUpdatedAt(LocalDateTime.now());
+        // 파일 업데이트 로직
+        if (materialFile != null && !materialFile.isEmpty()) {
+            String materialFileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(materialFile.getOriginalFilename());
+            File dest = new File(uploadDir, materialFileName);
+            materialFile.transferTo(dest);
+            material.setFileUrl(materialFileName);
+            material.setFileName(materialFile.getOriginalFilename()); // 파일명 저장
+        }
 
-        materialRepository.save(material);
+        // 썸네일 업데이트 로직
+        if (thumbnail != null && !thumbnail.isEmpty()) {
+            String thumbnailFileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(thumbnail.getOriginalFilename());
+            File dest = new File(uploadDir, thumbnailFileName);
+            thumbnail.transferTo(dest);
+            material.setThumbnailUrl(thumbnailFileName);
+        }
+
+        material.update(request); // Material 엔티티의 update 메서드 호출
+
+        // 파일 업데이트 로직 (기존과 동일)
+        if (materialFile != null && !materialFile.isEmpty()) {
+            String materialFileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(materialFile.getOriginalFilename());
+            File dest = new File(uploadDir, materialFileName);
+            materialFile.transferTo(dest);
+            material.setFileUrl(materialFileName);
+            material.setFileName(materialFile.getOriginalFilename()); // 파일명 저장
+        }
+
+        // 썸네일 업데이트 로직 (기존과 동일)
+        if (thumbnail != null && !thumbnail.isEmpty()) {
+            String thumbnailFileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(thumbnail.getOriginalFilename());
+            File dest = new File(uploadDir, thumbnailFileName);
+            thumbnail.transferTo(dest);
+            material.setThumbnailUrl(thumbnailFileName);
+        }
+
+        materialRepository.save(material); // 변경된 엔티티를 영속화
     }
 
     @Transactional

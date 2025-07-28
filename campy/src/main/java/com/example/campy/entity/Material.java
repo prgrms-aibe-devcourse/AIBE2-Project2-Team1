@@ -3,6 +3,7 @@ package com.example.campy.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import com.example.campy.dto.material.request.MaterialUpdateRequest;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,6 +36,9 @@ public class Material {
     @Column(name = "file_url", length = 255)
     private String fileUrl;
 
+    @Column(name = "file_name", length = 255)
+    private String fileName;
+
     @Column(name = "preview_file_url", length = 255)
     private String previewFileUrl;
 
@@ -52,4 +56,13 @@ public class Material {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public void update(MaterialUpdateRequest dto) {
+        this.title = dto.title();
+        this.content = dto.content();
+        this.price = dto.price();
+        // this.category = dto.category(); // DTO에 category 필드가 없으므로 주석 처리
+        this.updatedAt = LocalDateTime.now();
+        // seller, fileUrl, fileName, previewFileUrl, thumbnailUrl, isDeleted는 여기서 업데이트하지 않습니다.
+    }
 }
