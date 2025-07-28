@@ -6,13 +6,11 @@ import com.example.campy.dto.MessageResponseDto;
 import com.example.campy.entity.Message;
 import com.example.campy.entity.User;
 import com.example.campy.exception.GeneralException;
-import com.example.campy.jwt.JwtUtil;
 import com.example.campy.repository.MessageRepository;
 import com.example.campy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,26 +21,9 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
 
-    // 🔹 토큰에서 userId 추출
-    private Integer extractUserId(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if (token == null || !token.startsWith("Bearer ")) {
-            throw new GeneralException(ErrorCode.INVALID_TOKEN, "Authorization 헤더가 없거나 형식이 잘못되었습니다.");
-        }
-        token = token.substring(7);
-        if (!jwtUtil.validateToken(token)) {
-            throw new GeneralException(ErrorCode.INVALID_TOKEN, "유효하지 않은 토큰입니다.");
-        }
-        return jwtUtil.getUserId(token);
-    }
-
-    public MessageResponseDto sendMessage(MessageRequestDto requestDto, HttpServletRequest request) {
-        Integer senderId = extractUserId(request);
-        User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
-        User receiver = userRepository.findById(requestDto.getReceiverId())
+    public MessageResponseDto sendMessage(MessageRequestDto requestDto, User sender) {
+        User receiver = userRepository.findByNickname(requestDto.getTo())
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
 
         Message message = Message.builder()
@@ -58,11 +39,7 @@ public class MessageService {
         return new MessageResponseDto(sender.getNickname(), message.getContent(), message.getSentAt());
     }
 
-    public List<MessageResponseDto> getInbox(HttpServletRequest request) {
-        Integer receiverId = extractUserId(request);
-        User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
-
+    public List<MessageResponseDto> getInbox(User receiver) {
         List<Message> messages = messageRepository.findByReceiverOrderBySentAtDesc(receiver);
 
         return messages.stream()
@@ -70,13 +47,20 @@ public class MessageService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteMessage(Long messageId, HttpServletRequest request) {
-        Integer userId = extractUserId(request);
+    public List<MessageResponseDto> getSent(User sender) {
+        List<Message> messages = messageRepository.findBySenderOrderBySentAtDesc(sender);
+
+        return messages.stream()
+                .map(m -> new MessageResponseDto(m.getReceiver().getNickname(), m.getContent(), m.getSentAt()))
+                .collect(Collectors.toList());
+    }
+
+    public void deleteMessage(Long messageId, User user) {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.MESSAGE_NOT_FOUND));
 
-        if (!message.getSender().getUserId().equals(userId)
-                && !message.getReceiver().getUserId().equals(userId)) {
+        if (!message.getSender().getUserId().equals(user.getUserId())
+                && !message.getReceiver().getUserId().equals(user.getUserId())) {
             throw new GeneralException(ErrorCode.ACCESS_DENIED);
         }
 

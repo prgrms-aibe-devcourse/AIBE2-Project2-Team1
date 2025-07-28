@@ -109,68 +109,85 @@ table tbody tr:hover {
 /* ============================= */
 .message-form-container {
     width: 100%;
-    background-color: #F6F1F1;
-    padding: 20px;
+    min-width: 290px;
+    max-width: 400px;
+    margin: 40px auto 0 auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 28px 0 #afd3e280, 0 1.5px 4px #E0E0E0;
+    padding: 34px 28px 20px 28px;
     box-sizing: border-box;
 }
 
 .message-form-table {
     width: 100%;
-    border: 1px solid #ccc;
-    border-collapse: collapse;
-    background-color: white;
+    border: none;
+    background: none;
+    border-collapse: separate;
 }
 
 .message-form-table th {
-    width: 120px;
-    background-color: #146C94;
-    color: white;
-    text-align: left;
-    padding: 10px;
-    vertical-align: top;
-    font-size: 14px;
+    display: none;
 }
 
 .message-form-table td {
-    padding: 10px;
+    display: block;
+    padding: 0;
 }
 
-.message-form-table input[type="text"] {
-    width: 95%;
-    padding: 6px;
-    font-size: 14px;
-    border: 1px solid #ccc;
+.message-form-table input[type="text"],
+.message-form-table textarea {
+    width: 100%;
+    border: 1.5px solid #afd3e2;
+    border-radius: 7px;
+    padding: 11px 12px;
+    font-size: 1rem;
+    margin-bottom: 18px;
+    outline: none;
+    background: #f8fcff;
+    transition: border 0.18s;
     box-sizing: border-box;
+}
+
+.message-form-table input[type="text"]:focus,
+.message-form-table textarea:focus {
+    border-color: #19a7ce;
+    background: #f0f8ff;
 }
 
 .message-form-table textarea {
-    width: 95%;
-    height: 150px;
-    padding: 10px;
-    font-size: 14px;
+    min-height: 110px;
+    max-height: 200px;
     resize: none;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
 }
 
 .send-btn-wrapper {
-    text-align: center;
-    margin-top: 20px;
+    text-align: right;
+    margin-top: 8px;
 }
 
-.send-msg-button {
-    background-color: #AFD3E2;
-    color: #000;
+.send-msg-button, .send-btn {
+    padding: 11px 35px;
+    background: linear-gradient(90deg, #19A7CE 80%, #AFD3E2 100%);
+    color: #fff;
     border: none;
-    padding: 10px 30px;
-    font-size: 15px;
-    border-radius: 6px;
+    border-radius: 8px;
+    font-size: 1.07rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px #afd3e24f;
     cursor: pointer;
+    transition: background 0.17s, box-shadow 0.17s;
 }
 
-.send-msg-button:hover {
-    background-color: #19A7CE;
-    color: white;
+.send-msg-button:hover, .send-btn:hover {
+    background: linear-gradient(90deg, #146c94 85%, #19A7CE 100%);
+    box-shadow: 0 3px 16px #146c9445;
+}
+
+@media (max-width: 500px) {
+    .message-form-container {
+        padding: 14px 6vw 15px 6vw;
+    }
 }
 
 /* 쪽지 읽기 팝업 */

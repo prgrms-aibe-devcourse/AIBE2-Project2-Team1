@@ -4,18 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>내 쪽지함 - 캠피</title>
-  <link rel="stylesheet" href="../../static/css/msg.css" />
+  <link rel="stylesheet" th:href="@{/css/msg.css}" />
 </head>
 <body>
+<!-- [헤더 fragment 포함] -->
+<div th:replace="~{fragments/header :: header}"></div>
+
 <main class="container">
   <h2>내 쪽지함</h2>
 
   <div class="search-box">
-    <select id="search-type">
-      <option>제목</option>
+    <select id="message-box-type">
+      <option value="inbox">받은 쪽지함</option>
+      <option value="sent">보낸 쪽지함</option>
     </select>
-    <input type="text" id="search-input" placeholder="검색어를 입력하세요" />
-    <button onclick="searchMessages()">검색</button>
     <button class="send-btn" onclick="openMessageForm()">📨 보내기</button>
   </div>
 
@@ -40,85 +42,86 @@
     <!-- 메시지 데이터가 여기에 들어갑니다 -->
     </tbody>
   </table>
-
-  <div class="pagination" id="pagination"></div>
 </main>
 
+<!-- [푸터 fragment 포함] -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
 <script>
-  const messages = [
-    { no: 9999, type: "보낸쪽지", name: "김김김", content: "배고파", date: "2025/07/20" }
-  ];
+  // 전역 변수
+  let currentBoxType = "inbox";
 
-  const ITEMS_PER_PAGE = 5;
-  let currentPage = 1;
+  // select box 이벤트 바인딩
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("message-box-type").onchange = function() {
+      currentBoxType = this.value;
+      renderMessages();
+    };
+    renderMessages();
+  });
 
-  function renderMessages() {
-    const tableBody = document.getElementById("message-table-body");
-    tableBody.innerHTML = "";
-
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    const pageItems = messages.slice(start, end);
-
-    pageItems.forEach(msg => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-          <td>${msg.no}</td>
-          <td>${msg.type}</td>
-          <td>${msg.name}</td>
-          <td>${msg.content}</td>
-          <td>${msg.date}</td>
-        `;
-      row.style.cursor = "pointer";
-      row.onclick = () => openMessageView(msg);
-      tableBody.appendChild(row);
+  // 받은 쪽지 fetch
+  async function fetchMessagesInbox() {
+    const res = await fetch('/api/messages/inbox', {
+      credentials: 'include' // 쿠키 자동 전송
     });
-
-    renderPagination();
+    if (res.status === 401) {
+      alert("로그인이 필요합니다!");
+      location.href = "/login";
+      return [];
+    }
+    if (!res.ok) throw new Error("받은 쪽지함 데이터를 불러올 수 없습니다.");
+    return await res.json();
   }
 
-  function renderPagination() {
-    const pagination = document.getElementById("pagination");
-    pagination.innerHTML = "";
-
-    const totalPages = Math.ceil(messages.length / ITEMS_PER_PAGE);
-
-    if (currentPage > 1) {
-      const prev = document.createElement("button");
-      prev.textContent = "이전";
-      prev.onclick = () => {
-        currentPage--;
-        renderMessages();
-      };
-      pagination.appendChild(prev);
+  // 보낸 쪽지 fetch
+  async function fetchMessagesSent() {
+    const res = await fetch('/api/messages/sent', {
+      credentials: 'include' // 쿠키 자동 전송
+    });
+    if (res.status === 401) {
+      alert("로그인이 필요합니다!");
+      location.href = "/login";
+      return [];
     }
+    if (!res.ok) throw new Error("보낸 쪽지함 데이터를 불러올 수 없습니다.");
+    return await res.json();
+  }
 
-    for (let i = 1; i <= totalPages; i++) {
-      const btn = document.createElement("button");
-      btn.textContent = i;
-      if (i === currentPage) btn.classList.add("active");
-      btn.onclick = () => {
-        currentPage = i;
-        renderMessages();
-      };
-      pagination.appendChild(btn);
-    }
+  // 테이블 렌더링
+  async function renderMessages() {
+    try {
+      let messages = [];
+      if (currentBoxType === "inbox") {
+        messages = await fetchMessagesInbox();
+      } else {
+        messages = await fetchMessagesSent();
+      }
 
-    if (currentPage < totalPages) {
-      const next = document.createElement("button");
-      next.textContent = "다음";
-      next.onclick = () => {
-        currentPage++;
-        renderMessages();
-      };
-      pagination.appendChild(next);
+      const tableBody = document.getElementById("message-table-body");
+      tableBody.innerHTML = "";
+
+      if (messages.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">쪽지가 없습니다.</td></tr>`;
+      } else {
+        messages.forEach((msg, idx) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                <td>${idx + 1}</td>
+                <td>${currentBoxType === "inbox" ? "받은쪽지" : "보낸쪽지"}</td>
+                <td>${msg.nickname}</td>
+                <td>${msg.content}</td>
+                <td>${msg.sentAt ? msg.sentAt.replace("T", " ").slice(0, 16) : ""}</td>
+              `;
+          tableBody.appendChild(row);
+        });
+      }
+    } catch (e) {
+      alert(e.message);
     }
   }
 
-  function searchMessages() {
-    alert("검색 기능은 아직 구현되지 않았어요 :)");
-  }
-
+  // 쪽지 보내기 팝업
   function openMessageForm() {
     const width = 500;
     const height = 400;
@@ -126,34 +129,11 @@
     const top = (window.screen.height / 2) - (height / 2);
 
     window.open(
-            /* 타임리프 링크로 수정 가능: th:href="@{/message/send}" */
-            'sendMsg.html',
+            '/msg/sendMsg.html',
             '쪽지 보내기',
             `width=${width},height=${height},top=${top},left=${left},resizable=no`
     );
   }
-
-  function openMessageView(msg) {
-    const query = new URLSearchParams({
-      to: msg.to || '나나나',
-      from: msg.name,
-      content: msg.content,
-      date: msg.date
-    }).toString();
-
-    const width = 500;
-    const height = 400;
-    const left = (window.screen.width / 2) - (width / 2);
-    const top = (window.screen.height / 2) - (height / 2);
-
-    window.open(
-            `readMsg.html?${query}`,
-            '쪽지 보기',
-            `width=${width},height=${height},top=${top},left=${left},resizable=no`
-    );
-  }
-
-  renderMessages(); // 처음 렌더링
 </script>
 </body>
 </html>

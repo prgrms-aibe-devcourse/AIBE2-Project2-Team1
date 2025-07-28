@@ -97,4 +97,14 @@ public class PageController {
         return "talents/detail";  // → templates/talents/detail.html
     }
 
+    @GetMapping("/message")
+    public String showMessageInbox() {
+        return "msg/inboxMsg";
+    }
+
+    @GetMapping("/msg/sendMsg.html")
+    public String showSendMsgPageHtml() {
+        return "msg/sendMsg";
+    }
+
 }

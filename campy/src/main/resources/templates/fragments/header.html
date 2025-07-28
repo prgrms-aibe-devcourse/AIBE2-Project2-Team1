@@ -80,7 +80,6 @@
 
         <!-- 중앙 카테고리 -->
         <nav class="nav-links">
-            <a th:href="@{/about}">소개</a>
             <a th:if="${loggedInUser}" th:href="@{/class/classList}">멘토</a>
             <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('멘토 페이지는 로그인 후 이용 가능합니다')">멘토</a>
             <a th:if="${loggedInUser}" th:href="@{/talents}">재능</a>
@@ -97,7 +96,7 @@
         <div style="display: flex; gap: 12px;">
             <span th:if="${loggedInUser}" id="loggedInButtons">
                 <a th:href="@{/mypage}" class="auth-button">마이페이지</a>
-                <a th:href="@{/message}" class="auth-button">쪽지하기</a>
+                <a th:href="@{/message}" class="auth-button">쪽지함</a>
                 <a th:href="@{/logout}" class="auth-button" onclick="logout(event)">로그아웃</a>
             </span>
             <span th:unless="${loggedInUser}" id="loggedOutButtons">
