@@ -9,7 +9,7 @@
 </head>
 <body>
     <th:block th:fragment="content">
-        <div class="container">
+        <div class="admin-page-container">
             <h1>리뷰 관리</h1>
             <div class="search-form" style="margin-bottom: 20px;">
                 <form th:action="@{/admin/reviews}" method="get">
@@ -20,15 +20,15 @@
                         <option value="targetUserNickname" th:selected="${searchType == 'targetUserNickname'}">대상 사용자 닉네임</option>
                     </select>
                     <input type="text" name="keyword" th:value="${keyword}" placeholder="검색어를 입력하세요">
-                    <button type="submit" class="button">검색</button>
+                    <button type="submit" class="btn">검색</button>
                 </form>
             </div>
 
             <div style="margin-bottom: 20px;">
-                <a th:href="@{/admin/reviews/new}" class="button">새 리뷰 작성</a>
+                <a th:href="@{/admin/reviews/new}" class="btn">새 리뷰 작성</a>
             </div>
             
-            <table>
+            <table class="content-table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -55,10 +55,12 @@
                         <td th:text="${#temporals.format(review.updatedAt, 'yyyy-MM-dd HH:mm')}"></td>
                         <td th:text="${review.targetId}"></td>
                         <td>
-                            <a th:href="@{/admin/reviews/{reviewId}/edit(reviewId=${review.reviewId})}" class="button">수정</a>
-                            <form th:action="@{/admin/reviews/{reviewId}/delete(reviewId=${review.reviewId})}" method="post" style="display:inline;" onsubmit="return confirm('정말로 이 리뷰를 삭제하시겠습니까?');">
-                                <button type="submit" class="button delete-button">삭제</button>
-                            </form>
+                            <div class="action-buttons">
+                                <a th:href="@{/admin/reviews/{reviewId}/edit(reviewId=${review.reviewId})}" class="btn">수정</a>
+                                <form th:action="@{/admin/reviews/{reviewId}/delete(reviewId=${review.reviewId})}" method="post" onsubmit="return confirm('정말로 이 리뷰를 삭제하시겠습니까?');">
+                                    <button type="submit" class="btn btn-danger">삭제</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

@@ -1,5 +1,3 @@
-/* src/main/resources/static/css/admin.css */
-
 /* --- 기본 & 폰트 설정 --- */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
@@ -17,6 +15,10 @@
     --border-color: #dee2e6;
     --primary-color: #146C94;
     --primary-hover-color: #19A7CE;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --danger-hover-color: #c82333;
+    --light-gray-color: #f8f9fa;
 }
 
 body {
@@ -96,7 +98,8 @@ body {
     border-left: 3px solid transparent;
 }
 
-.admin-sidebar nav a:hover {
+.admin-sidebar nav a:hover,
+.admin-sidebar nav a.active {
     background-color: var(--sidebar-link-active-bg);
     color: var(--sidebar-link-hover-color);
     border-left: 3px solid var(--primary-color);
@@ -109,8 +112,14 @@ body {
     background-color: var(--bg-color);
 }
 
-/* 메인 콘텐츠 내부 요소 스타일 (테이블, 폼 등) */
-.admin-main-content h2 {
+.admin-page-container {
+    background-color: var(--content-bg);
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.admin-main-content h1, .admin-main-content h2 {
     font-size: 24px;
     margin-top: 0;
     margin-bottom: 20px;
@@ -118,12 +127,11 @@ body {
     padding-bottom: 10px;
 }
 
+/* --- 공용 컴포넌트 (테이블, 버튼 등) --- */
 .content-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: var(--content-bg);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .content-table th, .content-table td {
@@ -133,8 +141,8 @@ body {
     vertical-align: middle;
 }
 
-.content-table th {
-    background-color: #f8f9fa;
+.content-table thead th {
+    background-color: var(--light-gray-color);
     font-weight: 700;
 }
 
@@ -142,29 +150,126 @@ body {
     background-color: #f1f3f5;
 }
 
+.content-table tbody tr > td[colspan] {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+}
+
 .btn {
     display: inline-block;
-    padding: 6px 12px;
+    padding: 6px 14px;
     border: 1px solid transparent;
-    border-radius: 4px;
-    background-color: var(--primary-color);
+    border-radius: 5px;
     color: white;
     text-decoration: none;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
     transition: background-color 0.2s;
 }
 
+.btn {
+    background-color: var(--primary-color);
+}
 .btn:hover {
     background-color: var(--primary-hover-color);
 }
 
 .btn-danger {
-    background-color: #dc3545;
+    background-color: var(--danger-color);
 }
 .btn-danger:hover {
-    background-color: #c82333;
+    background-color: var(--danger-hover-color);
 }
 
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+/* 검색 폼 스타일 */
+.search-bar {
+    margin-bottom: 20px;
+    background-color: #f2f2f2;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.form-select, .form-input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-input {
+    flex-grow: 1;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 5px;
+}
+
+.page-link {
+    display: block;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.page-link:hover {
+    background-color: var(--light-gray-color);
+}
+
+.page-link.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 상태 뱃지 스타일 */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+.status-badge.status-completed {
+    background-color: #28a745; /* Green */
+}
+
+.status-badge.status-pending {
+    background-color: #ffc107; /* Yellow */
+    color: #333;
+}
+
+.status-badge.status-cancelled {
+    background-color: #dc3545; /* Red */
+}
+
+.status-badge.status-refunded {
+    background-color: #6c757d; /* Gray */
+}
 
 /* --- 푸터 --- */
 .admin-footer {
@@ -175,4 +280,35 @@ body {
     font-size: 14px;
     color: #6c757d;
     border-top: 1px solid var(--border-color);
+}
+
+.search-bar {
+    margin-bottom: 20px;
+    background-color: var(--light-gray-color);
+    padding: 20px;
+    border-radius: 6px;
+}
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px; /* 검색 바의 최대 너비 고정 */
+}
+.search-form .form-select {
+    flex-shrink: 0; /* 선택창 너비가 줄어들지 않도록 설정 */
+    padding: 8px 12px;
+    height: 38px; /* 입력창과 높이 맞춤 */
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+}
+.search-form .form-input {
+    flex-grow: 1; /* 검색창이 남는 공간을 모두 차지하도록 */
+    padding: 8px 12px;
+    height: 38px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box; /* padding, border가 너비에 포함되도록 */
 }

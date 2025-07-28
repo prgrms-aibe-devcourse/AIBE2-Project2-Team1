@@ -9,7 +9,7 @@
 </head>
 <body>
     <th:block th:fragment="content">
-        <div class="container">
+        <div class="admin-page-container">
             <h1>게시글 관리</h1>
 
             <div th:if="${message}" class="alert alert-success" role="alert">
@@ -17,10 +17,10 @@
             </div>
 
             <div style="margin-bottom: 20px;">
-                <a th:href="@{/admin/boards/new}" class="button">새 게시물 작성</a>
+                <a th:href="@{/admin/boards/new}" class="btn">새 게시물 작성</a>
             </div>
 
-            <table class="table table-striped">
+            <table class="content-table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -36,23 +36,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="board : ${boards}">
-                        <td th:text="${board.boardId}"></td>
-                        <td th:text="${board.username}"></td>
-                        <td th:text="${board.school}"></td>
-                        <td th:text="${board.category}"></td>
-                        <td th:text="${board.title}"></td>
-                        <td th:text="${board.content}"></td>
-                        <td th:text="${board.isDeleted ? '삭제됨' : '활성'}"></td>
-                        <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                        <td th:text="${board.updatedAt != null ? #temporals.format(board.updatedAt, 'yyyy-MM-dd HH:mm') : '-'}"></td>
-                        <td>
-                            <a th:href="@{/admin/boards/{boardId}/edit(boardId=${board.boardId})}" >수정</a>
-                            <form th:action="@{/admin/boards/{boardId}/delete(boardId=${board.boardId})}" method="post"  onsubmit="return confirm('정말로 이 게시글을 삭제하시겠습니까?');">
-                                <button type="submit" >삭제</button>
+                <tr th:each="board : ${boards}">
+                    <td th:text="${board.boardId}"></td>
+                    <td th:text="${board.username}"></td>
+                    <td th:text="${board.school}"></td>
+                    <td th:text="${board.category}"></td>
+                    <td th:text="${board.title}"></td>
+                    <td th:text="${board.content}"></td>
+                    <td th:text="${board.isDeleted ? '삭제됨' : '활성'}"></td>
+                    <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${board.updatedAt != null ? #temporals.format(board.updatedAt, 'yyyy-MM-dd HH:mm') : '-'}"></td>
+
+                    <td>
+                        <div class="action-buttons">
+                            <a th:href="@{/admin/boards/{boardId}/edit(boardId=${board.boardId})}" class="btn">수정</a>
+                            <form th:action="@{/admin/boards/{boardId}/delete(boardId=${board.boardId})}" method="post" onsubmit="return confirm('정말로 이 게시글을 삭제하시겠습니까?');">
+                                <button type="submit" class="btn btn-danger">삭제</button>
                             </form>
-                        </td>
-                    </tr>
+                        </div>
+                    </td>
+
+                </tr>
                 </tbody>
             </table>
         </div>
