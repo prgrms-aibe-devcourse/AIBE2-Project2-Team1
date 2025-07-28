@@ -70,6 +70,18 @@ public class MentoringMatchMemberService {
                 .toList();
     }
 
+    // 유저 ID + 역할로 조회
+    public List<MentoringMatchMemberResponse> findByUserIdAndRole(Integer userId, MatchRole role) {
+        return memberRepo.findByUser_UserIdAndRole(userId, role).stream()
+                .map(MentoringMatchMemberResponse::from)
+                .toList();
+    }
+
+    // 유저 ID + 역할로 조회해서 MatchId 리스트반환
+    public List<Integer> getMatchIdsByUserIdAndRole(Integer userId, MatchRole role) {
+        return memberRepo.findMatchIdsByUserIdAndRole(userId, role);
+    }
+
     public void delete(Integer memberId) {
         if (!memberRepo.existsById(memberId)) {
             throw new GeneralException(ErrorCode.NOT_FOUND, "매칭 멤버가 존재하지 않습니다.");

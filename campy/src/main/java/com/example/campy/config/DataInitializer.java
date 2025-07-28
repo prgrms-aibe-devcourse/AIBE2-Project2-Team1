@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.example.campy.constant.MentoringStatus.WAITING_FOR_MENTOR;
 import static com.example.campy.constant.MentoringType.INDIVIDUAL;
@@ -28,6 +29,9 @@ public class DataInitializer implements CommandLineRunner {
     private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final MaterialRepository materialRepository; // MaterialRepository 주입
+    private final MentoringTagRepository tagRepo;
+    private final MentoringTagPostRepository tagPostRepo;
+
 
     @Override
     public void run(String... args) throws Exception {
@@ -89,15 +93,42 @@ public class DataInitializer implements CommandLineRunner {
 
         // 3. 멘토링 제안 더미 데이터 생성 (by user2)
         MentoringOffer offer1 = MentoringOffer.builder()
-                .user(user2)
+                .user(user1)
                 .title("JPA 기초부터 알려드립니다.")
                 .description("객체와 테이블 매핑의 어려움을 겪는 분들께, ORM의 기본 개념부터 차근차근 알려드립니다.")
                 .price(50000)
+                .duration(90)
+                .location("온라인 - 디스코드")
                 .status(com.example.campy.constant.MentoringStatus.REQUESTED)
                 .createdAt(LocalDateTime.now())
+                .isDeleted(false)
                 .build();
 
-        mentoringOfferRepository.save(offer1);
+        MentoringOffer offer2 = MentoringOffer.builder()
+                .user(user2)
+                .title("Spring Boot 완전정복")
+                .description("스프링 부트를 처음부터 끝까지 실전 위주로 배워보세요.")
+                .price(60000)
+                .duration(90)
+                .location("온라인 - 디스코드")
+                .status(com.example.campy.constant.MentoringStatus.REQUESTED)
+                .createdAt(LocalDateTime.now())
+                .isDeleted(false)
+                .build();
+
+        MentoringOffer offer3 = MentoringOffer.builder()
+                .user(user2)
+                .title("코딩테스트 실전 대비반")
+                .description("백준/프로그래머스 문제풀이 전략, 실전 감각 키우기.")
+                .price(40000)
+                .duration(90)
+                .location("온라인 - 디스코드")
+                .status(com.example.campy.constant.MentoringStatus.REQUESTED)
+                .createdAt(LocalDateTime.now())
+                .isDeleted(false)
+                .build();
+
+        mentoringOfferRepository.saveAll(List.of(offer1, offer2, offer3));
 
         // 4. 멘토링 성사 더미 데이터 생성 (user1이 user2의 제안을 수락)
         MentoringMatch match1 = MentoringMatch.builder()
@@ -177,6 +208,27 @@ public class DataInitializer implements CommandLineRunner {
                 .build();
 
         reviewRepository.save(review2);
+
+        // 10. 태그 더미 데이터 생성
+        MentoringTag tagJpa = MentoringTag.builder().name("JPA").build();
+        MentoringTag tagOrm = MentoringTag.builder().name("ORM").build();
+        MentoringTag tagSpring = MentoringTag.builder().name("Spring Boot").build();
+        MentoringTag tag실전 = MentoringTag.builder().name("실전").build();
+        MentoringTag tagCoding = MentoringTag.builder().name("코딩테스트").build();
+        MentoringTag tag백준 = MentoringTag.builder().name("백준").build();
+
+        tagRepo.saveAll(List.of(tagJpa, tagOrm, tagSpring, tag실전, tagCoding, tag백준));
+
+        MentoringTagPost tagPost1 = MentoringTagPost.builder().mentoringOffer(offer1).tag(tagJpa).build();
+        MentoringTagPost tagPost2 = MentoringTagPost.builder().mentoringOffer(offer1).tag(tagOrm).build();
+
+        MentoringTagPost tagPost3 = MentoringTagPost.builder().mentoringOffer(offer2).tag(tagSpring).build();
+        MentoringTagPost tagPost4 = MentoringTagPost.builder().mentoringOffer(offer2).tag(tag실전).build();
+
+        MentoringTagPost tagPost5 = MentoringTagPost.builder().mentoringOffer(offer3).tag(tagCoding).build();
+        MentoringTagPost tagPost6 = MentoringTagPost.builder().mentoringOffer(offer3).tag(tag백준).build();
+
+        tagPostRepo.saveAll(List.of(tagPost1, tagPost2, tagPost3, tagPost4, tagPost5, tagPost6));
 
 
         System.out.println("더미 데이터 생성이 완료되었습니다.");

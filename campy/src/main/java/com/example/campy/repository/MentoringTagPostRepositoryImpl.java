@@ -2,7 +2,7 @@ package com.example.campy.repository;
 
 import com.example.campy.entity.QMentoringTag;
 import com.example.campy.entity.QMentoringTagPost;
-import com.querydsl.core.types.Projections;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -17,20 +17,20 @@ public class MentoringTagPostRepositoryImpl implements MentoringTagPostRepositor
 
     @Override
     public Map<Integer, List<String>> findTagNamesGroupedByOfferIds(List<Integer> offerIds) {
-
-        QMentoringTagPost post = QMentoringTagPost.mentoringTagPost;
+        QMentoringTagPost tagPost = QMentoringTagPost.mentoringTagPost;
         QMentoringTag tag = QMentoringTag.mentoringTag;
 
-        return queryFactory
-                .select(Projections.tuple(post.mentoringOffer.offerId, tag.name))
-                .from(post)
-                .join(post.tag, tag)
-                .where(post.mentoringOffer.offerId.in(offerIds))
-                .fetch()
-                .stream()
+        List<Tuple> result = queryFactory
+                .select(tagPost.mentoringOffer.offerId, tag.name)
+                .from(tagPost)
+                .join(tagPost.tag, tag)
+                .where(tagPost.mentoringOffer.offerId.in(offerIds))
+                .fetch();
+
+        return result.stream()
                 .collect(Collectors.groupingBy(
-                        tuple -> tuple.get(post.mentoringOffer.offerId),
-                        Collectors.mapping(t -> t.get(tag.name), Collectors.toList())
+                        tuple -> tuple.get(tagPost.mentoringOffer.offerId),
+                        Collectors.mapping(tuple -> tuple.get(tag.name), Collectors.toList())
                 ));
     }
 }
