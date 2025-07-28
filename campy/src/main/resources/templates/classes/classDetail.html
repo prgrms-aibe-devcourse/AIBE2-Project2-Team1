@@ -148,7 +148,15 @@
         <div class="mentor-profile">
             <h4 th:text="${offer.user.nickname()} + ' 멘토'">멘토</h4>
             <p th:text="${offer.user.major()}"><!--User엔티티에 전공(major)--></p>
-            <img th:src="@{/images/younghan.jpg}" alt="멘토 사진">
+            <!-- 사용자 이미지 있을 때 -->
+            <img th:if="${offer.user != null && offer.user.profileImg != null && !#strings.isEmpty(offer.user.profileImg)}"
+                 th:src="${offer.user.profileImg}"
+                 th:alt="${offer.user.nickname}">
+
+            <!-- 사용자 이미지 없을 때 -->
+            <img th:if="${offer.user == null || offer.user.profileImg == null || #strings.isEmpty(offer.user.profileImg)}"
+                 th:src="@{/images/default-mentor.png}"
+                 th:alt="기본이미지">
             <button class="btn-profile" th:onclick="|location.href='@{/mentorDetail/{id}(id=${offer.user.userId})}'|">프로필보기</button>
         </div>
     </div>

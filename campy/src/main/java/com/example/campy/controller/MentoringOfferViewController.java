@@ -92,29 +92,32 @@ public class MentoringOfferViewController {
 
     // http://localhost:8080/class/myClassList
     @GetMapping("/myClassList")
-    public String getMyClassList(@RequestParam(required = false) MatchRole role, Model model) {
+    public String getMyClassList(Model model) {
         Integer userId = 1; // 임시 하드코딩
 
-        // 1. matchMember 정보 가져오기
-        List<MentoringMatchMemberResponse> memberofferList = (role != null)
-                ? matchMemberService.findByUserIdAndRole(userId, role)
-                : matchMemberService.findByUserId(userId);
+        // userId로 검색하여 matchMember List 반환
+        List<MentoringMatchMemberResponse> matchMemberlist = matchMemberService.findByUserId(userId);
 
-        // 2. matchId만 추출
-        List<Integer> matchIds = memberofferList.stream()
-                .map(MentoringMatchMemberResponse::getMatchId) 
+        // matchId만 추출
+        List<Integer> matchIds = matchMemberlist.stream()
+                .map(MentoringMatchMemberResponse::getMatchId)
                 .toList();
 
-        // 3. matchId로 매칭 정보 가져오기
+        // matchIds 매칭 정보 가져오기
         List<MentoringMatchResponse> matchList = matchService.findMatchesByMatchIds(matchIds);
 
-        // 4. 사용자가 직접 등록한 수업 (offer)
-        List<MentoringOfferResponse> offerList = mentoringOfferService.findByUserId(userId);
+        // matchList에서 offerIds 추출해서 리스트 생성
+        List<Integer> offerIds = matchList.stream()
+                .map(MentoringMatchResponse::getMentoringOfferId)
+                .toList();
+
+        // offerIds로 offerList 작성
+        List<MentoringOfferResponse> matchedOfferList = mentoringOfferService.findOffersByIds(offerIds);
 
         // 5. 모델에 담기
         model.addAttribute("matchList", matchList);     // 내가 참여한 매칭 정보
-        model.addAttribute("offerList", offerList);     // 내가 등록한 수업
-        model.addAttribute("selectedRole", role);
+        model.addAttribute("offerList", matchedOfferList);     // 내가 등록한 수업
+        model.addAttribute("matchMemberlist", matchMemberlist);     // 내가 등록한 수업
 
         return "classes/myClassList";
     }

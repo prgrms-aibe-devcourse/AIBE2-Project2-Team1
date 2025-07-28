@@ -104,6 +104,12 @@ public class MentoringOfferService {
                 .toList();
     }
 
+    public List<MentoringOfferResponse> findOffersByIds(List<Integer> offerIds) {
+        return offerIds.stream()
+                .map(this::findById)
+                .toList();
+    }
+
     @Transactional
     public MentoringOfferResponse update(Integer offerId, MentoringOfferUpdateRequest req){
         MentoringOffer offer = offerRepo.findById(offerId)
