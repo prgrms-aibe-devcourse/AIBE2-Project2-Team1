@@ -1,5 +1,6 @@
 package com.example.campy.controller;
 
+import com.example.campy.service.PaymentService;
 import com.example.campy.service.AdminService;
 import com.example.campy.service.BoardService;
 import com.example.campy.service.TalentService;
@@ -41,6 +42,7 @@ public class AdminController {
     private final AdminRepository adminRepository;
     private final BoardService boardService;
     private final TalentService talentService;
+    private final PaymentService paymentService;
 
     @GetMapping
     public String adminPage(Authentication authentication, Model model) {
@@ -324,8 +326,9 @@ public class AdminController {
     }
 
     @GetMapping("/transactions")
-    public String adminTransactionsPage() {
-        return "admin/admin_transactions/admin_transactions";
+    public String adminTransactionsPage(Model model) {
+        model.addAttribute("payments", paymentService.getAllPayments());
+        return "admin/admin_transactions";
     }
 
     @GetMapping("/ai-stats")

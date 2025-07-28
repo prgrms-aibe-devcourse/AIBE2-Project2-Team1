@@ -85,7 +85,7 @@
             <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('멘토 페이지는 로그인 후 이용 가능합니다')">멘토</a>
             <a th:if="${loggedInUser}" th:href="@{/talents}">재능</a>
             <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('재능 페이지는 로그인 후 이용 가능합니다')">재능</a>
-            <a th:if="${loggedInUser}" th:href="@{/boards}">게시판</a>
+            <a th:if="${loggedInUser}" th:href="@{/board/listBoard}">게시판</a>
             <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('게시판은 로그인 후 이용 가능합니다')">게시판</a>
             <a th:if="${loggedInUser}" th:href="@{/materials}">자료</a>
             <a th:unless="${loggedInUser}" href="#" onclick="requireLogin('자료 페이지는 로그인 후 이용 가능합니다')">자료</a>

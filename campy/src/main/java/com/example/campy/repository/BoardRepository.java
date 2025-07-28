@@ -3,12 +3,9 @@ package com.example.campy.repository;
 import com.example.campy.entity.Board;
 import com.example.campy.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import java.util.List; // List import 추가
+import java.util.List;
 
-@Repository
 public interface BoardRepository extends JpaRepository<Board, Integer> {
-    List<Board> findByIsDeletedFalse(); // 추가된 메서드
-    List<Board> findByUserAndIsDeletedFalse(User user);
+    List<Board> findByUser(User user);
 }

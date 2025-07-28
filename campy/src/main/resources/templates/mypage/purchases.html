@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>구매 내역</title>
+    <link rel="stylesheet" th:href="@{/css/mypage.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <div class="my-page-container">
+        <h1>구매 내역</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>결제 ID</th>
+                    <th>상품 유형</th>
+                    <th>상품 ID</th>
+                    <th>결제 상태</th>
+                    <th>결제 수단</th>
+                    <th>결제일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="payment : ${payments}">
+                    <td th:text="${payment.paymentId}"></td>
+                    <td th:text="${payment.type}"></td>
+                    <td th:text="${payment.targetId}"></td>
+                    <td th:text="${payment.status}"></td>
+                    <td th:text="${payment.method}"></td>
+                    <td th:text="${#temporals.format(payment.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

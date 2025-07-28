@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>게시판 상세보기</title>
+    <link rel="stylesheet" th:href="@{/css/board.css}">
+</head>
+<body>
+
+<h2>게시판</h2>
+
+<div class="view-container">
+    <div class="top-buttons">
+        <button class="back-button" th:onclick="|location.href='@{/board/listBoard}'|">목록으로</button>
+        
+    </div>
+
+    <table class="view-table">
+        <tr>
+            <th>UNIVERSITY</th>
+            <td th:text="${post.school}">학교명</td>
+            <th>NO</th>
+            <td th:text="${post.boardId}">0</td>
+        </tr>
+        <tr>
+            <th>CATEGORY</th>
+            <td th:text="${post.category}">카테고리</td>
+            <th>DATE</th>
+            <td th:text="${post.createdAt}">9999/12/31</td>
+        </tr>
+        <tr>
+            <th>TITLE</th>
+            <td colspan="3" th:text="${post.title}">제목</td>
+        </tr>
+        <tr>
+            <td colspan="4" class="view-content" th:text="${post.content}">본문 내용</td>
+        </tr>
+        
+    </table>
+</div>
+
+
+</body>
+</html>
