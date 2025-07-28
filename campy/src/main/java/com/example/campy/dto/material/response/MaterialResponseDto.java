@@ -4,6 +4,7 @@ import com.example.campy.entity.Material;
 import com.example.campy.dto.user.response.UserResponseDto;
 import lombok.Builder;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Builder
 public record MaterialResponseDto(
@@ -19,7 +20,8 @@ public record MaterialResponseDto(
     Integer price,
     Boolean isDeleted,
     LocalDateTime createdAt,
-    LocalDateTime updatedAt
+    LocalDateTime updatedAt,
+    String formattedCreatedAt
 ) {
     public static MaterialResponseDto from(Material material) {
         return MaterialResponseDto.builder()
@@ -49,6 +51,9 @@ public record MaterialResponseDto(
                 .isDeleted(material.getIsDeleted())
                 .createdAt(material.getCreatedAt())
                 .updatedAt(material.getUpdatedAt())
+                .formattedCreatedAt("등록일 : "+
+                        material.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                )
                 .build();
     }
 }

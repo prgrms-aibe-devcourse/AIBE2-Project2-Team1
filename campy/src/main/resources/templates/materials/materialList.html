@@ -131,6 +131,13 @@
             background-color: #146C94;
             color: white;
         }
+
+        .created-date {
+            font-size: 12px;
+            color: #999999; /* 회색 */
+            margin-top: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -157,7 +164,7 @@
                 <div class="title" th:text="${material.title}"></div>
                 <div class="seller" th:text="'판매자: ' + ${material.seller.nickname}"></div>
                 <div class="price" th:text="${material.price + '원'}"></div>
-                <div class="date" th:text="${material.createdAt}"></div>
+                <p class="created-date" th:text="'등록일 : ' + ${#temporals.format(material.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
             </div>
         </div>
 

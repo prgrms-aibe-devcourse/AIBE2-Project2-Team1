@@ -130,11 +130,36 @@
         .buy-button:hover {
             background-color: #0d4c6b;
         }
+
+
+         .tab {
+             margin-top: 30px;
+             display: flex;
+             gap: 20px;
+             border-bottom: 2px solid #ccc;
+         }
+
+        .tab a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+
+        .tab a.active {
+            color: #1B6B93;
+            border-bottom: 3px solid #1B6B93;
+        }
+
+        .tab-content {
+            background-color: transparent;
+            padding: 20px 0;
+        }
     </style>
 </head>
 <body>
 
- <div th:replace="fragments/header :: header"></div>
+<div th:replace="fragments/header :: header"></div>
 
 <div class="container">
     <div class="search-box">
@@ -151,27 +176,54 @@
         <div class="detail-info">
             <div class="category" th:text="${material.category}">JAVA</div>
             <div class="title" th:text="${material.title}">00대학교 000교수님 JAVA강의의 25-1 족보</div>
-            <div class="date" th:text="'등록일: ' + ${material.createdAt}">2025-07-19</div>
+            <p th:text="${material.formattedCreatedAt}"></p>
         </div>
         <img class="thumbnail" th:src="@{'/uploads/' + ${material.thumbnailUrl}}" alt="썸네일">
     </div>
 
-    <div class="detail-description">
-        <div class="description-wrapper">
-            <div class="description-text">
-                <h3>상세정보</h3>
-                <p th:text="${material.content}">
-                    00대학교 000교수님 JAVA 강의 1학기 족보 팔아요 A+ 받음여
-                </p>
-            </div>
-            <a th:href="@{'/materials/' + ${material.materialId} + '/purchase'}" class="buy-button">구매하기 →</a>
+    <div class="tab">
+        <a href="#detail" class="active" onclick="showTab(event, 'detail')">상세설명</a>
+        <a href="#review" onclick="showTab(event, 'review')">후기</a>
+    </div>
 
+    <div class="detail-description">
+
+        <!-- 상세설명 탭 -->
+        <div id="detail" class="tab-content" style="display: block;">
+            <div class="description-wrapper">
+                <div class="description-text">
+                    <p th:text="${material.content}">
+                        00대학교 000교수님 JAVA 강의 1학기 족보 팔아요 A+ 받음여
+                    </p>
+                </div>
+                <a th:href="@{'/materials/' + ${material.materialId} + '/purchase'}" class="buy-button">구매하기 →</a>
+            </div>
         </div>
+
+        <!-- 후기 탭 -->
+        <div id="review" class="tab-content" style="display: none;">
+            <p>아직 후기가 없습니다.</p>
+        </div>
+
     </div>
 
 </div>
 
- <div th:replace="fragments/footer :: footer"></div>
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+    function showTab(evt, tabId) {
+        // 모든 탭 콘텐츠 숨기기
+        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+
+        // 모든 탭 비활성화
+        document.querySelectorAll('.tab a').forEach(link => link.classList.remove('active'));
+
+        // 선택된 탭 보이기 및 탭 활성화
+        document.getElementById(tabId).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+    }
+</script>
 
 </body>
 </html>

@@ -101,7 +101,7 @@
 <div th:replace="fragments/header :: header"></div>
 
 <div class="container">
-    <div class="title" th:text="${material.seller} + ' · 판매자'">김영한 · 판매자</div>
+    <div class="title" th:text="${material.seller.nickname} + ' · 판매자'">김영한 · 판매자</div>
     <div class="subtitle" th:text="${material.title}">Spring의 모든 것 정리본</div>
     <div class="price" th:text="${material.price + '원'}">5,000원</div>
 
