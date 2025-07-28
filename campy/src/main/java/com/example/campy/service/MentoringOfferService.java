@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class MentoringOfferService {
         MentoringOffer saved = offerRepo.save(entity);
 
         // 해시 태그 처리 로직
-        List<MentoringTagPost> tagPosts = req.getTags().stream()
+        List<MentoringTagPost> tagPosts = (req.getTags() != null ? req.getTags() : Collections.<String>emptyList()).stream()
                 .map(tagName -> {
                     MentoringTag tag = tagRepo.findByName(tagName)
                             .orElseGet(() -> tagRepo.save(

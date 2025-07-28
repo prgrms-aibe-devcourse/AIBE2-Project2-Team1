@@ -4,61 +4,269 @@
     <meta charset="UTF-8">
     <title>새 멘토링 제안 등록</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { color: #333; }
-        form { margin-top: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-        div { margin-bottom: 10px; }
-        label { display: inline-block; width: 120px; font-weight: bold; }
-        input[type="text"], input[type="number"], textarea, select { width: 300px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        textarea { height: 100px; resize: vertical; }
-        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        .error { color: red; font-size: 0.9em; }
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: #F6F1F1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-bubble {
+            display: inline-block;
+            background-color: #19A7CE;
+            border-radius: 0px 20px 20px 20px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            margin-top: 20px;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .header img {
+            width: 60px;
+            height: 45px;
+            margin-right: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            box-sizing: border-box;
+        }
+
+        input[type="number"].price-input {
+            width: 150px;
+            display: inline-block;
+        }
+
+        .price-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .tag-area {
+            margin-top: 10px;
+        }
+
+        .tag-box {
+            background-color: #bfe3f3;
+            padding: 12px;
+            border-radius: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            min-height: 40px;
+        }
+
+        .tag {
+            background-color: #00aacc;     /* 파란 배경 */
+            color: white;                  /* 흰색 글자 */
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .tag-box input {
+            flex: 1 1 120px;           /* 너비 유연하게 */
+            min-width: 80px;
+            max-width: 100%;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            padding: 5px;
+            background-color: transparent;
+        }
+
+        .tag-description {
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #0077aa;
+            line-height: 1.5;
+            font-weight: bold
+        }
+
+        .file-info {
+            font-size: 13px;
+            color: #777;
+            margin-top: 6px;
+        }
+
+        .btn-register {
+            margin-top: 30px;
+            display: block;
+            width: 150px;
+            padding: 12px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background-color: #ccc;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: auto;
+            margin-right: auto;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-register:hover {
+            background-color: #146C94;   /* 배경색 유지 */
+            color: #ffffff;              /* 글자색 흰색 */
+            font-weight: bold;
+            border: 2px solid #146c94;/* 글자 굵게 */
+        }
+
     </style>
 </head>
 <body>
-    <h1>새 멘토링 제안 등록</h1>
+
+<!-- Header Fragment 삽입
+<div th:replace="fragments/header :: header"></div>-->
+
+<div class="container">
+    <div class="header">
+        <img src="/images/ai.png" alt="로봇">
+        <div class="chat-bubble">안녕하세요! 멘토님 멘토링 제안을 등록해주세요!</div>
+    </div>
 
     <form th:action="@{/mypage/activity/mentoringoffers/new}" th:object="${mentoringOfferCreateRequest}" method="post">
-        <div>
-            <label for="title">제목:</label>
-            <input type="text" id="title" th:field="*{title}" required />
-            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
-        </div>
-        <div>
-            <label for="description">설명:</label>
-            <textarea id="description" th:field="*{description}" required></textarea>
-            <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></span>
-        </div>
-        <div>
-            <label for="price">가격:</label>
-            <input type="number" id="price" th:field="*{price}" required min="0" />
-            <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error"></span>
-        </div>
-        <div>
-            <label for="duration">기간:</label>
-            <input type="text" id="duration" th:field="*{duration}" placeholder="예: 1개월, 3회" />
-            <span th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}" class="error"></span>
-        </div>
-        <div>
-            <label for="location">장소:</label>
-            <input type="text" id="location" th:field="*{location}" placeholder="예: 온라인, 강남역 스터디룸" />
-            <span th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="error"></span>
-        </div>
-        <div>
-            <label for="maxParticipants">최대 참여 인원:</label>
-            <input type="number" id="maxParticipants" th:field="*{maxParticipants}" required min="1" />
-            <span th:if="${#fields.hasErrors('maxParticipants')}" th:errors="*{maxParticipants}" class="error"></span>
-        </div>
-        <div>
-            <label for="tags">태그 (쉼표로 구분):</label>
-            <input type="text" id="tags" th:field="*{tags}" placeholder="예: 자바,스프링,백엔드" />
-            <span th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}" class="error"></span>
-        </div>
-        <div>
-            <button type="submit">등록</button>
-            <button type="button" onclick="history.back()">취소</button>
-        </div>
+
+    <table>
+            <tr>
+                <td>제목</td>
+                <td><input type="text" th:field="*{title}" placeholder="한글, 영문 포함 최대 200 이내, 특수문자, 개인정보 등은 제외"></td>
+            </tr>
+           <tr>
+               <td>상세 정보</td>
+               <td><textarea th:field="*{description}" rows="5" placeholder="한글, 영문 포함 최대 500 이내, 특수문자, 개인정보 등은 제외"></textarea></td>
+           </tr>
+           <tr>
+               <td>판매가격</td>
+               <td>
+                   <div class="price-wrapper">
+                       <input type="number" class="price-input" th:field="*{price}" placeholder="가격 입력 (0은 무료)">
+                       <span>원</span>
+                   </div>
+               </td>
+           </tr>
+           <tr>
+               <td>멘토링 시간</td>
+               <td><input type="text" th:field="*{duration}" placeholder="멘토링을 진행할 총 시간을 적어주세요."></td>
+           </tr>
+          <tr>
+              <td>멘토링 방식</td>
+              <td><input type="text" th:field="*{location}" placeholder="예: Discord(Online), 공유 오피스(Offline)"></td>
+          </tr>
+          <tr>
+              <td>최대 참여 인원</td>
+              <td><input type="number" th:field="*{maxParticipants}" placeholder="최대 참여 인원을 적어주세요."></td>
+          </tr>
+            <tr>
+                <td>태그</td>
+                <td>
+                    <div class="tag-area">
+                        <div class="tag-description">
+                            💡 AI를 이용하여 멘토를 추천해주는 기능을 이용하시면,
+                            빠른 시간 내에 멘티를 모을 수 있어요!<br>
+                            멘토링 내용과 관련있는 태그를 적어주세요.
+                        </div>
+                        <div class="tag-box" id="tag-input">
+                            <input type="text" id="tag-text" placeholder="# 태그 입력 후 Enter" autocomplete="off">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <button type="submit" class="btn-register">등록하기</button>
     </form>
+</div>
+
+<!-- Footer Fragment 삽입
+<div th:replace="fragments/footer :: footer"></div>-->
+
+<script>
+    const tagInput = document.getElementById('tag-text');
+    const tagContainer = document.getElementById('tag-input');
+    const form = document.querySelector('form');
+
+    let tagCount = 0;
+    const maxTags = 5;
+
+    tagInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && tagInput.value.trim() !== '') {
+            e.preventDefault();
+
+            if (tagCount >= maxTags) {
+                alert("태그는 최대 5개까지 입력할 수 있습니다.");
+                return;
+            }
+
+            const tagText = tagInput.value.trim();
+            if (!tagText) return;
+
+            // span UI용
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.innerText = `#${tagText}`;
+
+            // 삭제 기능 + hidden input 제거
+            tag.addEventListener('click', () => {
+                tag.remove();
+                hiddenInput.remove();
+                tagCount--;
+            });
+
+            // 숨은 input 추가
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'tags'; // MentoringOfferCreateRequest의 tags 필드와 일치
+            hiddenInput.value = tagText;
+
+            tagContainer.insertBefore(tag, tagInput);
+            form.appendChild(hiddenInput); // 중요
+            tagInput.value = '';
+            tagCount++;
+        }
+    });
+</script>
+
 </body>
 </html>
