@@ -102,7 +102,7 @@ public class MentoringOfferViewController {
 
         // 2. matchId만 추출
         List<Integer> matchIds = memberofferList.stream()
-                .map(MentoringMatchMemberResponse::getMatchId) 
+                .map(MentoringMatchMemberResponse::getMatchId)
                 .toList();
 
         // 3. matchId로 매칭 정보 가져오기
@@ -117,6 +117,15 @@ public class MentoringOfferViewController {
         model.addAttribute("selectedRole", role);
 
         return "classes/myClassList";
+    }
+
+    @GetMapping("/myDetail/{offerId}")
+    public String getMyClassDetail(@PathVariable Integer offerId, Model model){
+
+        MentoringOfferResponse offer = mentoringOfferService.findById(offerId);
+        model.addAttribute("offer", offer);
+
+        return "classes/myClassDetail";
     }
 
 }

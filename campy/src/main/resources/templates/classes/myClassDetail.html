@@ -138,10 +138,6 @@
             <p class="duration" th:text="${offer.duration} +'분'"> </p>
             <p class="label">진행 방법</p>
             <p class="desc" th:text="${offer.location}"></p>
-            <button class="btn-purchase"
-                    th:onclick="|location.href='@{/class/purchase/{id}(id=${offer.offerId})}'|">
-                구매하기
-            </button>
             <button class="btn-message" th:onclick="|location.href='@{/message.html}'|">쪽지하기</button>
         </div>
 

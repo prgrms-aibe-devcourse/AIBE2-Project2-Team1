@@ -272,11 +272,12 @@
                        th:text="${#strings.listJoin(mentor.tags, ' ')}"></p>
                 </div>
                 <div class="card-image">
-                    <!-- 프로필 이미지: 값이 있으면 출력, 없으면 기본 이미지 -->
-                    <<img th:if="${mentor.user != null && mentor.user.profileImg != null && mentor.user.profileImg != ''}"
-                          th:src="@{${mentor.user.profileImg}}"
-                          th:alt="${mentor.user.nickname}">
-                    <img th:if="${mentor.user == null || mentor.user.profileImg == null || mentor.user.profileImg == ''}"
+                    <img th:if="${mentor.user != null && mentor.user.profileImg != null && !#strings.isEmpty(mentor.user.profileImg)}"
+                         th:src="${mentor.user.profileImg}"
+                         th:alt="${mentor.user.nickname}">
+
+                    <!-- 사용자 이미지 없을 때 -->
+                    <img th:if="${mentor.user == null || mentor.user.profileImg == null || #strings.isEmpty(mentor.user.profileImg)}"
                          th:src="@{/images/default-mentor.png}"
                          th:alt="기본이미지">
                 </div>
@@ -363,7 +364,7 @@
         card.style.cursor = 'pointer';
         card.addEventListener('click', () => {
             const id = card.getAttribute('data-id');
-            window.location.href = `/class/detail/${id}`;
+            window.location.href = `/class/myDetail/${id}`;
         });
     });
 
