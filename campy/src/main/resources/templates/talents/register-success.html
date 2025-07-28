@@ -2,112 +2,85 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>재능 등록 완료 | campy</title>
+    <title>수업 등록 완료</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            background: #F6F1F1;
-            height: 100%;
-        }
         body {
-            font-family: 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', Arial, sans-serif;
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8f6f6;
         }
-        .success-wrap {
-            margin: 50px auto 0 auto;
-            background: #F6F1F1;
-            min-height: 90vh;
-            max-width: 100vw;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .success-box {
-            margin-top: 54px;
-            background: #fff;
-            border: 3px solid #2ca4c8;
-            border-radius: 0;
-            width: 550px;
-            max-width: 97vw;
-            min-height: 410px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-sizing: border-box;
-            padding: 72px 32px 50px 32px;
-        }
-        .success-icon {
-            font-size: 72px;
-            color: #222;
-            margin-bottom: 18px;
-            line-height: 1;
-        }
-        .success-title {
-            font-size: 21px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #111;
+
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 50px 30px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
             text-align: center;
-            letter-spacing: -0.5px;
         }
-        .success-desc {
-            font-size: 15px;
-            color: #2ca4c8;
-            text-align: center;
-            margin-bottom: 35px;
-            margin-top: 8px;
-            letter-spacing: -0.15px;
+
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
         }
-        .success-btns {
-            margin-top: 38px;
-            display: flex;
-            gap: 40px;
-        }
-        .success-btn {
-            background: #D6D8DA;
-            color: #232323;
-            border: 2px solid #979797;
-            border-radius: 16px;
+
+        .message {
             font-size: 18px;
-            font-weight: 400;
-            padding: 13px 58px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .sub-message {
+            font-size: 14px;
+            color: #146C94;
+            margin-bottom: 30px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            font-size: 14px;
+            border: 2px solid #000;
+            background-color: #ddd;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background 0.13s;
+            transition: background-color 0.2s ease;
         }
-        .success-btn:hover {
-            background: #e3e3e3;
+
+        .btn:hover {
+            background-color: #146C94;
+            border: 2px solid #146c94;
+            color: #ffffff;              /* 글자색 흰색 */
+            font-weight: bold;
         }
-        @media (max-width:700px) {
-            .success-box { min-width: 0; width: 99vw; padding: 38px 3vw 27px 3vw; }
-            .success-title { font-size: 17px; }
-            .success-desc { font-size: 13px; }
-            .success-btn { font-size: 16px; padding: 11px 0; width: 40vw; }
-            .success-btns { gap: 10vw; }
-        }
+
     </style>
 </head>
 <body>
-<header th:replace="~{fragments/header :: header}"></header>
-<div class="success-wrap">
-    <div class="success-box">
-        <div class="success-icon">
-            <!-- 다운(완료) 아이콘 SVG -->
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                <path d="M32 12v31M32 43l-11-11M32 43l11-11" stroke="#232323" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </div>
-        <div class="success-title">
-            재능 업로드 작업이 모두 완료되었습니다.
-        </div>
-        <div class="success-desc">
-            ※ 내 정보 &rarr; 등록 내역에서 확인하실 수 있습니다.
-        </div>
-        <div class="success-btns">
-            <button class="success-btn" onclick="location.href='/'">홈으로</button>
-            <button class="success-btn" onclick="location.href='/mypage'">등록 내역</button>
-        </div>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="icon">⬇️</div>
+
+    <div class="message">재능 업로드 작업이 모두 완료되었습니다.</div>
+    <div class="sub-message">
+        ※ <a th:href="@{/mypage}" style="color: #146C94; text-decoration: none;">내 정보 → 등록 내역</a> 에서 확인하실 수 있습니다.
+    </div>
+
+    <div class="btn-group">
+        <a th:href="@{/}" class="btn">홈으로</a>
+        <a th:href="@{/mypage}" class="btn">등록한 재능</a>
     </div>
 </div>
-<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<div th:replace="fragments/footer :: footer"></div>
+
 </body>
 </html>
