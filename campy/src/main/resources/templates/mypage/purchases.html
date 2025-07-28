@@ -7,9 +7,10 @@
 </head>
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
-    <div class="my-page-container">
+    <main class="main-content">
+    <div class="registrations-container">
         <h1>구매 내역</h1>
-        <table>
+        <table class="content-table">
             <thead>
                 <tr>
                     <th>결제 ID</th>
@@ -32,6 +33,7 @@
             </tbody>
         </table>
     </div>
+    </main>
     <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

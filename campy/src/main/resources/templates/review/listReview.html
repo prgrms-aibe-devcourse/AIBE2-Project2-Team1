@@ -5,6 +5,7 @@
     <title>리뷰 게시판</title>
     <link rel="stylesheet" th:href="@{/css/review.css}">
     <style>
+        /* Existing styles */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -79,6 +80,38 @@
             font-size: 18px;
             cursor: pointer;
         }
+
+        /* New styles for action buttons */
+        .action-buttons button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .action-buttons .edit-button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+        .action-buttons .delete-button {
+            background-color: #f44336; /* Red */
+            color: white;
+        }
+        .modal-delete-button {
+            background-color: #f44336; /* Red */
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            margin-left: 10px; /* Add some space from submit button */
+        }
+        .edit-icon {
+            width: 20px; /* Adjust size as needed */
+            height: 20px; /* Adjust size as needed */
+            cursor: pointer;
+            vertical-align: middle;
+            margin-left: 5px; /* Space between nickname and icon */
+        }
     </style>
 </head>
 <body>
@@ -120,7 +153,11 @@
         <td th:text="${review.targetUser.nickname}">사용자</td>
         <td th:text="${review.rating}">⭐⭐⭐⭐⭐</td>
         <td class="left-align" th:text="${review.content}">내용</td>
-        <td th:text="${review.author.nickname}">작성자</td>
+        <td><span th:text="${review.author.nickname}">작성자</span>
+            <span th:if="${review.author.userId == currentUserId}">
+                <img th:src="@{/images/pencilicon.png}" alt="수정" class="edit-icon" th:data-review-id="${review.reviewId}">
+            </span>
+        </td>
         <td th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}">9999-12-31</td>
     </tr>
     </tbody>
@@ -175,49 +212,214 @@
     </div>
 </div>
 
+<!-- 리뷰 수정 모달 (New) -->
+<div id="editReviewModal" class="modal-overlay">
+    <div class="modal-content review-popup">
+        <button id="closeEditReviewModal" class="modal-close">×</button>
+        <h3>리뷰 수정하기</h3>
+        <form id="editReviewForm" method="post"> <!-- Action will be set by JS -->
+            <input type="hidden" name="reviewId" id="editReviewId">
+            <table class="write-table">
+                <tr>
+                    <th>리뷰 분야</th>
+                    <td>
+                        <select name="category" id="editCategory" required>
+                            <option value="" disabled selected>리뷰 분야를 선택해주세요.</option>
+                            <option value="멘토링">멘토링</option>
+                            <option value="자료">자료</option>
+                            <option value="재능">재능</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>리뷰 대상</th>
+                    <td>
+                        <input type="text" name="nickname" id="editNickname" placeholder="대상 사용자 닉네임을 입력하세요." required>
+                    </td>
+                </tr>
+                <tr>
+                    <th>별점</th>
+                    <td class="stars" id="editStarsContainer">
+                        <span class="star" data-value="1">☆</span>
+                        <span class="star" data-value="2">☆</span>
+                        <span class="star" data-value="3">☆</span>
+                        <span class="star" data-value="4">☆</span>
+                        <span class="star" data-value="5">☆</span>
+                        <input type="hidden" name="rating" id="editRating" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>내용</th>
+                    <td>
+                        <textarea name="content" id="editContent" placeholder="최대 500자 이내로 작성해주세요." maxlength="500" required></textarea>
+                    </td>
+                </tr>
+            </table>
+            <div class="btn-wrapper">
+                <button type="submit" class="submit-button">수정하기</button>
+                <button type="button" id="deleteReviewButton" class="modal-delete-button">삭제</button> <!-- Moved delete button -->
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- ✅ Footer Fragment -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const openBtn = document.getElementById('openReviewModal');
-        const closeBtn = document.getElementById('closeReviewModal');
-        const modal = document.getElementById('reviewModal');
-        const stars = document.querySelectorAll('.star');
-        const hiddenInput = document.querySelector('input[name=\"rating\"]');
+        // Common modal logic
+        const setupModal = (openBtnId, closeBtnId, modalId, formId = null, starsContainerId = null, hiddenInputId = null) => {
+            const openBtn = document.getElementById(openBtnId);
+            const closeBtn = document.getElementById(closeBtnId);
+            const modal = document.getElementById(modalId);
+            const stars = starsContainerId ? document.querySelectorAll(`#${starsContainerId} .star`) : null;
+            const hiddenInput = hiddenInputId ? document.getElementById(hiddenInputId) : null;
 
-        let selectedRating = 0;
+            let selectedRating = 0;
 
-        openBtn?.addEventListener('click', () => {
-            modal.style.display = 'flex';
-        });
-
-        closeBtn?.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-
-        stars.forEach((star) => {
-            star.addEventListener('click', () => {
-                selectedRating = star.getAttribute('data-value');
-                hiddenInput.value = selectedRating;
-                updateStars(selectedRating);
+            openBtn?.addEventListener('click', () => {
+                modal.style.display = 'flex';
+                if (formId) {
+                    document.getElementById(formId).reset(); // Reset form on open
+                    if (hiddenInput) hiddenInput.value = ''; // Clear hidden rating
+                    if (stars) updateStars(0, stars); // Reset stars
+                }
             });
-        });
 
-        function updateStars(rating) {
-            stars.forEach((star) => {
+            closeBtn?.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            if (stars) {
+                stars.forEach((star) => {
+                    star.addEventListener('click', () => {
+                        selectedRating = star.getAttribute('data-value');
+                        if (hiddenInput) hiddenInput.value = selectedRating;
+                        updateStars(selectedRating, stars);
+                    });
+                });
+                updateStars(0, stars); // Initial star setup
+            }
+
+            return { modal, stars, hiddenInput, updateStars };
+        };
+
+        const updateStars = (rating, starsElements) => {
+            starsElements.forEach((star) => {
                 const value = star.getAttribute('data-value');
                 star.textContent = (value <= rating) ? '⭐' : '☆';
             });
-        }
+        };
 
-        updateStars(0);
+        // Setup for Create Review Modal
+        setupModal('openReviewModal', 'closeReviewModal', 'reviewModal', 'createReviewForm', 'starsContainer', 'rating'); // Assuming createReviewForm and starsContainer/rating IDs exist or will be added
+
+        // Setup for Edit Review Modal
+        const { modal: editModal, stars: editStars, hiddenInput: editRatingInput, updateStars: updateEditStars } = setupModal(
+            'dummyOpenEditModal', // No direct open button, opened by JS
+            'closeEditReviewModal',
+            'editReviewModal',
+            'editReviewForm',
+            'editStarsContainer',
+            'editRating'
+        );
+
+        // Edit Button Click Handler
+        document.querySelectorAll('.edit-icon').forEach(button => { // Changed selector to .edit-icon
+            button.addEventListener('click', async (e) => {
+                const reviewId = e.target.dataset.reviewId;
+                try {
+                    const response = await fetch(`/api/my-reviews/${reviewId}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const review = await response.json();
+
+                    // Populate the edit modal form
+                    document.getElementById('editReviewId').value = review.reviewId;
+                    document.getElementById('editCategory').value = review.category;
+                    document.getElementById('editNickname').value = review.targetUser.nickname; // Assuming targetUser.nickname is available
+                    document.getElementById('editContent').value = review.content;
+                    document.getElementById('editRating').value = review.rating;
+                    updateEditStars(review.rating, editStars); // Update stars visually
+
+                    editModal.style.display = 'flex'; // Show the edit modal
+                } catch (error) {
+                    console.error('Error fetching review for edit:', error);
+                    alert('리뷰 정보를 불러오는데 실패했습니다.');
+                }
+            });
+        });
+
+        // Edit Form Submission Handler
+        document.getElementById('editReviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const reviewId = document.getElementById('editReviewId').value;
+            const category = document.getElementById('editCategory').value;
+            const nickname = document.getElementById('editNickname').value;
+            const rating = document.getElementById('editRating').value;
+            const content = document.getElementById('editContent').value;
+
+            const data = {
+                category: category,
+                nickname: nickname,
+                rating: parseInt(rating),
+                content: content
+            };
+
+            try {
+                const response = await fetch(`/api/my-reviews/${reviewId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                alert('리뷰가 성공적으로 수정되었습니다.');
+                editModal.style.display = 'none';
+                location.reload(); // Reload page to show updated review
+            } catch (error) {
+                console.error('Error updating review:', error);
+                alert('리뷰 수정에 실패했습니다: ' + error.message);
+            }
+        });
+
+        // Delete Button Click Handler (now targets the button inside the edit modal)
+        document.getElementById('deleteReviewButton').addEventListener('click', async (e) => {
+            const reviewId = document.getElementById('editReviewId').value; // Get reviewId from hidden input in edit modal
+            if (confirm('정말로 이 리뷰를 삭제하시겠습니까?')) {
+                try {
+                    const response = await fetch(`/api/my-reviews/${reviewId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                    }
+
+                    alert('리뷰가 성공적으로 삭제되었습니다.');
+                    editModal.style.display = 'none'; // Close edit modal
+                    location.reload(); // Reload page to reflect deletion
+                } catch (error) {
+                    console.error('Error deleting review:', error);
+                    alert('리뷰 삭제에 실패했습니다: ' + error.message);
+                }
+            }
+        });
     });
 </script>
 

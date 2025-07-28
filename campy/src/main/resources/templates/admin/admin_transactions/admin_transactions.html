@@ -1,21 +1,59 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{::head-extra}, ~{::content}, ~{::body-extra})}">
+      th:replace="~{admin/fragments/admin_layout :: layout(~{::title}, ~{}, ~{::content}, ~{})}">
 <head>
+    <meta charset="UTF-8">
     <title>관리자 - 거래 내역</title>
-    <th:block th:fragment="head-extra">
-        <!-- 이 페이지에만 필요한 추가 CSS/JS -->
-    </th:block>
 </head>
 <body>
-    <th:block th:fragment="content">
-        <div class="container">
-            <h1>거래 내역</h1>
-            <!-- 거래 내역 내용 -->
+<th:block th:fragment="content">
+    <div class="admin-page-container">
+        <h1>거래 내역</h1>
+
+        <div class="search-bar">
+            <form th:action="@{/admin/transactions}" method="get" class="search-form">
+                <select name="searchType" class="form-select">
+                    <option value="buyerId">구매자 ID</option>
+                    <option value="paymentId">결제 ID</option>
+                </select>
+                <input type="text" name="keyword" class="form-input" placeholder="검색어를 입력하세요">
+                <button type="submit" class="btn">검색</button>
+            </form>
         </div>
-    </th:block>
-    <th:block th:fragment="body-extra">
-        <!-- 이 페이지에만 필요한 추가 JS -->
-    </th:block>
+
+        <table class="content-table">
+            <thead>
+            <tr>
+                <th>결제 ID</th>
+                <th>구매자 ID</th>
+                <th>상품 유형</th>
+                <th>상품 ID</th>
+                <th>결제 상태</th>
+                <th>결제 수단</th>
+                <th>결제일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="payment : ${payments}">
+                <td th:text="${payment.paymentId}"></td>
+                <td th:text="${payment.buyer.userId}"></td>
+                <td th:text="${payment.type}"></td>
+                <td th:text="${payment.targetId}"></td>
+                <td>
+                    <span class="status-badge" th:classappend="${'status-' + #strings.toLowerCase(payment.status)}" th:text="${payment.status}"></span>
+                </td>
+                <td th:text="${payment.method}"></td>
+                <td th:text="${#temporals.format(payment.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(payments)}">
+                <td colspan="7">거래 내역이 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination">
+        </div>
+    </div>
+</th:block>
 </body>
 </html>
