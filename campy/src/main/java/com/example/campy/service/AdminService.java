@@ -7,13 +7,13 @@ import com.example.campy.dto.review.response.ReviewResponseDto;
 import com.example.campy.dto.review.request.ReviewUpdateRequest;
 import com.example.campy.dto.review.request.ReviewCreateRequest;
 import com.example.campy.dto.user.request.UserUpdateRequest;
-import com.example.campy.dto.user.request.UserCreateRequest; // UserCreateRequest import 추가
+import com.example.campy.dto.user.request.UserCreateRequest;
 import com.example.campy.entity.Review;
 import com.example.campy.entity.User;
 import com.example.campy.exception.GeneralException;
 import com.example.campy.constant.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder; // PasswordEncoder import 추가
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +27,7 @@ public class AdminService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findByDeletedAtIsNull().stream()
@@ -67,7 +67,6 @@ public class AdminService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
 
-        // 해당 유저가 작성했거나 대상이 된 리뷰들을 소프트 삭제
         List<Review> authoredReviews = reviewRepository.findByAuthorAndDeletedAtIsNull(user);
         authoredReviews.forEach(review -> {
             review.setDeletedAt(LocalDateTime.now());
@@ -80,7 +79,6 @@ public class AdminService {
             reviewRepository.save(review);
         });
 
-        // 유저 소프트 삭제
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
     }
@@ -98,17 +96,15 @@ public class AdminService {
                 case "category":
                     reviews = reviewRepository.findByCategoryContainingIgnoreCaseAndDeletedAtIsNull(keyword);
                     break;
-                case "authorNickname":
+                case "reviewer":
                     reviews = reviewRepository.findByAuthor_NicknameContainingIgnoreCaseAndDeletedAtIsNull(keyword);
                     break;
-                case "targetUserNickname":
-                    reviews = reviewRepository.findByTargetUser_NicknameContainingIgnoreCaseAndDeletedAtIsNull(keyword);
-                    break;
                 default:
-                    reviews = reviewRepository.findByDeletedAtIsNull(); // Fallback to all non-deleted if searchType is invalid
+                    reviews = reviewRepository.findByDeletedAtIsNull();
                     break;
             }
         }
+
         return reviews.stream()
                 .map(ReviewResponseDto::from)
                 .collect(Collectors.toList());
@@ -133,17 +129,20 @@ public class AdminService {
     public void deleteReview(Integer reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.REVIEW_NOT_FOUND));
-        review.setDeletedAt(java.time.LocalDateTime.now());
+        review.setDeletedAt(LocalDateTime.now());
         reviewRepository.save(review);
     }
 
-    // 새로운 리뷰 생성 메서드 추가
+    // 리뷰 생성 - 닉네임 기반 대상자 찾기
     @Transactional
     public ReviewResponseDto createReview(ReviewCreateRequest request) {
-        User author = userRepository.findById(request.authorId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "작성자 사용자를 찾을 수 없습니다."));
-        User targetUser = userRepository.findById(request.targetUserId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "대상 사용자를 찾을 수 없습니다."));
+        // 작성자는 admin 사용자로 고정
+        User author = userRepository.findByUsername("admin")
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "작성자(admin)를 찾을 수 없습니다."));
+
+        // 대상 유저는 nickname으로 찾음
+        User targetUser = userRepository.findByNickname(request.nickname())
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND, "대상 닉네임 사용자를 찾을 수 없습니다."));
 
         Review newReview = Review.builder()
                 .author(author)
@@ -152,23 +151,20 @@ public class AdminService {
                 .rating(request.rating())
                 .category(request.category())
                 .content(request.content())
-                .createdAt(LocalDateTime.now()) // 생성 시간 설정
-                .updatedAt(LocalDateTime.now()) // 업데이트 시간 설정
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         Review savedReview = reviewRepository.save(newReview);
         return ReviewResponseDto.from(savedReview);
     }
 
-    // 새로운 사용자 생성 메서드 추가
     @Transactional
     public UserResponseDto createUser(UserCreateRequest request) {
-        // 이메일 중복 확인
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new GeneralException(ErrorCode.DUPLICATE_EMAIL);
         }
 
-        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(request.password());
 
         User newUser = User.builder()
@@ -180,8 +176,8 @@ public class AdminService {
                 .school(request.school())
                 .major(request.major())
                 .entranceYear(request.entranceYear())
-                .role("USER") // 기본 역할 부여
-                .isVerified(false) // 기본적으로 미인증 상태
+                .role("USER")
+                .isVerified(false)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
