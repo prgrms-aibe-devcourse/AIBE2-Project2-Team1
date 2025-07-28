@@ -4,6 +4,7 @@ import com.example.campy.entity.Payment;
 import com.example.campy.entity.User;
 import com.example.campy.service.PaymentService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,20 +23,20 @@ class PaymentControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private PaymentService paymentService;
 
     @Test
     @WithMockUser(username = "testuser", roles = {"USER"})
     void getUserPayments() throws Exception {
         User user = new User();
-        user.setUserId(1L);
+        user.setUserId(1);
 
         Payment payment = new Payment();
         payment.setPaymentId(1);
         payment.setBuyer(user);
 
-        when(paymentService.getUserPayments(1L)).thenReturn(Collections.singletonList(payment));
+        when(paymentService.getUserPayments(1)).thenReturn(Collections.singletonList(payment));
 
         mockMvc.perform(get("/payments"))
                 .andExpect(status().isOk());
