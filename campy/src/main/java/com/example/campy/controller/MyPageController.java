@@ -144,7 +144,7 @@ public class MyPageController {
     public String deleteReview(@PathVariable Integer reviewId, Authentication authentication, RedirectAttributes redirectAttributes) {
         userReviewService.deleteReview(reviewId, authentication);
         redirectAttributes.addFlashAttribute("message", "후기가 성공적으로 삭제되었습니다.");
-        return "redirect:/mypage/activity/reviews/myreviews";
+        return "redirect:/mypage/activity/registrations";
     }
 
     // 재능 수정
